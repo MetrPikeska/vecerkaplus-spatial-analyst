@@ -6,3 +6,6 @@ __pycache__/
 data/gridy_domacnosti/
 data/gridy_domacnosti.zip
 data/obce_sldb/
+
+# Google Distance Matrix cache (obsahuje API klíč v URL historii, generovat lokálně)
+data/google_distance_cache.json

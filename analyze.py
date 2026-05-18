@@ -89,39 +89,31 @@ buffer_wgs = gpd.GeoDataFrame(geometry=buffer_m, crs=CRS_METRIC).to_crs(CRS_WGS)
 print(f"   Plocha: {buffer_m.area.values[0]/1e6:.1f} km²")
 
 # ---------------------------------------------------------------------------
-# 4. Izochróna 20 min autem
+# 4. Reálná rozvozová zóna (Google Distance Matrix ≤ 20 km jízdy)
 # ---------------------------------------------------------------------------
-print("\n=== 4. Izochróna (ORS) ===")
-iso_file = os.path.join(DATA_DIR, "isochrone_20min.geojson")
-if os.path.exists(iso_file):
-    with open(iso_file) as f:
-        iso_data = json.load(f)
-    iso_geom_wgs = shape(iso_data["features"][0]["geometry"])
-    isochrone_gdf = gpd.GeoDataFrame(
-        [{"geometry": iso_geom_wgs}], crs=CRS_WGS
-    )
+print("\n=== 4. Google rozvozová zóna (≤ 20 km driving) ===")
+google_zone_file = os.path.join(DATA_DIR, "google_zone_20km.geojson")
+isochrone_gdf = None
+iso_geom_m = None
+if os.path.exists(google_zone_file):
+    isochrone_gdf = gpd.read_file(google_zone_file)
     iso_geom_m = isochrone_gdf.to_crs(CRS_METRIC).geometry.iloc[0]
-    print(f"   Načtena z cache, plocha: {iso_geom_m.area/1e6:.1f} km²")
-elif ORS_API_KEY:
-    url = "https://api.openrouteservice.org/v2/isochrones/driving-car"
-    headers = {"Authorization": ORS_API_KEY, "Content-Type": "application/json"}
-    body = {"locations": [[FM_LON, FM_LAT]], "range": [1200],
-            "range_type": "time", "smoothing": 25}
-    resp = requests.post(url, headers=headers, json=body, timeout=30)
-    if resp.status_code == 200:
-        iso_data = resp.json()
-        with open(iso_file, "w") as f:
-            json.dump(iso_data, f)
-        iso_geom_wgs = shape(iso_data["features"][0]["geometry"])
-        isochrone_gdf = gpd.GeoDataFrame([{"geometry": iso_geom_wgs}], crs=CRS_WGS)
-        iso_geom_m = isochrone_gdf.to_crs(CRS_METRIC).geometry.iloc[0]
-        print(f"   Stažena z ORS, plocha: {iso_geom_m.area/1e6:.1f} km²")
-    else:
-        print(f"   ORS chyba {resp.status_code}")
-        iso_geom_m = None; isochrone_gdf = None
+    print(f"   Načtena Google zóna, plocha: {iso_geom_m.area/1e6:.1f} km²")
+    print(f"   (stejná logika jako vecerkaplus.cz – driving distance ≤ 20 km)")
 else:
-    print("   ORS_API_KEY není nastaven a cache neexistuje — přeskakuji")
-    iso_geom_m = None; isochrone_gdf = None
+    print(f"   Google zóna nenalezena — spusť nejdřív build_google_zone.py")
+
+# ORS izochróna (záložní / srovnávací)
+ors_iso_gdf = None
+ors_iso_geom_m = None
+ors_file = os.path.join(DATA_DIR, "isochrone_20min.geojson")
+if os.path.exists(ors_file):
+    with open(ors_file) as f:
+        ors_data = json.load(f)
+    ors_iso_geom_wgs = shape(ors_data["features"][0]["geometry"])
+    ors_iso_gdf = gpd.GeoDataFrame([{"geometry": ors_iso_geom_wgs}], crs=CRS_WGS)
+    ors_iso_geom_m = ors_iso_gdf.to_crs(CRS_METRIC).geometry.iloc[0]
+    print(f"   ORS izochróna (20 min, srovnání): {ors_iso_geom_m.area/1e6:.1f} km²")
 
 # ---------------------------------------------------------------------------
 # 5. Spatial join: buffer × obce (počet obyvatel)
@@ -361,16 +353,30 @@ folium.GeoJson(
     tooltip="Buffer 20 km",
 ).add_to(m)
 
-# --- Izochróna ---
+# --- Google rozvozová zóna (≤ 20 km driving) ---
 if isochrone_gdf is not None:
     folium.GeoJson(
         isochrone_gdf.geometry.iloc[0].__geo_interface__,
-        name="Izochróna 20 min autem",
+        name="Google zóna ≤ 20 km jízdy (vecerkaplus.cz)",
         style_function=lambda x: {
             "color": "#ff6b35", "weight": 2.5,
-            "fillColor": "#ff6b35", "fillOpacity": 0.1,
+            "fillColor": "#ff6b35", "fillOpacity": 0.12,
         },
-        tooltip="Izochróna 20 min autem",
+        tooltip="Reálná rozvozová zóna — driving distance ≤ 20 km (Google)",
+    ).add_to(m)
+
+# --- ORS izochróna (srovnání) ---
+if ors_iso_gdf is not None:
+    folium.GeoJson(
+        ors_iso_gdf.geometry.iloc[0].__geo_interface__,
+        name="ORS izochróna 20 min (srovnání)",
+        style_function=lambda x: {
+            "color": "#b39ddb", "weight": 1.5,
+            "fillColor": "#b39ddb", "fillOpacity": 0.05,
+            "dashArray": "4 4",
+        },
+        tooltip="ORS izochróna 20 min autem (OSM data, pouze srovnání)",
+        show=False,
     ).add_to(m)
 
 # --- Marketing spots ---
@@ -467,7 +473,7 @@ legend_html = f"""
   <span style="color:#aaa;font-size:10px">výjezd: {FM_LAT}°N {FM_LON}°E</span><br><br>
   <span style="color:#00e5ff">──────</span> Buffer 20 km<br>
   &nbsp;&nbsp;domácností: <b>{int(hh_buf):,}</b> | pop: <b>{int(pop_grid_buf):,}</b><br><br>
-  <span style="color:#ff6b35">──────</span> Izochróna 20 min<br>
+  <span style="color:#ff6b35">──────</span> Google zóna ≤ 20 km<br>
   &nbsp;&nbsp;domácností: <b>{int(hh_iso) if iso_geom_m else 'N/A':}</b> | pop: <b>{iso_pop_str}</b><br><br>
   <b>Spoty (klíčové)</b><br>
   <span style="color:#ff4081">●</span> Restaurace &nbsp;
