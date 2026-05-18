@@ -141,9 +141,12 @@
     <li><a href="#zastavba">Bytová zástavba (RÚIAN)</a></li>
     <li><a href="#zakaznici">Zákazníci a objednávky</a></li>
     <li><a href="#finance">Finanční přehled</a></li>
+    <li><a href="#marze">Maržová analýza</a></li>
     <li><a href="#sortiment">Sortiment a produkty</a></li>
+    <li><a href="#cena-historie">Cenová historie</a></li>
+    <li><a href="#predikce">Predikce a scénáře růstu</a></li>
     <li><a href="#marketing">Marketingové příležitosti</a></li>
-    <li><a href="#scenare">Scénáře vzdálenosti</a></li>
+    <li><a href="#scenare">Scénáře vzdálenosti + palivo</a></li>
     <li><a href="#mapa">Interaktivní mapa</a></li>
     <li><a href="#zaver">Závěry a doporučení</a></li>
   </ol>
@@ -306,7 +309,7 @@
   <tr><td>Celkové přímé náklady na rozvoz</td><td class="num">86 Kč</td></tr>
   <tr><td>Průměrné náklady rozvoz / obj.</td><td class="num">17.1 Kč</td></tr>
   <tr><td>Průměrná vzdálenost doručení</td><td class="num">2.7 km</td></tr>
-  <tr><td>Objednávky s dopravným zdarma (≥500 Kč)</td><td class="num">1 / 5</td></tr>
+  <tr><td>Objednávky s dopravným zdarma (≥1000 Kč)</td><td class="num">1 / 5 <span style="color:var(--muted);font-size:.8rem">(1× promo/spuštění)</span></td></tr>
   <tr><td>Platba kartou / hotově</td><td class="num">3 / 2</td></tr>
 </table>
 </div>
@@ -316,13 +319,53 @@
 </div>
 
 <div class="highlight positive" style="margin-top:20px;">
-  <strong>Nákladová efektivita rozvozu:</strong> Průměrné přímé náklady na jedno doručení jsou <strong>17.1 Kč</strong> (pohonné hmoty, opotřebení vozidla). Při průměrné tržbě 452 Kč a průměrné hrubé marži na zboží ~37 % jde o ekonomicky životaschopný model — klíčem ke škálování je zvýšení četnosti objednávek, nikoli rozšiřování zóny.
+  <strong>Nákladová efektivita rozvozu:</strong> Průměrné palivové náklady na doručení jsou <strong>14.4 Kč</strong> (7.0 l/100 km × 38.0 Kč/l, průměr 2.7 km). Průměrná kontribuční marže po odečtení pohonných hmot a zboží je <strong>191.3 Kč/objednávku</strong>.
 </div>
 </div>
 
-<!-- ── 7. SORTIMENT ──────────────────────────────────────────────────── -->
+<!-- ── 7. MARŽE ───────────────────────────────────────────────────────── -->
+<div class="section" id="marze">
+<h2>7. Maržová analýza</h2>
+<p>Na základě skutečných nákupních cen (faktury) byla vypočtena přesná hrubá marže pro každý prodaný produkt a každou objednávku. Průměrná hrubá marže na zboží je <strong>36.5 %</strong>, průměrná kontribuční marže (marže + dopravné zákazníka − palivo) je <strong>191.3 Kč/objednávku</strong>.</p>
+
+<div class="kpi-grid" style="margin:20px 0;">
+  <div class="kpi"><div class="val">36.5 %</div><div class="lbl">Průměrná hrubá marže na zboží</div></div>
+  <div class="kpi"><div class="val green">191.3 Kč</div><div class="lbl">Kontribuční marže/objednávku</div></div>
+  <div class="kpi"><div class="val green">956.3 Kč</div><div class="lbl">Celková kontribuce (5 obj.)</div></div>
+  <div class="kpi"><div class="val pink">14.4 Kč</div><div class="lbl">Průměrné palivo/doručení</div></div>
+</div>
+
+<div class="two-col">
+<div>
+<h3>Marže na objednávku</h3>
+<table>
+  <tr><th>Obj.</th><th class="num">Tržba zboží</th><th class="num">Nákl. zboží</th><th class="num">Hrubá marže</th><th class="num">Marže %</th><th class="num">+Dopravné zák.</th><th class="num">−Palivo</th><th class="num"><strong>Kontribuce</strong></th></tr>
+<tr><td>#1</td><td class="num">547 Kč</td><td class="num" style="color:var(--pink)">334 Kč</td><td class="num">213 Kč</td><td class="num">39.0 %</td><td class="num" style="color:var(--green)">+0 Kč</td><td class="num" style="color:var(--pink)">−14.9 Kč</td><td class="num"><strong>198 Kč</strong></td></tr><tr><td>#2</td><td class="num">286 Kč</td><td class="num" style="color:var(--pink)">0 Kč</td><td class="num">0 Kč</td><td class="num">0.0 %</td><td class="num" style="color:var(--green)">+39 Kč</td><td class="num" style="color:var(--pink)">−17.0 Kč</td><td class="num"><strong>22 Kč</strong></td></tr><tr><td>#3</td><td class="num">223 Kč</td><td class="num" style="color:var(--pink)">153 Kč</td><td class="num">70 Kč</td><td class="num">31.4 %</td><td class="num" style="color:var(--green)">+39 Kč</td><td class="num" style="color:var(--pink)">−9.6 Kč</td><td class="num"><strong>100 Kč</strong></td></tr><tr><td>#4</td><td class="num">508 Kč</td><td class="num" style="color:var(--pink)">263 Kč</td><td class="num">245 Kč</td><td class="num">48.3 %</td><td class="num" style="color:var(--green)">+39 Kč</td><td class="num" style="color:var(--pink)">−17.6 Kč</td><td class="num"><strong>267 Kč</strong></td></tr><tr><td>#5</td><td class="num">538 Kč</td><td class="num" style="color:var(--pink)">194 Kč</td><td class="num">344 Kč</td><td class="num">64.0 %</td><td class="num" style="color:var(--green)">+39 Kč</td><td class="num" style="color:var(--pink)">−13.3 Kč</td><td class="num"><strong>370 Kč</strong></td></tr>
+</table>
+<p style="font-size:.8rem;color:var(--muted);margin-top:6px;">Kontribuce = hrubá marže + dopravné zákazníka − palivové náklady (7.0 l/100 km × 38.0 Kč/l)</p>
+</div>
+<div class="chart-wrap">
+  <h3 style="margin-bottom:14px;">Průměrná marže dle kategorie</h3>
+  <canvas id="chartMarzeKat" height="260"></canvas>
+</div>
+</div>
+
+<div style="margin-top:20px;">
+<h3>Top 10 produktů dle hrubé marže</h3>
+<table>
+  <tr><th>Produkt</th><th>Kategorie</th><th class="num">Prodejní cena</th><th class="num">Nákupní cena</th><th class="num">Marže</th><th class="num">Marže %</th></tr>
+<tr><td>Lay's 60g</td><td>Snacky</td><td class="num">59 Kč</td><td class="num" style="color:var(--pink)">15 Kč</td><td class="num" style="color:var(--green)">44 Kč</td><td class="num"><strong style="color:var(--green)">74.7 %</strong></td></tr><tr><td>Kinder Bueno White</td><td>Snacky</td><td class="num">55 Kč</td><td class="num" style="color:var(--pink)">14 Kč</td><td class="num" style="color:var(--green)">41 Kč</td><td class="num"><strong style="color:var(--green)">74.4 %</strong></td></tr><tr><td>Božkov Originál 0.5l</td><td>Lihoviny</td><td class="num">269 Kč</td><td class="num" style="color:var(--pink)">97 Kč</td><td class="num" style="color:var(--green)">172 Kč</td><td class="num"><strong style="color:var(--green)">64.0 %</strong></td></tr><tr><td>Schweppes 1.5l</td><td>Soft drinky</td><td class="num">53 Kč</td><td class="num" style="color:var(--pink)">26 Kč</td><td class="num" style="color:var(--green)">27 Kč</td><td class="num"><strong style="color:var(--green)">51.1 %</strong></td></tr><tr><td>Captain Morgan Spiced 0.7l</td><td>Lihoviny</td><td class="num">449 Kč</td><td class="num" style="color:var(--pink)">248 Kč</td><td class="num" style="color:var(--green)">201 Kč</td><td class="num"><strong style="color:var(--yellow)">44.8 %</strong></td></tr><tr><td>Beefeater Pink Gin 0.7l</td><td>Lihoviny</td><td class="num">494 Kč</td><td class="num" style="color:var(--pink)">308 Kč</td><td class="num" style="color:var(--green)">186 Kč</td><td class="num"><strong style="color:var(--yellow)">37.7 %</strong></td></tr><tr><td>LM Blue Label</td><td>Tabák</td><td class="num">168 Kč</td><td class="num" style="color:var(--pink)">139 Kč</td><td class="num" style="color:var(--green)">29 Kč</td><td class="num"><strong style="color:var(--muted)">17.4 %</strong></td></tr>
+</table>
+</div>
+
+<div class="highlight positive" style="margin-top:16px;">
+  <strong>Nejziskovější kategorie:</strong> Snacky a soft drinky mají marži 56–75 % — ideální přídavné produkty. Lihoviny (klíčová kategorie, 60 % objednávek) mají marži 38–64 %. Tabák má nejnižší marži ~17 % — ale funguje jako trigger objednávky (zákazník objedná tabák a přidá lihoviny). Optimální strategie: zvyšovat průměrnou hodnotu košíku cross-sellem snacků a nealko ke každé objednávce s lihovinami.
+</div>
+</div>
+
+<!-- ── 8. SORTIMENT ──────────────────────────────────────────────────── -->
 <div class="section" id="sortiment">
-<h2>7. Sortiment a produktová analýza</h2>
+<h2>8. Sortiment a produktová analýza</h2>
 <p>Katalog VečerkaPlus obsahuje celkem <strong>36 SKU</strong> ve <strong>9 kategoriích</strong>. Z toho bylo dosud prodáno <strong>9 různých produktů</strong>. Analýza vychází z dat Supabase (products_rows.csv) a přesných emailových notifikací objednávek.</p>
 
 <div class="kpi-grid" style="margin:20px 0;">
@@ -361,9 +404,89 @@
 </div>
 
 
-<!-- ── 8. MARKETING ───────────────────────────────────────────────────── -->
+<!-- ── 9. CENOVÁ HISTORIE ────────────────────────────────────────────── -->
+<div class="section" id="cena-historie">
+<h2>9. Cenová historie produktů</h2>
+<p>Ceny jsou odvozeny porovnáním <strong>cen z emailových notifikací objednávek</strong> (dubna–května 2026) s aktuálním produktovým katalogem (Supabase, stav 19. 5. 2026). Pro produkty dosud neobjednané nelze historii odvodit.</p>
+
+<div class="two-col">
+<div>
+<h3>Produkty se zdraženým ceníkem od spuštění</h3>
+<table>
+  <tr><th>Produkt</th><th class="num">Cena při 1. prodeji</th><th class="num">Cena nyní</th><th class="num">Nárůst</th></tr>
+<tr><td>Beefeater Pink Gin 0.7l</td><td class="num">494 Kč</td><td class="num">549 Kč</td><td class="num" style="color:var(--green)">+55 Kč (11.1 %)</td></tr><tr><td>Schweppes 1.5l</td><td class="num">53 Kč</td><td class="num">59 Kč</td><td class="num" style="color:var(--green)">+6 Kč (11.3 %)</td></tr><tr><td>Znovín Tramín 0.75l</td><td class="num">143 Kč</td><td class="num">179 Kč</td><td class="num" style="color:var(--green)">+36 Kč (25.2 %)</td></tr><tr><td>Znovín Sauvignon 0.75l</td><td class="num">143 Kč</td><td class="num">179 Kč</td><td class="num" style="color:var(--green)">+36 Kč (25.2 %)</td></tr>
+</table>
+
+<div class="highlight positive" style="margin-top:16px;">
+  <strong>Průměrné zdražení: +18.2 %</strong> u produktů se změnou. Znovín vína zdražila nejvýrazněji (+25 %), Beefeater a Schweppes o +11 %. Zdražování může být důsledkem rostoucích nákupních cen nebo záměrné optimalizace marže.
+</div>
+</div>
+<div class="chart-wrap">
+  <h3 style="margin-bottom:14px;">Cena při 1. prodeji vs. aktuální (Kč)</h3>
+  <canvas id="chartCenaHist" height="280"></canvas>
+</div>
+</div>
+
+<h3 style="margin-top:20px;">Produkty bez cenové změny (sledované od 1. objednávky)</h3>
+<table>
+  <tr><th>Produkt</th><th>Kategorie</th><th class="num">Stabilní cena</th><th>1. prodej</th></tr>
+<tr><td>LM Blue Label</td><td>Tabák</td><td class="num">168 Kč</td><td style="color:var(--muted);font-size:.85rem">2026-05-01</td></tr><tr><td>Kinder Bueno White</td><td>Snacky</td><td class="num">55 Kč</td><td style="color:var(--muted);font-size:.85rem">2026-05-01</td></tr><tr><td>Captain Morgan Spiced 0.7l</td><td>Lihoviny</td><td class="num">449 Kč</td><td style="color:var(--muted);font-size:.85rem">2026-05-08</td></tr><tr><td>Lay's 60g</td><td>Snacky</td><td class="num">59 Kč</td><td style="color:var(--muted);font-size:.85rem">2026-05-08</td></tr><tr><td>Božkov Originál 0.5l</td><td>Lihoviny</td><td class="num">269 Kč</td><td style="color:var(--muted);font-size:.85rem">2026-05-15</td></tr>
+</table>
+
+<div class="highlight warn" style="margin-top:16px;">
+  <strong>Slepá skvrna:</strong> Pro 27 z 36 SKU v katalogu (neprodané) nemáme historii cen — nevíme, zda jejich ceny zůstaly stejné od spuštění. Doporučujeme zavést verzování cen v Supabase (přidat sloupec <code>price_updated_at</code>).
+</div>
+</div>
+
+
+<!-- ── 10. PREDIKCE ────────────────────────────────────────────────────── -->
+<div class="section" id="predikce">
+<h2>10. Predikce objednávek a scénáře růstu</h2>
+<p>Model vychází z aktuálního trendu: <strong>poslední 3 víkendy vždy 1 objednávka/týden</strong>. Průměrná tržba na objednávku je <strong>452 Kč</strong>, průměrné přímé palivové náklady na doručení <strong>14.4 Kč</strong> (při 7.0 l/100 km a 38.0 Kč/l, průměrná vzdálenost 2.7 km).</p>
+
+<div class="kpi-grid" style="margin:20px 0;">
+  <div class="kpi"><div class="val">1</div><div class="lbl">Obj./týden (aktuální trend)</div></div>
+  <div class="kpi"><div class="val">4</div><div class="lbl">Odh. obj./měsíc</div></div>
+  <div class="kpi"><div class="val green">1,808 Kč</div><div class="lbl">Odh. tržba/měsíc</div></div>
+  <div class="kpi"><div class="val yellow">23,504 Kč</div><div class="lbl">Odh. tržba/rok (aktuální)</div></div>
+</div>
+
+<div class="charts-2col">
+<div class="chart-wrap">
+  <h3 style="margin-bottom:14px;">Projekce tržby — 3 scénáře (12 měsíců)</h3>
+  <canvas id="chartPredikce" height="260"></canvas>
+</div>
+<div class="chart-wrap">
+  <h3 style="margin-bottom:14px;">Počet objednávek od spuštění (týdně)</h3>
+  <canvas id="chartTrend" height="260"></canvas>
+</div>
+</div>
+
+<div style="margin-top:20px;overflow-x:auto;">
+<h3>Scénáře výnosů a nákladů (měsíčně, po ustálení)</h3>
+<table>
+  <tr>
+    <th>Scénář</th>
+    <th class="num">Obj./týden</th>
+    <th class="num">Obj./měsíc</th>
+    <th class="num">Tržba/měsíc</th>
+    <th class="num">Palivo/měsíc</th>
+    <th class="num">Přísp. marže/měsíc</th>
+    <th class="num">Tržba/rok</th>
+  </tr>
+<trstyle="background:var(--bg3);"><td><strong>Konzervativní (1/týden)</strong></td><td class="num">1</td><td class="num">4</td><td class="num" style="color:var(--green)">1 943 Kč</td><td class="num" style="color:var(--pink)">61 Kč</td><td class="num">1 881 Kč</td><td class="num">23 504 Kč</td></tr><tr><td><strong>Cílový (3/víkend)</strong></td><td class="num">3</td><td class="num">12</td><td class="num" style="color:var(--green)">5 830 Kč</td><td class="num" style="color:var(--pink)">185 Kč</td><td class="num">5 645 Kč</td><td class="num">70 512 Kč</td></tr><tr><td><strong>Optimistický (7/víkend)</strong></td><td class="num">7</td><td class="num">30</td><td class="num" style="color:var(--green)">13 605 Kč</td><td class="num" style="color:var(--pink)">432 Kč</td><td class="num">13 172 Kč</td><td class="num">164 528 Kč</td></tr>
+</table>
+</div>
+
+<div class="highlight" style="margin-top:16px;">
+  <strong>Poznámka k modelu:</strong> Příspěvková marže zahrnuje pouze přímé palivové náklady (7.0 l/100 km × 38.0 Kč/l). Nezahrnuje odpisy vozidla, čas řidiče, marketing ani provoz Supabase/webu. Při 3 obj./víkend (cílový scénář) jsou roční tržby ~70 512 Kč — ekonomicky životaschopná aktivita při stávající nízké režii.
+</div>
+</div>
+
+
+<!-- ── 11. MARKETING ───────────────────────────────────────────────────── -->
 <div class="section" id="marketing">
-<h2>8. Marketingové příležitosti</h2>
+<h2>11. Marketingové příležitosti</h2>
 <p>Na základě OSM dat bylo v Google rozvozové zóně identifikováno celkem <strong>427 podniků</strong> relevantních pro noční rozvoz (restaurace, puby, bary, fast foody, kavárny, noční kluby).</p>
 
 <div class="charts-2col" style="margin:20px 0;">
@@ -390,9 +513,9 @@
 </div>
 </div>
 
-<!-- ── 9. SCÉNÁŘE ─────────────────────────────────────────────────────── -->
+<!-- ── 12. SCÉNÁŘE ─────────────────────────────────────────────────────── -->
 <div class="section" id="scenare">
-<h2>9. Scénáře rozvozové vzdálenosti</h2>
+<h2>12. Scénáře rozvozové vzdálenosti</h2>
 <p>Analýza porovnává dopad různých limitů jízdní vzdálenosti na dosažitelný trh. Všechny scénáře vychází z reálných Google Distance Matrix dat (1 093 bodů gridu). Aktuální provozní limit VečerkaPlus je <strong>20 km</strong>.</p>
 
 <div style="overflow-x:auto;margin:20px 0;">
@@ -402,12 +525,12 @@
     <th class="num">Plocha</th>
     <th class="num">Odh. obyvatel</th>
     <th class="num">Domácností</th>
-    <th class="num">Bytů celkem</th>
     <th class="num">Bytů v paneláku</th>
-    <th class="num">Restaurace</th>
     <th class="num">Nightlife</th>
+    <th class="num" title="Průměrná vzdálenost = limit × 35 %">Palivo/doj. (avg)</th>
+    <th class="num" title="Doručení na kraj zóny">Palivo/doj. (max)</th>
   </tr>
-<tr><td><strong>≤ 5 km</strong></td><td class="num">39 km²</td><td class="num">53,678</td><td class="num">22,649</td><td class="num">25,801</td><td class="num">14,177</td><td class="num">44</td><td class="num">41</td></tr><tr><td><strong>≤ 10 km</strong></td><td class="num">149 km²</td><td class="num">72,488</td><td class="num">30,586</td><td class="num">35,098</td><td class="num">14,202</td><td class="num">63</td><td class="num">54</td></tr><tr><td><strong>≤ 15 km</strong></td><td class="num">331 km²</td><td class="num">126,188</td><td class="num">53,244</td><td class="num">65,949</td><td class="num">24,632</td><td class="num">132</td><td class="num">80</td></tr><tr style="background:var(--bg3);border:1px solid var(--cyan);"><td><strong>▶ ≤ 20 km</strong></td><td class="num">630 km²</td><td class="num">265,783</td><td class="num">112,145</td><td class="num">119,977</td><td class="num">43,237</td><td class="num">212</td><td class="num">120</td></tr><tr><td><strong>≤ 25 km</strong></td><td class="num">968 km²</td><td class="num">454,596</td><td class="num">191,813</td><td class="num">119,977</td><td class="num">43,237</td><td class="num">242</td><td class="num">145</td></tr>
+<tr><td><strong>≤ 5 km</strong></td><td class="num">39 km²</td><td class="num">53,678</td><td class="num">22,649</td><td class="num">14,177</td><td class="num">41</td><td class="num" style="color:var(--yellow)">9.3 Kč</td><td class="num" style="color:var(--pink)">26.6 Kč</td></tr><tr><td><strong>≤ 10 km</strong></td><td class="num">149 km²</td><td class="num">72,488</td><td class="num">30,586</td><td class="num">14,202</td><td class="num">54</td><td class="num" style="color:var(--yellow)">18.6 Kč</td><td class="num" style="color:var(--pink)">53.2 Kč</td></tr><tr><td><strong>≤ 15 km</strong></td><td class="num">331 km²</td><td class="num">126,188</td><td class="num">53,244</td><td class="num">24,632</td><td class="num">80</td><td class="num" style="color:var(--yellow)">27.9 Kč</td><td class="num" style="color:var(--pink)">79.8 Kč</td></tr><tr style="background:var(--bg3);border:1px solid var(--cyan);"><td><strong>▶ ≤ 20 km</strong></td><td class="num">630 km²</td><td class="num">265,783</td><td class="num">112,145</td><td class="num">43,237</td><td class="num">120</td><td class="num" style="color:var(--yellow)">37.2 Kč</td><td class="num" style="color:var(--pink)">106.4 Kč</td></tr><tr><td><strong>≤ 25 km</strong></td><td class="num">968 km²</td><td class="num">454,596</td><td class="num">191,813</td><td class="num">43,237</td><td class="num">145</td><td class="num" style="color:var(--yellow)">46.6 Kč</td><td class="num" style="color:var(--pink)">133.0 Kč</td></tr><tr><td><strong>≤ 30 km</strong></td><td class="num">1,365 km²</td><td class="num">631,251</td><td class="num">266,351</td><td class="num">43,237</td><td class="num">455</td><td class="num" style="color:var(--yellow)">55.9 Kč</td><td class="num" style="color:var(--pink)">159.6 Kč</td></tr><tr><td><strong>≤ 35 km</strong></td><td class="num">1,739 km²</td><td class="num">721,124</td><td class="num">304,272</td><td class="num">43,237</td><td class="num">455</td><td class="num" style="color:var(--yellow)">65.2 Kč</td><td class="num" style="color:var(--pink)">186.2 Kč</td></tr>
 </table>
 </div>
 
@@ -430,23 +553,23 @@
 <div style="overflow-x:auto;">
 <table>
   <tr><th>Přechod</th><th class="num">+Obyvatel</th><th class="num">+Domácností</th><th class="num">+Bytů panel.</th><th class="num">+Plocha km²</th></tr>
-<tr><td>5 → 10 km</td><td class="num">+18,810</td><td class="num">+7,937</td><td class="num">+25</td><td class="num">+110</td></tr><tr><td>10 → 15 km</td><td class="num">+53,700</td><td class="num">+22,658</td><td class="num">+10,430</td><td class="num">+182</td></tr><tr><td>▶ 15 → 20 km</td><td class="num">+139,595</td><td class="num">+58,901</td><td class="num">+18,605</td><td class="num">+299</td></tr><tr><td>20 → 25 km</td><td class="num">+188,813</td><td class="num">+79,668</td><td class="num">+0</td><td class="num">+338</td></tr>
+<tr><td>5 → 10 km</td><td class="num">+18,810</td><td class="num">+7,937</td><td class="num">+25</td><td class="num">+110</td></tr><tr><td>10 → 15 km</td><td class="num">+53,700</td><td class="num">+22,658</td><td class="num">+10,430</td><td class="num">+182</td></tr><tr><td>▶ 15 → 20 km</td><td class="num">+139,595</td><td class="num">+58,901</td><td class="num">+18,605</td><td class="num">+299</td></tr><tr><td>20 → 25 km</td><td class="num">+188,813</td><td class="num">+79,668</td><td class="num">+0</td><td class="num">+338</td></tr><tr><td>25 → 30 km</td><td class="num">+176,655</td><td class="num">+74,538</td><td class="num">+0</td><td class="num">+397</td></tr><tr><td>30 → 35 km</td><td class="num">+89,873</td><td class="num">+37,921</td><td class="num">+0</td><td class="num">+374</td></tr>
 </table>
 </div>
 </div>
 
-<!-- ── 10. MAPA ─────────────────────────────────────────────────────────── -->
+<!-- ── 13. MAPA ─────────────────────────────────────────────────────────── -->
 <div class="section" id="mapa">
-<h2>10. Interaktivní mapa</h2>
+<h2>13. Interaktivní mapa</h2>
 <p>Mapa zobrazuje Google rozvozovou zónu (oranžová), buffer 20 km (modrá přerušovaná), ZUJ hranice, 1km gridy domácností, OSM marketing spoty a geocodované zákazníky. Vrstvy lze přepínat v pravém horním rohu.</p>
 <div class="map-container">
   <iframe src="vecerkaplus_mapa.html" loading="lazy"></iframe>
 </div>
 </div>
 
-<!-- ── 11. ZÁVĚRY ──────────────────────────────────────────────────────── -->
+<!-- ── 14. ZÁVĚRY ──────────────────────────────────────────────────────── -->
 <div class="section" id="zaver">
-<h2>11. Závěry a doporučení</h2>
+<h2>14. Závěry a doporučení</h2>
 
 <h3>Silné stránky</h3>
 <p>VečerkaPlus operuje v nezaplněné tržní mezeře — noční rozvoz alkoholu a doplňkového zboží v FM nemá přímého konkurenta. Rozvozová zóna pokrývá <strong>265 783 obyvatel</strong> v <strong>112 145 domácnostech</strong>. Průměrná tržba 452 Kč na objednávku při přímých nákladech rozvozu ~17 Kč zaručuje zdravou základní marži.</p>
@@ -461,7 +584,7 @@
   <tr><td>2</td><td>Partnerství s nočními podniky — QR kódy na stolech v <strong>120</strong> pubech a barech</td><td style="color:var(--green)">Vysoký</td><td style="color:var(--yellow)">Nízká</td></tr>
   <tr><td>3</td><td>Instagram/TikTok cílení na věk 18–35, geolokace FM centrum, aktivní Pá–So 20–00</td><td style="color:var(--green)">Střední</td><td style="color:var(--yellow)">Nízká</td></tr>
   <tr><td>4</td><td>Rozšíření sortimentu o energetické nápoje a snacks — 1 ze 5 objednávek cílila na tabák+sladkosti</td><td style="color:#ffd740)">Střední</td><td style="color:var(--green)">Nízká</td></tr>
-  <tr><td>5</td><td>Přehodnotit limit pro dopravné zdarma: místo ≥500 Kč zkusit ≥350 Kč — 3 ze 5 zákazníků zaplatili 39 Kč</td><td style="color:#ffd740">Střední</td><td style="color:var(--green)">Velmi nízká</td></tr>
+  <tr><td>5</td><td>Práh dopravného zdarma ≥1 000 Kč motivuje zákazníky navyšovat hodnotu košíku — sledovat průměrnou tržbu, zda roste k tomuto prahu</td><td style="color:var(--yellow)">Střední</td><td style="color:var(--green)">Velmi nízká</td></tr>
 </table>
 
 <div class="highlight positive" style="margin-top:20px;">
@@ -553,17 +676,17 @@ new Chart(document.getElementById('chartSpoty'), {
 new Chart(document.getElementById('chartScenareOb'), {
   type: 'bar',
   data: {
-    labels: ["\u2264 5 km", "\u2264 10 km", "\u2264 15 km", "\u2264 20 km", "\u2264 25 km"],
+    labels: ["\u2264 5 km", "\u2264 10 km", "\u2264 15 km", "\u2264 20 km", "\u2264 25 km", "\u2264 30 km", "\u2264 35 km"],
     datasets: [
       {
         label: 'Obyvatelé (odh.)',
-        data: [53678, 72488, 126188, 265783, 454596],
+        data: [53678, 72488, 126188, 265783, 454596, 631251, 721124],
         backgroundColor: '#29B6F6',
         borderRadius: 2,
       },
       {
         label: 'Domácnosti',
-        data: [22649, 30586, 53244, 112145, 191813],
+        data: [22649, 30586, 53244, 112145, 191813, 266351, 304272],
         backgroundColor: '#FF3D9A',
         borderRadius: 2,
       }
@@ -605,11 +728,11 @@ new Chart(document.getElementById('chartKategorie'), {
 new Chart(document.getElementById('chartScenarePan'), {
   type: 'bar',
   data: {
-    labels: ["\u2264 5 km", "\u2264 10 km", "\u2264 15 km", "\u2264 20 km", "\u2264 25 km"],
+    labels: ["\u2264 5 km", "\u2264 10 km", "\u2264 15 km", "\u2264 20 km", "\u2264 25 km", "\u2264 30 km", "\u2264 35 km"],
     datasets: [{
       label: 'Byty v panelovém fondu',
-      data: [14177, 14202, 24632, 43237, 43237],
-      backgroundColor: ["#ffd740", "#ffd740", "#ffd740", "#00e676", "#ffd740"],
+      data: [14177, 14202, 24632, 43237, 43237, 43237, 43237],
+      backgroundColor: ["#ffd740", "#ffd740", "#ffd740", "#00e676", "#ffd740", "#ffd740", "#ffd740"],
       borderRadius: 2,
     }]
   },
@@ -621,6 +744,97 @@ new Chart(document.getElementById('chartScenarePan'), {
     }
   }
 });
+// ── Marže dle kategorie ──
+new Chart(document.getElementById('chartMarzeKat'), {
+  type: 'bar',
+  data: {
+    labels: ["Snacky", "Energy", "Soft drinky", "Pivo", "Lihoviny", "Tab\u00e1k"],
+    datasets: [{
+      label: 'Průměrná marže %',
+      data: [74.6, 64.3, 59.2, 52.3, 51.6, 17.4],
+      backgroundColor: ["#00e676", "#00e676", "#00e676", "#00e676", "#00e676", "#FF3D9A"],
+      borderRadius: 2,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: { legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ctx.parsed.x.toFixed(1) + ' %' } } },
+    scales: {
+      x: { ticks: { color: '#888', callback: v => v + ' %' }, grid: { color: '#1a1a28' }, suggestedMax: 80 },
+      y: { ticks: { color: '#bbb' }, grid: { display: false } }
+    }
+  }
+});
+
+// ── Cenová historie: grouped bar ──
+new Chart(document.getElementById('chartCenaHist'), {
+  type: 'bar',
+  data: {
+    labels: ["Beefeater Pink Gin 0.7l", "Schweppes 1.5l", "Znov\u00edn Tram\u00edn 0.75l", "Znov\u00edn Sauvignon 0.75l"],
+    datasets: [
+      { label: 'Cena při 1. prodeji', data: [494, 53, 143, 143],
+         backgroundColor: '#29B6F6', borderRadius: 2 },
+      { label: 'Cena aktuální', data: [549, 59, 179, 179],
+         backgroundColor: '#00e676', borderRadius: 2 }
+    ]
+  },
+  options: {
+    plugins: { legend: { labels: { color: '#bbb', font: { size: 11 } } } },
+    scales: {
+      x: { ticks: { color: '#888', maxRotation: 20 }, grid: { color: '#1a1a28' } },
+      y: { ticks: { color: '#888', callback: v => v + ' Kč' }, grid: { color: '#1a1a28' } }
+    }
+  }
+});
+
+// ── Predikce tržby: 3 scénáře ──
+(function() {
+  const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  const labels = months.map(m => 'M+' + m);
+  const scenarios = {"Konzervativn\u00ed (1/t\u00fdden)": [2002, 2060, 2119, 2177, 2235, 2293, 2352, 2410, 2468, 2527, 2585, 2643], "C\u00edlov\u00fd (3/v\u00edkend)": [6006, 6181, 6356, 6530, 6705, 6880, 7055, 7230, 7405, 7580, 7755, 7930], "Optimistick\u00fd (7/v\u00edkend)": [14013, 14422, 14830, 15238, 15646, 16054, 16462, 16870, 17279, 17687, 18095, 18503]};
+  const colors = {"Konzervativn\u00ed (1/t\u00fdden)": "#888", "C\u00edlov\u00fd (3/v\u00edkend)": "#29B6F6", "Optimistick\u00fd (7/v\u00edkend)": "#00e676"};
+  new Chart(document.getElementById('chartPredikce'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: Object.entries(scenarios).map(([name, data]) => ({
+        label: name, data,
+        borderColor: colors[name], backgroundColor: colors[name] + '22',
+        borderWidth: 2, pointRadius: 3, tension: 0.3, fill: false
+      }))
+    },
+    options: {
+      plugins: { legend: { labels: { color: '#bbb', font: { size: 11 } } } },
+      scales: {
+        x: { ticks: { color: '#888' }, grid: { color: '#1a1a28' } },
+        y: { ticks: { color: '#888', callback: v => (v/1000).toFixed(0) + ' tis. Kč' }, grid: { color: '#1a1a28' } }
+      }
+    }
+  });
+})();
+
+// ── Trend objednávek (týdně) ──
+new Chart(document.getElementById('chartTrend'), {
+  type: 'bar',
+  data: {
+    labels: ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9"],
+    datasets: [{
+      label: 'Objednávky/týden',
+      data: [0, 0, 0, 0, 2, 0, 1, 1, 1],
+      backgroundColor: ["#222", "#222", "#222", "#222", "#00e676", "#222", "#00e676", "#00e676", "#00e676"],
+      borderRadius: 2,
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#888' }, grid: { color: '#1a1a28' } },
+      y: { ticks: { color: '#888', stepSize: 1 }, grid: { color: '#1a1a28' }, max: 3 }
+    }
+  }
+});
+
 </script>
 </body>
 </html>

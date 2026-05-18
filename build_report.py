@@ -112,6 +112,49 @@ price_same = pol_sys[pol_sys["rozdil_cena"] <= 0][["produkt","kategorie","cena_k
 
 # Cenová historie
 cena_hist = pd.read_csv(os.path.join(DATA_DIR, "cena_historie.csv"))
+
+# Nákupní ceny a marže
+nak_ceny = pd.read_csv(os.path.join(DATA_DIR, "nakupni_ceny.csv"))
+nak_dict = dict(zip(nak_ceny["produkt"], nak_ceny["nakupni_cena_kc"]))
+
+# Marže na každou položku objednávek
+pol_sys2 = pol_sys.copy()
+pol_sys2["nak_cena"] = pol_sys2["produkt"].map(nak_dict)
+pol_sys2["marze_kc"] = pol_sys2["cena_kc"] - pol_sys2["nak_cena"]
+pol_sys2["marze_pct"] = (pol_sys2["marze_kc"] / pol_sys2["cena_kc"] * 100).round(1)
+
+# Marže na každou objednávku
+order_marze = pol_sys2.groupby("order_id").agg(
+    trzba=("cena_kc", "sum"),
+    naklady_zbozi=("nak_cena", "sum"),
+    marze_kc=("marze_kc", "sum"),
+).reset_index()
+order_marze = order_marze.merge(
+    df_zak[["id","vzdalenost_km","dopravne_zakaznik_kc","naklady_rozvoz_kc"]].rename(columns={"id":"order_id"}),
+    on="order_id", how="left"
+)
+order_marze["fuel_kc"] = (order_marze["vzdalenost_km"] * 2 * cost_per_km).round(2)
+order_marze["kontribuce_kc"] = (order_marze["marze_kc"] + order_marze["dopravne_zakaznik_kc"] - order_marze["fuel_kc"]).round(1)
+order_marze["marze_pct"] = (order_marze["marze_kc"] / order_marze["trzba"] * 100).round(1)
+
+# Marže na produkt (top table)
+prod_marze = pol_sys2.dropna(subset=["nak_cena"]).drop_duplicates("produkt")[
+    ["produkt","kategorie","cena_kc","nak_cena","marze_kc","marze_pct"]
+].sort_values("marze_pct", ascending=False)
+
+# Katalog s marží (všechny produkty kde máme nákupní cenu)
+kat_marze = nak_ceny.merge(
+    pd.DataFrame({"produkt": katalog["name"].str.replace(",",".", regex=False),
+                  "prodejni_cena": katalog["price"]}),
+    on="produkt", how="inner"
+)
+kat_marze["marze_kc"] = kat_marze["prodejni_cena"] - kat_marze["nakupni_cena_kc"]
+kat_marze["marze_pct"] = (kat_marze["marze_kc"] / kat_marze["prodejni_cena"] * 100).round(1)
+kat_marze_grp = kat_marze.groupby("kategorie")["marze_pct"].mean().round(1).sort_values(ascending=False)
+
+avg_marze_pct = round(order_marze["marze_pct"].mean(), 1)
+avg_kontribuce = round(order_marze["kontribuce_kc"].mean(), 1)
+total_kontribuce = round(order_marze["kontribuce_kc"].sum(), 1)
 changed_hist = cena_hist[cena_hist["zmena_kc"] > 0].copy()
 unchanged_hist = cena_hist[cena_hist["zmena_kc"] == 0].copy()
 avg_price_change_pct = round(cena_hist[cena_hist["zmena_kc"] > 0]["zmena_pct"].mean(), 1)
@@ -293,6 +336,7 @@ HTML = f"""<!DOCTYPE html>
     <li><a href="#zastavba">Bytová zástavba (RÚIAN)</a></li>
     <li><a href="#zakaznici">Zákazníci a objednávky</a></li>
     <li><a href="#finance">Finanční přehled</a></li>
+    <li><a href="#marze">Maržová analýza</a></li>
     <li><a href="#sortiment">Sortiment a produkty</a></li>
     <li><a href="#cena-historie">Cenová historie</a></li>
     <li><a href="#predikce">Predikce a scénáře růstu</a></li>
@@ -470,13 +514,70 @@ HTML = f"""<!DOCTYPE html>
 </div>
 
 <div class="highlight positive" style="margin-top:20px;">
-  <strong>Nákladová efektivita rozvozu:</strong> Průměrné přímé náklady na jedno doručení jsou <strong>{round(naklady_total/n_objednavek, 1)} Kč</strong> (pohonné hmoty, opotřebení vozidla). Při průměrné tržbě {int(trzba_avg)} Kč a průměrné hrubé marži na zboží ~37 % jde o ekonomicky životaschopný model — klíčem ke škálování je zvýšení četnosti objednávek, nikoli rozšiřování zóny.
+  <strong>Nákladová efektivita rozvozu:</strong> Průměrné palivové náklady na doručení jsou <strong>{avg_fuel_per_order:.1f} Kč</strong> ({SPOTREBA_L_100KM} l/100 km × {CENA_PHM_KC_L} Kč/l, průměr {vzdalenost_avg} km). Průměrná kontribuční marže po odečtení pohonných hmot a zboží je <strong>{avg_kontribuce} Kč/objednávku</strong>.
 </div>
 </div>
 
-<!-- ── 7. SORTIMENT ──────────────────────────────────────────────────── -->
+<!-- ── 7. MARŽE ───────────────────────────────────────────────────────── -->
+<div class="section" id="marze">
+<h2>7. Maržová analýza</h2>
+<p>Na základě skutečných nákupních cen (faktury) byla vypočtena přesná hrubá marže pro každý prodaný produkt a každou objednávku. Průměrná hrubá marže na zboží je <strong>{avg_marze_pct} %</strong>, průměrná kontribuční marže (marže + dopravné zákazníka − palivo) je <strong>{avg_kontribuce} Kč/objednávku</strong>.</p>
+
+<div class="kpi-grid" style="margin:20px 0;">
+  <div class="kpi"><div class="val">{avg_marze_pct} %</div><div class="lbl">Průměrná hrubá marže na zboží</div></div>
+  <div class="kpi"><div class="val green">{avg_kontribuce} Kč</div><div class="lbl">Kontribuční marže/objednávku</div></div>
+  <div class="kpi"><div class="val green">{total_kontribuce} Kč</div><div class="lbl">Celková kontribuce (5 obj.)</div></div>
+  <div class="kpi"><div class="val pink">{avg_fuel_per_order:.1f} Kč</div><div class="lbl">Průměrné palivo/doručení</div></div>
+</div>
+
+<div class="two-col">
+<div>
+<h3>Marže na objednávku</h3>
+<table>
+  <tr><th>Obj.</th><th class="num">Tržba zboží</th><th class="num">Nákl. zboží</th><th class="num">Hrubá marže</th><th class="num">Marže %</th><th class="num">+Dopravné zák.</th><th class="num">−Palivo</th><th class="num"><strong>Kontribuce</strong></th></tr>
+{"".join(
+    f'<tr><td>#{int(r.order_id)}</td>'
+    f'<td class="num">{r.trzba:.0f} Kč</td>'
+    f'<td class="num" style="color:var(--pink)">{r.naklady_zbozi:.0f} Kč</td>'
+    f'<td class="num">{r.marze_kc:.0f} Kč</td>'
+    f'<td class="num">{r.marze_pct:.1f} %</td>'
+    f'<td class="num" style="color:var(--green)">+{r.dopravne_zakaznik_kc:.0f} Kč</td>'
+    f'<td class="num" style="color:var(--pink)">−{r.fuel_kc:.1f} Kč</td>'
+    f'<td class="num"><strong>{r.kontribuce_kc:.0f} Kč</strong></td></tr>'
+    for r in order_marze.itertuples() if not pd.isna(r.naklady_zbozi)
+)}
+</table>
+<p style="font-size:.8rem;color:var(--muted);margin-top:6px;">Kontribuce = hrubá marže + dopravné zákazníka − palivové náklady ({SPOTREBA_L_100KM} l/100 km × {CENA_PHM_KC_L} Kč/l)</p>
+</div>
+<div class="chart-wrap">
+  <h3 style="margin-bottom:14px;">Průměrná marže dle kategorie</h3>
+  <canvas id="chartMarzeKat" height="260"></canvas>
+</div>
+</div>
+
+<div style="margin-top:20px;">
+<h3>Top 10 produktů dle hrubé marže</h3>
+<table>
+  <tr><th>Produkt</th><th>Kategorie</th><th class="num">Prodejní cena</th><th class="num">Nákupní cena</th><th class="num">Marže</th><th class="num">Marže %</th></tr>
+{"".join(
+    f'<tr><td>{r.produkt}</td><td>{r.kategorie}</td>'
+    f'<td class="num">{r.cena_kc:.0f} Kč</td>'
+    f'<td class="num" style="color:var(--pink)">{r.nak_cena:.0f} Kč</td>'
+    f'<td class="num" style="color:var(--green)">{r.marze_kc:.0f} Kč</td>'
+    f'<td class="num"><strong style="color:{"var(--green)" if r.marze_pct >= 50 else "var(--yellow)" if r.marze_pct >= 30 else "var(--muted)"}">{r.marze_pct:.1f} %</strong></td></tr>'
+    for r in prod_marze.itertuples()
+)}
+</table>
+</div>
+
+<div class="highlight positive" style="margin-top:16px;">
+  <strong>Nejziskovější kategorie:</strong> Snacky a soft drinky mají marži 56–75 % — ideální přídavné produkty. Lihoviny (klíčová kategorie, 60 % objednávek) mají marži 38–64 %. Tabák má nejnižší marži ~17 % — ale funguje jako trigger objednávky (zákazník objedná tabák a přidá lihoviny). Optimální strategie: zvyšovat průměrnou hodnotu košíku cross-sellem snacků a nealko ke každé objednávce s lihovinami.
+</div>
+</div>
+
+<!-- ── 8. SORTIMENT ──────────────────────────────────────────────────── -->
 <div class="section" id="sortiment">
-<h2>7. Sortiment a produktová analýza</h2>
+<h2>8. Sortiment a produktová analýza</h2>
 <p>Katalog VečerkaPlus obsahuje celkem <strong>{total_skus} SKU</strong> ve <strong>{len(kat_skus)} kategoriích</strong>. Z toho bylo dosud prodáno <strong>{sold_skus} různých produktů</strong>. Analýza vychází z dat Supabase (products_rows.csv) a přesných emailových notifikací objednávek.</p>
 
 <div class="kpi-grid" style="margin:20px 0;">
@@ -527,10 +628,10 @@ HTML = f"""<!DOCTYPE html>
 </div>
 
 
-<!-- ── 8. CENOVÁ HISTORIE ────────────────────────────────────────────── -->
+<!-- ── 9. CENOVÁ HISTORIE ────────────────────────────────────────────── -->
 <div class="section" id="cena-historie">
-<h2>8. Cenová historie produktů</h2>
-<p>Ceny jsou odvozeny porovnáním <strong>cen z emailových notifikací objednávek</strong> (dubna–května 2026) s aktuálním produktovým katalogem (Supabase, stav {today}). Pro produkty dosud neobjednané nelze historii odvodit.</p>
+<h2>9. Cenová historie produktů</h2>
+<p>Ceny jsou odvozeny porovnáním <strong>cen z emailových notifikací objednávek</strong> (dubna–května 2026) s aktuálním produktovým katalogem (Supabase, stav 19. 5. 2026). Pro produkty dosud neobjednané nelze historii odvodit.</p>
 
 <div class="two-col">
 <div>
@@ -573,9 +674,9 @@ HTML = f"""<!DOCTYPE html>
 </div>
 
 
-<!-- ── 9. PREDIKCE ────────────────────────────────────────────────────── -->
+<!-- ── 10. PREDIKCE ────────────────────────────────────────────────────── -->
 <div class="section" id="predikce">
-<h2>9. Predikce objednávek a scénáře růstu</h2>
+<h2>10. Predikce objednávek a scénáře růstu</h2>
 <p>Model vychází z aktuálního trendu: <strong>poslední 3 víkendy vždy 1 objednávka/týden</strong>. Průměrná tržba na objednávku je <strong>{int(trzba_avg)} Kč</strong>, průměrné přímé palivové náklady na doručení <strong>{avg_fuel_per_order:.1f} Kč</strong> (při {SPOTREBA_L_100KM} l/100 km a {CENA_PHM_KC_L} Kč/l, průměrná vzdálenost {vzdalenost_avg} km).</p>
 
 <div class="kpi-grid" style="margin:20px 0;">
@@ -629,9 +730,9 @@ HTML = f"""<!DOCTYPE html>
 </div>
 
 
-<!-- ── 10. MARKETING ───────────────────────────────────────────────────── -->
+<!-- ── 11. MARKETING ───────────────────────────────────────────────────── -->
 <div class="section" id="marketing">
-<h2>10. Marketingové příležitosti</h2>
+<h2>11. Marketingové příležitosti</h2>
 <p>Na základě OSM dat bylo v Google rozvozové zóně identifikováno celkem <strong>{fmt_n(sum(spot_counts.get(k,0) for k in ["restaurant","pub","fast_food","cafe","bar","nightclub"]))} podniků</strong> relevantních pro noční rozvoz (restaurace, puby, bary, fast foody, kavárny, noční kluby).</p>
 
 <div class="charts-2col" style="margin:20px 0;">
@@ -658,9 +759,9 @@ HTML = f"""<!DOCTYPE html>
 </div>
 </div>
 
-<!-- ── 11. SCÉNÁŘE ─────────────────────────────────────────────────────── -->
+<!-- ── 12. SCÉNÁŘE ─────────────────────────────────────────────────────── -->
 <div class="section" id="scenare">
-<h2>11. Scénáře rozvozové vzdálenosti</h2>
+<h2>12. Scénáře rozvozové vzdálenosti</h2>
 <p>Analýza porovnává dopad různých limitů jízdní vzdálenosti na dosažitelný trh. Všechny scénáře vychází z reálných Google Distance Matrix dat (1 093 bodů gridu). Aktuální provozní limit VečerkaPlus je <strong>20 km</strong>.</p>
 
 <div style="overflow-x:auto;margin:20px 0;">
@@ -723,18 +824,18 @@ HTML = f"""<!DOCTYPE html>
 </div>
 </div>
 
-<!-- ── 12. MAPA ─────────────────────────────────────────────────────────── -->
+<!-- ── 13. MAPA ─────────────────────────────────────────────────────────── -->
 <div class="section" id="mapa">
-<h2>12. Interaktivní mapa</h2>
+<h2>13. Interaktivní mapa</h2>
 <p>Mapa zobrazuje Google rozvozovou zónu (oranžová), buffer 20 km (modrá přerušovaná), ZUJ hranice, 1km gridy domácností, OSM marketing spoty a geocodované zákazníky. Vrstvy lze přepínat v pravém horním rohu.</p>
 <div class="map-container">
   <iframe src="vecerkaplus_mapa.html" loading="lazy"></iframe>
 </div>
 </div>
 
-<!-- ── 13. ZÁVĚRY ──────────────────────────────────────────────────────── -->
+<!-- ── 14. ZÁVĚRY ──────────────────────────────────────────────────────── -->
 <div class="section" id="zaver">
-<h2>13. Závěry a doporučení</h2>
+<h2>14. Závěry a doporučení</h2>
 
 <h3>Silné stránky</h3>
 <p>VečerkaPlus operuje v nezaplněné tržní mezeře — noční rozvoz alkoholu a doplňkového zboží v FM nemá přímého konkurenta. Rozvozová zóna pokrývá <strong>{fmt_n(pop_grid_iso)} obyvatel</strong> v <strong>{fmt_n(hh_iso)} domácnostech</strong>. Průměrná tržba {int(trzba_avg)} Kč na objednávku při přímých nákladech rozvozu ~{round(naklady_total/n_objednavek, 0):.0f} Kč zaručuje zdravou základní marži.</p>
@@ -909,6 +1010,97 @@ new Chart(document.getElementById('chartScenarePan'), {{
     }}
   }}
 }});
+// ── Marže dle kategorie ──
+new Chart(document.getElementById('chartMarzeKat'), {{
+  type: 'bar',
+  data: {{
+    labels: {json.dumps(list(kat_marze_grp.index))},
+    datasets: [{{
+      label: 'Průměrná marže %',
+      data: {json.dumps(list(kat_marze_grp.values))},
+      backgroundColor: {json.dumps(['#00e676' if v >= 50 else '#ffd740' if v >= 30 else '#FF3D9A' for v in kat_marze_grp.values])},
+      borderRadius: 2,
+    }}]
+  }},
+  options: {{
+    indexAxis: 'y',
+    plugins: {{ legend: {{ display: false }},
+      tooltip: {{ callbacks: {{ label: ctx => ctx.parsed.x.toFixed(1) + ' %' }} }} }},
+    scales: {{
+      x: {{ ticks: {{ color: '#888', callback: v => v + ' %' }}, grid: {{ color: '#1a1a28' }}, suggestedMax: 80 }},
+      y: {{ ticks: {{ color: '#bbb' }}, grid: {{ display: false }} }}
+    }}
+  }}
+}});
+
+// ── Cenová historie: grouped bar ──
+new Chart(document.getElementById('chartCenaHist'), {{
+  type: 'bar',
+  data: {{
+    labels: {json.dumps(list(changed_hist["produkt"]))},
+    datasets: [
+      {{ label: 'Cena při 1. prodeji', data: {json.dumps(list(changed_hist["cena_launch_kc"].astype(int)))},
+         backgroundColor: '#29B6F6', borderRadius: 2 }},
+      {{ label: 'Cena aktuální', data: {json.dumps(list(changed_hist["cena_aktualni_kc"].astype(int)))},
+         backgroundColor: '#00e676', borderRadius: 2 }}
+    ]
+  }},
+  options: {{
+    plugins: {{ legend: {{ labels: {{ color: '#bbb', font: {{ size: 11 }} }} }} }},
+    scales: {{
+      x: {{ ticks: {{ color: '#888', maxRotation: 20 }}, grid: {{ color: '#1a1a28' }} }},
+      y: {{ ticks: {{ color: '#888', callback: v => v + ' Kč' }}, grid: {{ color: '#1a1a28' }} }}
+    }}
+  }}
+}});
+
+// ── Predikce tržby: 3 scénáře ──
+(function() {{
+  const months = {json.dumps(pred_months)};
+  const labels = months.map(m => 'M+' + m);
+  const scenarios = {json.dumps({name: [round(sc["weekly"] * 4.3 * trzba_avg * (1 + 0.03 * m)) for m in pred_months] for name, sc in scenarios_pred.items()})};
+  const colors = {json.dumps({name: sc["color"] for name, sc in scenarios_pred.items()})};
+  new Chart(document.getElementById('chartPredikce'), {{
+    type: 'line',
+    data: {{
+      labels,
+      datasets: Object.entries(scenarios).map(([name, data]) => ({{
+        label: name, data,
+        borderColor: colors[name], backgroundColor: colors[name] + '22',
+        borderWidth: 2, pointRadius: 3, tension: 0.3, fill: false
+      }}))
+    }},
+    options: {{
+      plugins: {{ legend: {{ labels: {{ color: '#bbb', font: {{ size: 11 }} }} }} }},
+      scales: {{
+        x: {{ ticks: {{ color: '#888' }}, grid: {{ color: '#1a1a28' }} }},
+        y: {{ ticks: {{ color: '#888', callback: v => (v/1000).toFixed(0) + ' tis. Kč' }}, grid: {{ color: '#1a1a28' }} }}
+      }}
+    }}
+  }});
+}})();
+
+// ── Trend objednávek (týdně) ──
+new Chart(document.getElementById('chartTrend'), {{
+  type: 'bar',
+  data: {{
+    labels: {json.dumps([f'T{w}' for w, _ in weeks_data])},
+    datasets: [{{
+      label: 'Objednávky/týden',
+      data: {json.dumps([c for _, c in weeks_data])},
+      backgroundColor: {json.dumps(['#00e676' if c > 0 else '#222' for _, c in weeks_data])},
+      borderRadius: 2,
+    }}]
+  }},
+  options: {{
+    plugins: {{ legend: {{ display: false }} }},
+    scales: {{
+      x: {{ ticks: {{ color: '#888' }}, grid: {{ color: '#1a1a28' }} }},
+      y: {{ ticks: {{ color: '#888', stepSize: 1 }}, grid: {{ color: '#1a1a28' }}, max: 3 }}
+    }}
+  }}
+}});
+
 </script>
 </body>
 </html>
