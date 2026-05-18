@@ -141,6 +141,7 @@
     <li><a href="#zastavba">Bytová zástavba (RÚIAN)</a></li>
     <li><a href="#zakaznici">Zákazníci a objednávky</a></li>
     <li><a href="#finance">Finanční přehled</a></li>
+    <li><a href="#sortiment">Sortiment a produkty</a></li>
     <li><a href="#marketing">Marketingové příležitosti</a></li>
     <li><a href="#scenare">Scénáře vzdálenosti</a></li>
     <li><a href="#mapa">Interaktivní mapa</a></li>
@@ -319,9 +320,50 @@
 </div>
 </div>
 
-<!-- ── 7. MARKETING ───────────────────────────────────────────────────── -->
+<!-- ── 7. SORTIMENT ──────────────────────────────────────────────────── -->
+<div class="section" id="sortiment">
+<h2>7. Sortiment a produktová analýza</h2>
+<p>Katalog VečerkaPlus obsahuje celkem <strong>36 SKU</strong> ve <strong>9 kategoriích</strong>. Z toho bylo dosud prodáno <strong>9 různých produktů</strong>. Analýza vychází z dat Supabase (products_rows.csv) a přesných emailových notifikací objednávek.</p>
+
+<div class="kpi-grid" style="margin:20px 0;">
+  <div class="kpi"><div class="val">36</div><div class="lbl">Celkem SKU v katalogu</div></div>
+  <div class="kpi"><div class="val pink">9</div><div class="lbl">Prodaných SKU</div></div>
+  <div class="kpi"><div class="val yellow">27</div><div class="lbl">Neprodaných SKU</div></div>
+  <div class="kpi"><div class="val">2 102 Kč</div><div class="lbl">Tržba za zboží (bez dopravného)</div></div>
+  <div class="kpi"><div class="val pink">3</div><div class="lbl">SKU skladem 0</div></div>
+</div>
+
+<div class="two-col">
+<div>
+<h3>Prodané produkty a cenové změny</h3>
+<table>
+  <tr><th>Produkt</th><th>Kategorie</th><th class="num">Cena v obj.</th><th class="num">Cena nyní</th><th class="num">Δ</th></tr>
+<tr><td>Beefeater Pink Gin 0.7l</td><td>Lihoviny</td><td class="num">494 Kč</td><td class="num">549 Kč</td><td class="num" style="color:var(--green)">+55 Kč</td></tr><tr><td>Schweppes 1.5l</td><td>Soft drinky</td><td class="num">53 Kč</td><td class="num">59 Kč</td><td class="num" style="color:var(--green)">+6 Kč</td></tr><tr><td>Znovín Tramín 0.75l</td><td>Víno</td><td class="num">143 Kč</td><td class="num">179 Kč</td><td class="num" style="color:var(--green)">+36 Kč</td></tr><tr><td>Znovín Sauvignon 0.75l</td><td>Víno</td><td class="num">143 Kč</td><td class="num">179 Kč</td><td class="num" style="color:var(--green)">+36 Kč</td></tr>
+<tr><td>LM Blue Label</td><td>Tabák</td><td class="num">168 Kč</td><td class="num">168 Kč</td><td class="num" style="color:var(--muted)">—</td></tr><tr><td>Kinder Bueno White</td><td>Snacky</td><td class="num">55 Kč</td><td class="num">55 Kč</td><td class="num" style="color:var(--muted)">—</td></tr><tr><td>Captain Morgan Spiced 0.7l</td><td>Lihoviny</td><td class="num">449 Kč</td><td class="num">449 Kč</td><td class="num" style="color:var(--muted)">—</td></tr><tr><td>Lay's 60g</td><td>Snacky</td><td class="num">59 Kč</td><td class="num">59 Kč</td><td class="num" style="color:var(--muted)">—</td></tr><tr><td>Božkov Originál 0.5l</td><td>Lihoviny</td><td class="num">269 Kč</td><td class="num">269 Kč</td><td class="num" style="color:var(--muted)">—</td></tr>
+  <tr style="background:var(--bg3)"><td><em>Marlboro Red (mimo systém)</em></td><td>Tabák</td>
+    <td class="num" style="color:var(--muted)">—</td><td class="num">179 Kč</td><td class="num">—</td></tr>
+</table>
+</div>
+<div class="chart-wrap">
+  <h3 style="margin-bottom:14px;">Tržba za zboží dle kategorie</h3>
+  <canvas id="chartKategorie" height="220"></canvas>
+</div>
+</div>
+
+<div style="margin-top:20px;">
+<h3>Neprodané kategorie (nulová tržba)</h3>
+<p>Tyto kategorie v katalogu existují, ale zatím nikdo neobjednal: <strong>Pivo</strong>, <strong>Energy drinky</strong>, <strong>Party Mix</strong>, <strong>Doplňky</strong>, <strong>Soft drinky</strong> (jen Schweppes jako mixer). Nejsilnější příležitost je pivo — 5 SKU v katalogu, 0 prodejů, přitom v noční ekonomice standardní produkt.</p>
+</div>
+
+<div class="highlight warn">
+  <strong>Off-system prodej — Marlboro:</strong> U objednávky #2 (Ladislav Wojnar, 19. 4.) zákazník požadoval i Marlboro, které nebylo přidáno do systémové objednávky. Emailová notifikace zachytila tržbu 286 Kč za víno + 39 Kč dopravné = 325 Kč, reálná hodnota transakce byla ~504 Kč. Tato slepá skvrna v datech bude přetrvávat, dokud nebude sortiment úplný a objednávky budou doplňovány manuálně.
+</div>
+</div>
+
+
+<!-- ── 8. MARKETING ───────────────────────────────────────────────────── -->
 <div class="section" id="marketing">
-<h2>7. Marketingové příležitosti</h2>
+<h2>8. Marketingové příležitosti</h2>
 <p>Na základě OSM dat bylo v Google rozvozové zóně identifikováno celkem <strong>427 podniků</strong> relevantních pro noční rozvoz (restaurace, puby, bary, fast foody, kavárny, noční kluby).</p>
 
 <div class="charts-2col" style="margin:20px 0;">
@@ -348,9 +390,9 @@
 </div>
 </div>
 
-<!-- ── 8. SCÉNÁŘE ─────────────────────────────────────────────────────── -->
+<!-- ── 9. SCÉNÁŘE ─────────────────────────────────────────────────────── -->
 <div class="section" id="scenare">
-<h2>8. Scénáře rozvozové vzdálenosti</h2>
+<h2>9. Scénáře rozvozové vzdálenosti</h2>
 <p>Analýza porovnává dopad různých limitů jízdní vzdálenosti na dosažitelný trh. Všechny scénáře vychází z reálných Google Distance Matrix dat (1 093 bodů gridu). Aktuální provozní limit VečerkaPlus je <strong>20 km</strong>.</p>
 
 <div style="overflow-x:auto;margin:20px 0;">
@@ -393,18 +435,18 @@
 </div>
 </div>
 
-<!-- ── 9. MAPA ─────────────────────────────────────────────────────────── -->
+<!-- ── 10. MAPA ─────────────────────────────────────────────────────────── -->
 <div class="section" id="mapa">
-<h2>9. Interaktivní mapa</h2>
+<h2>10. Interaktivní mapa</h2>
 <p>Mapa zobrazuje Google rozvozovou zónu (oranžová), buffer 20 km (modrá přerušovaná), ZUJ hranice, 1km gridy domácností, OSM marketing spoty a geocodované zákazníky. Vrstvy lze přepínat v pravém horním rohu.</p>
 <div class="map-container">
   <iframe src="vecerkaplus_mapa.html" loading="lazy"></iframe>
 </div>
 </div>
 
-<!-- ── 9. ZÁVĚRY ──────────────────────────────────────────────────────── -->
+<!-- ── 11. ZÁVĚRY ──────────────────────────────────────────────────────── -->
 <div class="section" id="zaver">
-<h2>9. Závěry a doporučení</h2>
+<h2>11. Závěry a doporučení</h2>
 
 <h3>Silné stránky</h3>
 <p>VečerkaPlus operuje v nezaplněné tržní mezeře — noční rozvoz alkoholu a doplňkového zboží v FM nemá přímého konkurenta. Rozvozová zóna pokrývá <strong>265 783 obyvatel</strong> v <strong>112 145 domácnostech</strong>. Průměrná tržba 452 Kč na objednávku při přímých nákladech rozvozu ~17 Kč zaručuje zdravou základní marži.</p>
@@ -532,6 +574,29 @@ new Chart(document.getElementById('chartScenareOb'), {
     scales: {
       x: { ticks: { color: '#888' }, grid: { color: '#1a1a28' } },
       y: { ticks: { color: '#888' }, grid: { color: '#1a1a28' } }
+    }
+  }
+});
+
+
+// ── Sortiment: tržba dle kategorie ──
+new Chart(document.getElementById('chartKategorie'), {
+  type: 'bar',
+  data: {
+    labels: ["Lihoviny", "V\u00edno", "Tab\u00e1k", "Snacky", "Soft drinky"],
+    datasets: [{
+      label: 'Tržba za zboží (Kč)',
+      data: [1481, 286, 168, 114, 53],
+      backgroundColor: ['#FF3D9A','#ffd740','#29B6F6','#00e676','#e040fb'],
+      borderRadius: 2,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#888' }, grid: { color: '#1a1a28' } },
+      y: { ticks: { color: '#bbb' }, grid: { display: false } }
     }
   }
 });

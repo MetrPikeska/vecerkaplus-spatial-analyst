@@ -88,6 +88,21 @@ kat_counts = df_zak["produkt_kategorie"].value_counts().to_dict()
 # Scénáře vzdáleností
 scenare = pd.read_csv(os.path.join(OUT_DIR, "scenare_vzdalenosti.csv"))
 
+# Produkty a položky objednávek
+polozky = pd.read_csv(os.path.join(DATA_DIR, "polozky.csv"))
+katalog = pd.read_csv(os.path.join(DATA_DIR, "products_rows.csv"))
+
+pol_sys = polozky[polozky["v_systemu"] == True].copy()
+pol_sys["rozdil_cena"] = pol_sys["cena_katalog_kc"] - pol_sys["cena_kc"]
+trzba_zbozi_celkem = int(pol_sys["cena_kc"].sum())
+kat_rev = pol_sys.groupby("kategorie")["cena_kc"].sum().sort_values(ascending=False)
+sold_skus = pol_sys["produkt"].nunique()
+total_skus = len(katalog)
+kat_skus = katalog.groupby("category").size().to_dict()
+out_of_stock = int((katalog["stock"] == 0).sum())
+price_changed = pol_sys[pol_sys["rozdil_cena"] > 0][["produkt","kategorie","cena_kc","cena_katalog_kc","rozdil_cena"]].drop_duplicates("produkt")
+price_same = pol_sys[pol_sys["rozdil_cena"] <= 0][["produkt","kategorie","cena_kc","cena_katalog_kc","rozdil_cena"]].drop_duplicates("produkt")
+
 print("Data načtena, generuji report...")
 
 # ── HTML report ────────────────────────────────────────────────────────────
@@ -237,6 +252,7 @@ HTML = f"""<!DOCTYPE html>
     <li><a href="#zastavba">Bytová zástavba (RÚIAN)</a></li>
     <li><a href="#zakaznici">Zákazníci a objednávky</a></li>
     <li><a href="#finance">Finanční přehled</a></li>
+    <li><a href="#sortiment">Sortiment a produkty</a></li>
     <li><a href="#marketing">Marketingové příležitosti</a></li>
     <li><a href="#scenare">Scénáře vzdálenosti</a></li>
     <li><a href="#mapa">Interaktivní mapa</a></li>
@@ -415,9 +431,62 @@ HTML = f"""<!DOCTYPE html>
 </div>
 </div>
 
-<!-- ── 7. MARKETING ───────────────────────────────────────────────────── -->
+<!-- ── 7. SORTIMENT ──────────────────────────────────────────────────── -->
+<div class="section" id="sortiment">
+<h2>7. Sortiment a produktová analýza</h2>
+<p>Katalog VečerkaPlus obsahuje celkem <strong>{total_skus} SKU</strong> ve <strong>{len(kat_skus)} kategoriích</strong>. Z toho bylo dosud prodáno <strong>{sold_skus} různých produktů</strong>. Analýza vychází z dat Supabase (products_rows.csv) a přesných emailových notifikací objednávek.</p>
+
+<div class="kpi-grid" style="margin:20px 0;">
+  <div class="kpi"><div class="val">{total_skus}</div><div class="lbl">Celkem SKU v katalogu</div></div>
+  <div class="kpi"><div class="val pink">{sold_skus}</div><div class="lbl">Prodaných SKU</div></div>
+  <div class="kpi"><div class="val yellow">{total_skus - sold_skus}</div><div class="lbl">Neprodaných SKU</div></div>
+  <div class="kpi"><div class="val">{fmt_n(trzba_zbozi_celkem)} Kč</div><div class="lbl">Tržba za zboží (bez dopravného)</div></div>
+  <div class="kpi"><div class="val pink">{out_of_stock}</div><div class="lbl">SKU skladem 0</div></div>
+</div>
+
+<div class="two-col">
+<div>
+<h3>Prodané produkty a cenové změny</h3>
+<table>
+  <tr><th>Produkt</th><th>Kategorie</th><th class="num">Cena v obj.</th><th class="num">Cena nyní</th><th class="num">Δ</th></tr>
+{"".join(
+    f'<tr><td>{r.produkt}</td><td>{r.kategorie}</td>'
+    f'<td class="num">{int(r.cena_kc)} Kč</td>'
+    f'<td class="num">{int(r.cena_katalog_kc)} Kč</td>'
+    f'<td class="num" style="color:var(--green)">+{int(r.rozdil_cena)} Kč</td></tr>'
+    for r in price_changed.itertuples()
+)}
+{"".join(
+    f'<tr><td>{r.produkt}</td><td>{r.kategorie}</td>'
+    f'<td class="num">{int(r.cena_kc)} Kč</td>'
+    f'<td class="num">{int(r.cena_katalog_kc)} Kč</td>'
+    f'<td class="num" style="color:var(--muted)">—</td></tr>'
+    for r in price_same.itertuples()
+)}
+  <tr style="background:var(--bg3)"><td><em>Marlboro Red (mimo systém)</em></td><td>Tabák</td>
+    <td class="num" style="color:var(--muted)">—</td><td class="num">179 Kč</td><td class="num">—</td></tr>
+</table>
+</div>
+<div class="chart-wrap">
+  <h3 style="margin-bottom:14px;">Tržba za zboží dle kategorie</h3>
+  <canvas id="chartKategorie" height="220"></canvas>
+</div>
+</div>
+
+<div style="margin-top:20px;">
+<h3>Neprodané kategorie (nulová tržba)</h3>
+<p>Tyto kategorie v katalogu existují, ale zatím nikdo neobjednal: <strong>Pivo</strong>, <strong>Energy drinky</strong>, <strong>Party Mix</strong>, <strong>Doplňky</strong>, <strong>Soft drinky</strong> (jen Schweppes jako mixer). Nejsilnější příležitost je pivo — 5 SKU v katalogu, 0 prodejů, přitom v noční ekonomice standardní produkt.</p>
+</div>
+
+<div class="highlight warn">
+  <strong>Off-system prodej — Marlboro:</strong> U objednávky #2 (Ladislav Wojnar, 19. 4.) zákazník požadoval i Marlboro, které nebylo přidáno do systémové objednávky. Emailová notifikace zachytila tržbu 286 Kč za víno + 39 Kč dopravné = 325 Kč, reálná hodnota transakce byla ~504 Kč. Tato slepá skvrna v datech bude přetrvávat, dokud nebude sortiment úplný a objednávky budou doplňovány manuálně.
+</div>
+</div>
+
+
+<!-- ── 8. MARKETING ───────────────────────────────────────────────────── -->
 <div class="section" id="marketing">
-<h2>7. Marketingové příležitosti</h2>
+<h2>8. Marketingové příležitosti</h2>
 <p>Na základě OSM dat bylo v Google rozvozové zóně identifikováno celkem <strong>{fmt_n(sum(spot_counts.get(k,0) for k in ["restaurant","pub","fast_food","cafe","bar","nightclub"]))} podniků</strong> relevantních pro noční rozvoz (restaurace, puby, bary, fast foody, kavárny, noční kluby).</p>
 
 <div class="charts-2col" style="margin:20px 0;">
@@ -444,9 +513,9 @@ HTML = f"""<!DOCTYPE html>
 </div>
 </div>
 
-<!-- ── 8. SCÉNÁŘE ─────────────────────────────────────────────────────── -->
+<!-- ── 9. SCÉNÁŘE ─────────────────────────────────────────────────────── -->
 <div class="section" id="scenare">
-<h2>8. Scénáře rozvozové vzdálenosti</h2>
+<h2>9. Scénáře rozvozové vzdálenosti</h2>
 <p>Analýza porovnává dopad různých limitů jízdní vzdálenosti na dosažitelný trh. Všechny scénáře vychází z reálných Google Distance Matrix dat (1 093 bodů gridu). Aktuální provozní limit VečerkaPlus je <strong>20 km</strong>.</p>
 
 <div style="overflow-x:auto;margin:20px 0;">
@@ -509,18 +578,18 @@ HTML = f"""<!DOCTYPE html>
 </div>
 </div>
 
-<!-- ── 9. MAPA ─────────────────────────────────────────────────────────── -->
+<!-- ── 10. MAPA ─────────────────────────────────────────────────────────── -->
 <div class="section" id="mapa">
-<h2>9. Interaktivní mapa</h2>
+<h2>10. Interaktivní mapa</h2>
 <p>Mapa zobrazuje Google rozvozovou zónu (oranžová), buffer 20 km (modrá přerušovaná), ZUJ hranice, 1km gridy domácností, OSM marketing spoty a geocodované zákazníky. Vrstvy lze přepínat v pravém horním rohu.</p>
 <div class="map-container">
   <iframe src="vecerkaplus_mapa.html" loading="lazy"></iframe>
 </div>
 </div>
 
-<!-- ── 9. ZÁVĚRY ──────────────────────────────────────────────────────── -->
+<!-- ── 11. ZÁVĚRY ──────────────────────────────────────────────────────── -->
 <div class="section" id="zaver">
-<h2>9. Závěry a doporučení</h2>
+<h2>11. Závěry a doporučení</h2>
 
 <h3>Silné stránky</h3>
 <p>VečerkaPlus operuje v nezaplněné tržní mezeře — noční rozvoz alkoholu a doplňkového zboží v FM nemá přímého konkurenta. Rozvozová zóna pokrývá <strong>{fmt_n(pop_grid_iso)} obyvatel</strong> v <strong>{fmt_n(hh_iso)} domácnostech</strong>. Průměrná tržba {int(trzba_avg)} Kč na objednávku při přímých nákladech rozvozu ~{round(naklady_total/n_objednavek, 0):.0f} Kč zaručuje zdravou základní marži.</p>
@@ -648,6 +717,29 @@ new Chart(document.getElementById('chartScenareOb'), {{
     scales: {{
       x: {{ ticks: {{ color: '#888' }}, grid: {{ color: '#1a1a28' }} }},
       y: {{ ticks: {{ color: '#888' }}, grid: {{ color: '#1a1a28' }} }}
+    }}
+  }}
+}});
+
+
+// ── Sortiment: tržba dle kategorie ──
+new Chart(document.getElementById('chartKategorie'), {{
+  type: 'bar',
+  data: {{
+    labels: {json.dumps(list(kat_rev.index))},
+    datasets: [{{
+      label: 'Tržba za zboží (Kč)',
+      data: {json.dumps([int(v) for v in kat_rev.values])},
+      backgroundColor: ['#FF3D9A','#ffd740','#29B6F6','#00e676','#e040fb'],
+      borderRadius: 2,
+    }}]
+  }},
+  options: {{
+    indexAxis: 'y',
+    plugins: {{ legend: {{ display: false }} }},
+    scales: {{
+      x: {{ ticks: {{ color: '#888' }}, grid: {{ color: '#1a1a28' }} }},
+      y: {{ ticks: {{ color: '#bbb' }}, grid: {{ display: false }} }}
     }}
   }}
 }});

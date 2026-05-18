@@ -1,6 +1,6 @@
-id,adresa,formatted,lat,lng,datum,cas,den_tyden,vzdalenost_km,trzba_kc,naklady_rozvoz_kc,dopravne_zakaznik_kc,platba,produkt_kategorie,poznamka
-1,"K Hájku 29, Frýdek-Místek","K Hájku 29, 738 01 Frýdek-Místek",49.6925578,18.346118,2026-04-18,20:13,pátek,2.8,547,17.6,0,hotově,lihoviny+nealko,Beefeater Pink Gin + Schweppes
-2,"Heydukova, Frýdek-Místek","Heydukova, 738 01 Frýdek-Místek",49.69108,18.3422378,2026-04-19,00:04,sobota,3.2,325,20.2,39,kartou,víno,Znovín Tramín + Sauvignon
-3,"Dr. Vančury 1924, Frýdek-Místek","Dr. Vančury 1924, 738 01 Frýdek-Místek",49.68610839999999,18.3591856,2026-05-01,21:20,pátek,1.8,262,11.3,39,kartou,tabák+sladkosti,LM Blue + Kinder Bueno White
-4,"Boženy Němcové 568, Frýdek-Místek","B. Němcové 568, 738 01 Frýdek-Místek",49.6761217,18.3384062,2026-05-08,22:56,sobota,3.3,547,20.8,39,kartou,lihoviny+snack,Captain Morgan + Lay's
-5,"Malý Koloredov 565, Frýdek-Místek","Malý Koloredov 565, 738 01 Frýdek-Místek",49.6788004,18.3426659,2026-05-15,21:30,pátek,2.5,577,15.8,39,hotově,lihoviny,2× Božkov Originál
+id,jmeno,telefon,adresa,formatted,lat,lng,datum,cas,den_tyden,vzdalenost_km,odhad_jizdy_min,trzba_kc,naklady_rozvoz_kc,dopravne_zakaznik_kc,platba,produkt_kategorie,poznamka
+1,Lucie Foldynová,734685591,"K Hájku 29, Frýdek-Místek","K Hájku 29, 738 01 Frýdek-Místek",49.6925578,18.346118,2026-04-18,20:13,pátek,2.8,,547,17.6,0,hotově,lihoviny+nealko,Beefeater Pink Gin + Schweppes
+2,Ladislav Wojnar,732625970,"Heydukova, Frýdek-Místek","Heydukova, 738 01 Frýdek-Místek",49.69108,18.3422378,2026-04-19,00:04,sobota,3.2,,325,20.2,39,kartou,víno+tabák,Znovín Tramín + Sauvignon + Marlboro (mimo systém)
+3,Tereza Grunová,734802235,"Dr. Vančury 1924, Frýdek-Místek","Dr. Vančury 1924, 738 01 Frýdek-Místek",49.68610839999999,18.3591856,2026-05-01,21:20,pátek,1.8,,262,11.3,39,kartou,tabák+sladkosti,LM Blue + Kinder Bueno White
+4,Tomáš Řeha,723032813,"Boženy Němcové 568, Frýdek-Místek","B. Němcové 568, 738 01 Frýdek-Místek",49.6761217,18.3384062,2026-05-08,22:56,sobota,3.3,5,547,20.8,39,kartou,lihoviny+snack,Captain Morgan + Lay's
+5,Iveta Bystřická,739285076,"Malý Koloredov 565, Frýdek-Místek","Malý Koloredov 565, 738 01 Frýdek-Místek",49.6788004,18.3426659,2026-05-15,21:30,pátek,2.5,4,577,15.8,39,hotově,lihoviny,2× Božkov Originál
