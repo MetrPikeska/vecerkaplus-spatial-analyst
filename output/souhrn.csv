@@ -1,15 +1,18 @@
-﻿metriky,hodnota
-Počet obcí v dosahu (20 km),80
-Celkem obyvatel (buffer 20 km),"640,786"
-  z toho 0–14 let,"98,249 (15.3 %)"
-  z toho 15–64 let,"410,094 (64.0 %)"
-  z toho 65+ let,"132,443 (20.7 %)"
-Průměrný věk (střed obcí),42.3
-Celkem marketing spots,1984
-  restaurace,270
-  puby,128
-  fast food,71
-  kavárny,47
-  bary,37
-  zastávky MHD (pt:platform),949
-Obyvatel v izochroně 20 min,N/A (ORS_API_KEY chybí)
+﻿metrika,hodnota
+Výchozí bod (byt),"49.6754886°N, 18.3389397°E"
+--- BUFFER 20 km ---,
+Obcí v dosahu,82
+"Obyvatel (SLDB, centroidy obcí)","617,960"
+Domácností (1km grid),"232,599"
+Odh. obyvatel (grid × 2.37),"551,237"
+--- IZOCHRÓNA 20 min autem ---,
+Plocha izochrony,803 km²
+Domácností (1km grid),"162,894"
+Odh. obyvatel (grid × 2.37),"386,042"
+Pokrytí vs buffer,70 %
+--- MARKETING SPOTS (buffer) ---,
+Restaurace,270
+Puby,128
+Fast food,71
+Kavárny,47
+Bary,37

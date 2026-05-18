@@ -5,6 +5,7 @@ import os
 import warnings
 warnings.filterwarnings("ignore")
 
+import json
 import pytest
 import geopandas as gpd
 import pandas as pd
@@ -13,7 +14,7 @@ from shapely.geometry import Point
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 OUT_DIR  = os.path.join(os.path.dirname(__file__), "output")
 
-FM_LAT, FM_LON = 49.6833, 18.3667
+FM_LAT, FM_LON = 49.6754886, 18.3389397
 CRS_METRIC = "EPSG:5514"
 CRS_WGS    = "EPSG:4326"
 
@@ -135,6 +136,50 @@ def test_spots_have_expected_categories():
 # ---------------------------------------------------------------------------
 # Output files
 # ---------------------------------------------------------------------------
+
+def test_isochrone_file_exists():
+    path = os.path.join(DATA_DIR, "isochrone_20min.geojson")
+    assert os.path.exists(path), "Chybí isochrone_20min.geojson"
+    with open(path) as f:
+        data = json.load(f)
+    assert "features" in data and len(data["features"]) > 0
+    feat = data["features"][0]
+    assert feat["geometry"]["type"] in ("Polygon", "MultiPolygon")
+
+
+def test_isochrone_area_reasonable():
+    import json
+    from shapely.geometry import shape
+    path = os.path.join(DATA_DIR, "isochrone_20min.geojson")
+    with open(path) as f:
+        data = json.load(f)
+    geom = shape(data["features"][0]["geometry"])
+    iso_gdf = gpd.GeoDataFrame([{"geometry": geom}], crs="EPSG:4326").to_crs("EPSG:5514")
+    area_km2 = iso_gdf.geometry.area.values[0] / 1e6
+    # 20 min drive ~500–1200 km² is realistic for FM area
+    assert 300 <= area_km2 <= 1500, f"Plocha izochrony {area_km2:.0f} km² mimo očekávání"
+
+
+def test_grid_data_loads():
+    grid_path = os.path.join(DATA_DIR, "gridy_domacnosti",
+                             "grid_domacnosti_sldb2021_20210326.gpkg")
+    assert os.path.exists(grid_path), "Chybí grid data"
+    gdf = gpd.read_file(grid_path, rows=10)
+    assert "g179999001" in gdf.columns
+    assert gdf.crs is not None
+
+
+def test_grid_households_in_buffer():
+    grid_path = os.path.join(DATA_DIR, "gridy_domacnosti",
+                             "grid_domacnosti_sldb2021_20210326.gpkg")
+    gdf = gpd.read_file(grid_path).rename(columns={"g179999001": "hh_celkem"})
+    fm = gpd.GeoDataFrame([{"geometry": Point(FM_LON, FM_LAT)}], crs="EPSG:4326")
+    buf = fm.to_crs("EPSG:5514").buffer(20_000).iloc[0]
+    gdf_m = gdf.to_crs("EPSG:5514")
+    in_buf = gdf_m[gdf_m.geometry.centroid.within(buf)]
+    hh_total = in_buf["hh_celkem"].sum()
+    assert 100_000 <= hh_total <= 500_000, f"Domácností {hh_total:,} mimo očekávaný rozsah"
+
 
 def test_output_files_exist():
     for fname in (
