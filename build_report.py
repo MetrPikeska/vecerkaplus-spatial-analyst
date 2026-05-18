@@ -74,7 +74,7 @@ spot_counts = in_zone_spots.groupby("kat").size().to_dict()
 
 # Palivové parametry (nastavitelné)
 SPOTREBA_L_100KM = 7.0    # průměrná spotřeba l/100 km
-CENA_PHM_KC_L    = 38.0   # cena pohonných hmot Kč/l
+CENA_PHM_KC_L    = 42.0   # cena pohonných hmot Kč/l
 DOPRAVNE_ZDARMA_KC = 1000  # práh pro bezplatné dopravné
 
 cost_per_km = (SPOTREBA_L_100KM / 100) * CENA_PHM_KC_L  # Kč/km
