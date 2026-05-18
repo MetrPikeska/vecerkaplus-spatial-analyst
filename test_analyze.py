@@ -181,6 +181,41 @@ def test_grid_households_in_buffer():
     assert 100_000 <= hh_total <= 500_000, f"Domácností {hh_total:,} mimo očekávaný rozsah"
 
 
+def test_zuj_gdb_accessible():
+    import os
+    gdb = "/media/petr-mikeska/8A9A950B9A94F4C3/Skola/DATA/ČR/arcčr_4_3.gdb"
+    if not os.path.exists(gdb):
+        pytest.skip("ArcČR GDB není připojená — přeskakuji")
+    gdf = gpd.read_file(gdb, layer="ZUJ", rows=5)
+    assert "kod_obce" in gdf.columns
+    assert "nazev" in gdf.columns
+    assert gdf.crs is not None
+
+
+def test_zuj_in_buffer():
+    import os
+    gdb = "/media/petr-mikeska/8A9A950B9A94F4C3/Skola/DATA/ČR/arcčr_4_3.gdb"
+    if not os.path.exists(gdb):
+        pytest.skip("ArcČR GDB není připojená — přeskakuji")
+    gdf = gpd.read_file(gdb, layer="ZUJ").to_crs("EPSG:5514")
+    fm = gpd.GeoDataFrame([{"geometry": Point(FM_LON, FM_LAT)}], crs="EPSG:4326")
+    buf = fm.to_crs("EPSG:5514").buffer(20_000).iloc[0]
+    gdf["centroid"] = gdf.geometry.centroid
+    in_buf = gdf[gdf["centroid"].within(buf)]
+    assert 60 <= len(in_buf) <= 150, f"ZUJ v bufferu: {len(in_buf)}"
+
+
+def test_zakaznici_geocoded():
+    df = pd.read_csv(os.path.join(DATA_DIR, "zakaznici.csv"))
+    assert len(df) > 0
+    assert "lat" in df.columns and "lng" in df.columns
+    valid = df.dropna(subset=["lat", "lng"])
+    assert len(valid) == len(df), "Některé adresy nebyly geocodovány"
+    # Všechny koordináty musí být v rozumném rozsahu pro FM
+    assert (valid["lat"].between(49.0, 50.5)).all(), "Souřadnice lat mimo ČR"
+    assert (valid["lng"].between(17.0, 19.5)).all(), "Souřadnice lng mimo ČR"
+
+
 def test_output_files_exist():
     for fname in (
         "vecerkaplus_mapa.html",

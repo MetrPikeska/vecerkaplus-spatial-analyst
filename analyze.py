@@ -26,8 +26,9 @@ CRS_WGS        = "EPSG:4326"
 # Průměrná velikost domácnosti ČR SLDB 2021
 AVG_HH_SIZE    = 2.37
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
-OUT_DIR  = os.path.join(os.path.dirname(__file__), "output")
+DATA_DIR   = os.path.join(os.path.dirname(__file__), "data")
+OUT_DIR    = os.path.join(os.path.dirname(__file__), "output")
+ARCCR_GDB  = "/media/petr-mikeska/8A9A950B9A94F4C3/Skola/DATA/ČR/arcčr_4_3.gdb"
 os.makedirs(OUT_DIR, exist_ok=True)
 
 ORS_API_KEY = os.environ.get("ORS_API_KEY", "")
@@ -246,6 +247,57 @@ pd.DataFrame(summary_rows, columns=["metrika", "hodnota"]).to_csv(
 print(f"   souhrn.csv")
 
 # ---------------------------------------------------------------------------
+# 8b. ZUJ z ArcČR – jemnější územní jednotky v bufferu
+# ---------------------------------------------------------------------------
+print("\n=== 8b. ZUJ (ArcČR 4.3) ===")
+zuj_gdf = None
+if os.path.exists(ARCCR_GDB):
+    zuj_all = gpd.read_file(ARCCR_GDB, layer="ZUJ")
+    zuj_m = zuj_all.to_crs(CRS_METRIC)
+    zuj_m["centroid"] = zuj_m.geometry.centroid
+    zuj_buf = zuj_m[zuj_m["centroid"].within(buffer_geom_m)].copy().drop(columns=["centroid"])
+    zuj_gdf = zuj_buf.to_crs(CRS_WGS)
+    print(f"   ZUJ v bufferu: {len(zuj_gdf)}")
+    zuj_gdf.to_file(os.path.join(OUT_DIR, "zuj_v_dosahu.gpkg"), driver="GPKG")
+    print(f"   Uloženo: output/zuj_v_dosahu.gpkg")
+else:
+    print(f"   ArcČR GDB nenalezena: {ARCCR_GDB}")
+
+# ---------------------------------------------------------------------------
+# 8c. Zákazníci – geocodované adresy
+# ---------------------------------------------------------------------------
+print("\n=== 8c. Zákazníci ===")
+zakaznici_path = os.path.join(DATA_DIR, "zakaznici.csv")
+zakaznici_gdf = None
+if os.path.exists(zakaznici_path):
+    df_zak = pd.read_csv(zakaznici_path)
+    df_zak = df_zak.dropna(subset=["lat", "lng"])
+    zakaznici_gdf = gpd.GeoDataFrame(
+        df_zak,
+        geometry=gpd.points_from_xy(df_zak["lng"], df_zak["lat"]),
+        crs=CRS_WGS,
+    )
+    # Přiřadit zákazníkům ZUJ
+    if zuj_gdf is not None:
+        joined = gpd.sjoin(
+            zakaznici_gdf, zuj_gdf[["nazev", "kod_obce", "geometry"]],
+            how="left", predicate="within"
+        )
+        zakaznici_gdf["zuj_nazev"] = joined["nazev"]
+        zakaznici_gdf["zuj_kod"] = joined["kod_obce"]
+    # Přiřadit: je zákazník v izochroně?
+    if iso_geom_m:
+        zak_m = zakaznici_gdf.to_crs(CRS_METRIC)
+        zakaznici_gdf["v_izochrone"] = zak_m.geometry.within(iso_geom_m)
+    print(f"   Zákazníků: {len(zakaznici_gdf)}")
+    print(f"   V izochroně: {zakaznici_gdf['v_izochrone'].sum() if 'v_izochrone' in zakaznici_gdf.columns else 'N/A'}")
+    if "zuj_nazev" in zakaznici_gdf.columns:
+        print("   ZUJ zákazníků:")
+        print(zakaznici_gdf[["adresa","zuj_nazev","v_izochrone"]].to_string(index=False))
+else:
+    print(f"   Soubor {zakaznici_path} nenalezen")
+
+# ---------------------------------------------------------------------------
 # 9. Interaktivní mapa (folium)
 # ---------------------------------------------------------------------------
 print("\n=== 9. Tvorba mapy ===")
@@ -361,6 +413,42 @@ for _, row in spots_vis.iterrows():
             max_width=250,
         ),
     ).add_to(spot_layers[kat_layer])
+
+# --- ZUJ hranice ---
+if zuj_gdf is not None:
+    zuj_layer = folium.FeatureGroup(name="ZUJ hranice (ArcČR)", show=False)
+    for _, row in zuj_gdf[zuj_gdf.geometry.notna()].iterrows():
+        folium.GeoJson(
+            row.geometry.__geo_interface__,
+            style_function=lambda x: {
+                "color": "#7986cb", "weight": 1.2,
+                "fillOpacity": 0, "dashArray": "3 3",
+            },
+            tooltip=f"{row['nazev']} (kod: {row['kod_obce']})",
+        ).add_to(zuj_layer)
+    zuj_layer.add_to(m)
+
+# --- Zákazníci ---
+if zakaznici_gdf is not None:
+    zak_layer = folium.FeatureGroup(name="Zákazníci (reálné adresy)", show=True)
+    for _, row in zakaznici_gdf.iterrows():
+        in_iso = row.get("v_izochrone", False)
+        color = "#00e676" if in_iso else "#ff1744"
+        zuj_info = f"<br>ZUJ: {row.get('zuj_nazev','?')}" if "zuj_nazev" in row.index else ""
+        iso_info = " ✓ v izochroně" if in_iso else " ✗ mimo izochrónu"
+        folium.CircleMarker(
+            location=[row.geometry.y, row.geometry.x],
+            radius=8, color=color, fill=True, fill_color=color,
+            fill_opacity=0.9, weight=2,
+            tooltip=f"{row['adresa']}{iso_info}",
+            popup=folium.Popup(
+                f"<b>{row['adresa']}</b><br>"
+                f"{row.get('formatted','')}{zuj_info}<br>"
+                f"<b>{iso_info}</b>",
+                max_width=300,
+            ),
+        ).add_to(zak_layer)
+    zak_layer.add_to(m)
 
 # --- Výchozí bod ---
 folium.Marker(
