@@ -72,6 +72,13 @@ in_zone_spots = in_zone_spots.copy()
 in_zone_spots["kat"] = in_zone_spots.apply(kat, axis=1)
 spot_counts = in_zone_spots.groupby("kat").size().to_dict()
 
+# Palivové parametry (nastavitelné)
+SPOTREBA_L_100KM = 7.0    # průměrná spotřeba l/100 km
+CENA_PHM_KC_L    = 38.0   # cena pohonných hmot Kč/l
+DOPRAVNE_ZDARMA_KC = 1000  # práh pro bezplatné dopravné
+
+cost_per_km = (SPOTREBA_L_100KM / 100) * CENA_PHM_KC_L  # Kč/km
+
 # Zákazníci
 df_zak = pd.read_csv(os.path.join(DATA_DIR, "zakaznici.csv"))
 n_objednavek   = len(df_zak)
@@ -102,6 +109,40 @@ kat_skus = katalog.groupby("category").size().to_dict()
 out_of_stock = int((katalog["stock"] == 0).sum())
 price_changed = pol_sys[pol_sys["rozdil_cena"] > 0][["produkt","kategorie","cena_kc","cena_katalog_kc","rozdil_cena"]].drop_duplicates("produkt")
 price_same = pol_sys[pol_sys["rozdil_cena"] <= 0][["produkt","kategorie","cena_kc","cena_katalog_kc","rozdil_cena"]].drop_duplicates("produkt")
+
+# Cenová historie
+cena_hist = pd.read_csv(os.path.join(DATA_DIR, "cena_historie.csv"))
+changed_hist = cena_hist[cena_hist["zmena_kc"] > 0].copy()
+unchanged_hist = cena_hist[cena_hist["zmena_kc"] == 0].copy()
+avg_price_change_pct = round(cena_hist[cena_hist["zmena_kc"] > 0]["zmena_pct"].mean(), 1)
+
+# Predikce objednávek
+import numpy as np
+# Týdenní data: týden od spuštění (14.3.2026), počet objednávek
+weeks_data = [
+    (1, 0), (2, 0), (3, 0), (4, 0), (5, 2),   # první objednávky v týdnu 5
+    (6, 0), (7, 1), (8, 1), (9, 1),             # stabilní 1/týden posledních 3 týdny
+]
+# Aktuální trend: průměr posledních 3 týdnů = 1 obj/týden
+trend_weekly = 1.0
+avg_trzba_obj = float(trzba_avg)
+avg_dopravne_zakaznik = round(df_zak[df_zak["dopravne_zakaznik_kc"] > 0]["dopravne_zakaznik_kc"].mean(), 0)
+# Průměrný příjem na objednávku (tržba + dopravné od zákazníka)
+avg_revenue_per_order = avg_trzba_obj + avg_dopravne_zakaznik * (1 - free_delivery/n_objednavek)
+avg_fuel_per_order = cost_per_km * vzdalenost_avg * 2  # round trip
+
+# Tři predikční scénáře (obj/týden v budoucích měsících)
+scenarios_pred = {
+    "Konzervativní (1/týden)":  {"weekly": 1.0,  "color": "#888"},
+    "Cílový (3/víkend)":        {"weekly": 3.0,  "color": "#29B6F6"},
+    "Optimistický (7/víkend)":  {"weekly": 7.0,  "color": "#00e676"},
+}
+pred_months = list(range(1, 13))
+
+# Scénáře s palivovými náklady
+scenare["avg_delivery_km"] = scenare["limit_km"] * 0.35
+scenare["fuel_avg_kc"] = (scenare["avg_delivery_km"] * 2 * cost_per_km).round(1)
+scenare["fuel_max_kc"] = (scenare["limit_km"] * 2 * cost_per_km).round(1)
 
 print("Data načtena, generuji report...")
 
@@ -253,8 +294,10 @@ HTML = f"""<!DOCTYPE html>
     <li><a href="#zakaznici">Zákazníci a objednávky</a></li>
     <li><a href="#finance">Finanční přehled</a></li>
     <li><a href="#sortiment">Sortiment a produkty</a></li>
+    <li><a href="#cena-historie">Cenová historie</a></li>
+    <li><a href="#predikce">Predikce a scénáře růstu</a></li>
     <li><a href="#marketing">Marketingové příležitosti</a></li>
-    <li><a href="#scenare">Scénáře vzdálenosti</a></li>
+    <li><a href="#scenare">Scénáře vzdálenosti + palivo</a></li>
     <li><a href="#mapa">Interaktivní mapa</a></li>
     <li><a href="#zaver">Závěry a doporučení</a></li>
   </ol>
@@ -417,7 +460,7 @@ HTML = f"""<!DOCTYPE html>
   <tr><td>Celkové přímé náklady na rozvoz</td><td class="num">{round(naklady_total, 0):.0f} Kč</td></tr>
   <tr><td>Průměrné náklady rozvoz / obj.</td><td class="num">{round(naklady_total/n_objednavek, 1)} Kč</td></tr>
   <tr><td>Průměrná vzdálenost doručení</td><td class="num">{vzdalenost_avg} km</td></tr>
-  <tr><td>Objednávky s dopravným zdarma (≥500 Kč)</td><td class="num">{free_delivery} / {n_objednavek}</td></tr>
+  <tr><td>Objednávky s dopravným zdarma (≥{DOPRAVNE_ZDARMA_KC} Kč)</td><td class="num">{free_delivery} / {n_objednavek} <span style="color:var(--muted);font-size:.8rem">(1× promo/spuštění)</span></td></tr>
   <tr><td>Platba kartou / hotově</td><td class="num">3 / 2</td></tr>
 </table>
 </div>
@@ -484,9 +527,111 @@ HTML = f"""<!DOCTYPE html>
 </div>
 
 
-<!-- ── 8. MARKETING ───────────────────────────────────────────────────── -->
+<!-- ── 8. CENOVÁ HISTORIE ────────────────────────────────────────────── -->
+<div class="section" id="cena-historie">
+<h2>8. Cenová historie produktů</h2>
+<p>Ceny jsou odvozeny porovnáním <strong>cen z emailových notifikací objednávek</strong> (dubna–května 2026) s aktuálním produktovým katalogem (Supabase, stav {today}). Pro produkty dosud neobjednané nelze historii odvodit.</p>
+
+<div class="two-col">
+<div>
+<h3>Produkty se zdraženým ceníkem od spuštění</h3>
+<table>
+  <tr><th>Produkt</th><th class="num">Cena při 1. prodeji</th><th class="num">Cena nyní</th><th class="num">Nárůst</th></tr>
+{"".join(
+    f'<tr><td>{r.produkt}</td>'
+    f'<td class="num">{int(r.cena_launch_kc)} Kč</td>'
+    f'<td class="num">{int(r.cena_aktualni_kc)} Kč</td>'
+    f'<td class="num" style="color:var(--green)">+{int(r.zmena_kc)} Kč ({r.zmena_pct:.1f} %)</td></tr>'
+    for r in changed_hist.itertuples()
+)}
+</table>
+
+<div class="highlight positive" style="margin-top:16px;">
+  <strong>Průměrné zdražení: +{avg_price_change_pct} %</strong> u produktů se změnou. Znovín vína zdražila nejvýrazněji (+25 %), Beefeater a Schweppes o +11 %. Zdražování může být důsledkem rostoucích nákupních cen nebo záměrné optimalizace marže.
+</div>
+</div>
+<div class="chart-wrap">
+  <h3 style="margin-bottom:14px;">Cena při 1. prodeji vs. aktuální (Kč)</h3>
+  <canvas id="chartCenaHist" height="280"></canvas>
+</div>
+</div>
+
+<h3 style="margin-top:20px;">Produkty bez cenové změny (sledované od 1. objednávky)</h3>
+<table>
+  <tr><th>Produkt</th><th>Kategorie</th><th class="num">Stabilní cena</th><th>1. prodej</th></tr>
+{"".join(
+    f'<tr><td>{r.produkt}</td><td>{r.kategorie}</td>'
+    f'<td class="num">{int(r.cena_aktualni_kc)} Kč</td>'
+    f'<td style="color:var(--muted);font-size:.85rem">{r.prvni_objednavka_datum}</td></tr>'
+    for r in unchanged_hist.itertuples()
+)}
+</table>
+
+<div class="highlight warn" style="margin-top:16px;">
+  <strong>Slepá skvrna:</strong> Pro 27 z 36 SKU v katalogu (neprodané) nemáme historii cen — nevíme, zda jejich ceny zůstaly stejné od spuštění. Doporučujeme zavést verzování cen v Supabase (přidat sloupec <code>price_updated_at</code>).
+</div>
+</div>
+
+
+<!-- ── 9. PREDIKCE ────────────────────────────────────────────────────── -->
+<div class="section" id="predikce">
+<h2>9. Predikce objednávek a scénáře růstu</h2>
+<p>Model vychází z aktuálního trendu: <strong>poslední 3 víkendy vždy 1 objednávka/týden</strong>. Průměrná tržba na objednávku je <strong>{int(trzba_avg)} Kč</strong>, průměrné přímé palivové náklady na doručení <strong>{avg_fuel_per_order:.1f} Kč</strong> (při {SPOTREBA_L_100KM} l/100 km a {CENA_PHM_KC_L} Kč/l, průměrná vzdálenost {vzdalenost_avg} km).</p>
+
+<div class="kpi-grid" style="margin:20px 0;">
+  <div class="kpi"><div class="val">{trend_weekly:.0f}</div><div class="lbl">Obj./týden (aktuální trend)</div></div>
+  <div class="kpi"><div class="val">{int(trend_weekly * 4)}</div><div class="lbl">Odh. obj./měsíc</div></div>
+  <div class="kpi"><div class="val green">{int(trend_weekly * 4 * trzba_avg):,} Kč</div><div class="lbl">Odh. tržba/měsíc</div></div>
+  <div class="kpi"><div class="val yellow">{int(trend_weekly * 52 * trzba_avg):,} Kč</div><div class="lbl">Odh. tržba/rok (aktuální)</div></div>
+</div>
+
+<div class="charts-2col">
+<div class="chart-wrap">
+  <h3 style="margin-bottom:14px;">Projekce tržby — 3 scénáře (12 měsíců)</h3>
+  <canvas id="chartPredikce" height="260"></canvas>
+</div>
+<div class="chart-wrap">
+  <h3 style="margin-bottom:14px;">Počet objednávek od spuštění (týdně)</h3>
+  <canvas id="chartTrend" height="260"></canvas>
+</div>
+</div>
+
+<div style="margin-top:20px;overflow-x:auto;">
+<h3>Scénáře výnosů a nákladů (měsíčně, po ustálení)</h3>
+<table>
+  <tr>
+    <th>Scénář</th>
+    <th class="num">Obj./týden</th>
+    <th class="num">Obj./měsíc</th>
+    <th class="num">Tržba/měsíc</th>
+    <th class="num">Palivo/měsíc</th>
+    <th class="num">Přísp. marže/měsíc</th>
+    <th class="num">Tržba/rok</th>
+  </tr>
+{"".join(
+    f'<tr{"style=\"background:var(--bg3);\"" if name == list(scenarios_pred.keys())[0] else ""}>'
+    f'<td><strong>{name}</strong></td>'
+    f'<td class="num">{sc["weekly"]:.0f}</td>'
+    f'<td class="num">{int(sc["weekly"] * 4.3)}</td>'
+    f'<td class="num" style="color:var(--green)">{fmt_n(int(sc["weekly"] * 4.3 * trzba_avg))} Kč</td>'
+    f'<td class="num" style="color:var(--pink)">{fmt_n(int(sc["weekly"] * 4.3 * avg_fuel_per_order))} Kč</td>'
+    f'<td class="num">{fmt_n(int(sc["weekly"] * 4.3 * (trzba_avg - avg_fuel_per_order)))} Kč</td>'
+    f'<td class="num">{fmt_n(int(sc["weekly"] * 52 * trzba_avg))} Kč</td>'
+    f'</tr>'
+    for name, sc in scenarios_pred.items()
+)}
+</table>
+</div>
+
+<div class="highlight" style="margin-top:16px;">
+  <strong>Poznámka k modelu:</strong> Příspěvková marže zahrnuje pouze přímé palivové náklady ({SPOTREBA_L_100KM} l/100 km × {CENA_PHM_KC_L} Kč/l). Nezahrnuje odpisy vozidla, čas řidiče, marketing ani provoz Supabase/webu. Při 3 obj./víkend (cílový scénář) jsou roční tržby ~{fmt_n(int(3 * 52 * trzba_avg))} Kč — ekonomicky životaschopná aktivita při stávající nízké režii.
+</div>
+</div>
+
+
+<!-- ── 10. MARKETING ───────────────────────────────────────────────────── -->
 <div class="section" id="marketing">
-<h2>8. Marketingové příležitosti</h2>
+<h2>10. Marketingové příležitosti</h2>
 <p>Na základě OSM dat bylo v Google rozvozové zóně identifikováno celkem <strong>{fmt_n(sum(spot_counts.get(k,0) for k in ["restaurant","pub","fast_food","cafe","bar","nightclub"]))} podniků</strong> relevantních pro noční rozvoz (restaurace, puby, bary, fast foody, kavárny, noční kluby).</p>
 
 <div class="charts-2col" style="margin:20px 0;">
@@ -513,9 +658,9 @@ HTML = f"""<!DOCTYPE html>
 </div>
 </div>
 
-<!-- ── 9. SCÉNÁŘE ─────────────────────────────────────────────────────── -->
+<!-- ── 11. SCÉNÁŘE ─────────────────────────────────────────────────────── -->
 <div class="section" id="scenare">
-<h2>9. Scénáře rozvozové vzdálenosti</h2>
+<h2>11. Scénáře rozvozové vzdálenosti</h2>
 <p>Analýza porovnává dopad různých limitů jízdní vzdálenosti na dosažitelný trh. Všechny scénáře vychází z reálných Google Distance Matrix dat (1 093 bodů gridu). Aktuální provozní limit VečerkaPlus je <strong>20 km</strong>.</p>
 
 <div style="overflow-x:auto;margin:20px 0;">
@@ -525,10 +670,10 @@ HTML = f"""<!DOCTYPE html>
     <th class="num">Plocha</th>
     <th class="num">Odh. obyvatel</th>
     <th class="num">Domácností</th>
-    <th class="num">Bytů celkem</th>
     <th class="num">Bytů v paneláku</th>
-    <th class="num">Restaurace</th>
     <th class="num">Nightlife</th>
+    <th class="num" title="Průměrná vzdálenost = limit × 35 %">Palivo/doj. (avg)</th>
+    <th class="num" title="Doručení na kraj zóny">Palivo/doj. (max)</th>
   </tr>
 {"".join(
     f'<tr{_hl(row.limit_km)}>' \
@@ -536,10 +681,10 @@ HTML = f"""<!DOCTYPE html>
     f'<td class="num">{int(row.plocha_km2):,} km²</td>'
     f'<td class="num">{int(row.pop_grid):,}</td>'
     f'<td class="num">{int(row.hh):,}</td>'
-    f'<td class="num">{int(row.byty):,}</td>'
     f'<td class="num">{int(row.byty_panel):,}</td>'
-    f'<td class="num">{int(row.restaurace)}</td>'
     f'<td class="num">{int(row.nightlife)}</td>'
+    f'<td class="num" style="color:var(--yellow)">{row.fuel_avg_kc:.1f} Kč</td>'
+    f'<td class="num" style="color:var(--pink)">{row.fuel_max_kc:.1f} Kč</td>'
     f'</tr>'
     for row in scenare.itertuples()
 )}
@@ -578,18 +723,18 @@ HTML = f"""<!DOCTYPE html>
 </div>
 </div>
 
-<!-- ── 10. MAPA ─────────────────────────────────────────────────────────── -->
+<!-- ── 12. MAPA ─────────────────────────────────────────────────────────── -->
 <div class="section" id="mapa">
-<h2>10. Interaktivní mapa</h2>
+<h2>12. Interaktivní mapa</h2>
 <p>Mapa zobrazuje Google rozvozovou zónu (oranžová), buffer 20 km (modrá přerušovaná), ZUJ hranice, 1km gridy domácností, OSM marketing spoty a geocodované zákazníky. Vrstvy lze přepínat v pravém horním rohu.</p>
 <div class="map-container">
   <iframe src="vecerkaplus_mapa.html" loading="lazy"></iframe>
 </div>
 </div>
 
-<!-- ── 11. ZÁVĚRY ──────────────────────────────────────────────────────── -->
+<!-- ── 13. ZÁVĚRY ──────────────────────────────────────────────────────── -->
 <div class="section" id="zaver">
-<h2>11. Závěry a doporučení</h2>
+<h2>13. Závěry a doporučení</h2>
 
 <h3>Silné stránky</h3>
 <p>VečerkaPlus operuje v nezaplněné tržní mezeře — noční rozvoz alkoholu a doplňkového zboží v FM nemá přímého konkurenta. Rozvozová zóna pokrývá <strong>{fmt_n(pop_grid_iso)} obyvatel</strong> v <strong>{fmt_n(hh_iso)} domácnostech</strong>. Průměrná tržba {int(trzba_avg)} Kč na objednávku při přímých nákladech rozvozu ~{round(naklady_total/n_objednavek, 0):.0f} Kč zaručuje zdravou základní marži.</p>
@@ -604,7 +749,7 @@ HTML = f"""<!DOCTYPE html>
   <tr><td>2</td><td>Partnerství s nočními podniky — QR kódy na stolech v <strong>{spot_counts.get("pub",0) + spot_counts.get("bar",0)}</strong> pubech a barech</td><td style="color:var(--green)">Vysoký</td><td style="color:var(--yellow)">Nízká</td></tr>
   <tr><td>3</td><td>Instagram/TikTok cílení na věk 18–35, geolokace FM centrum, aktivní Pá–So 20–00</td><td style="color:var(--green)">Střední</td><td style="color:var(--yellow)">Nízká</td></tr>
   <tr><td>4</td><td>Rozšíření sortimentu o energetické nápoje a snacks — 1 ze 5 objednávek cílila na tabák+sladkosti</td><td style="color:#ffd740)">Střední</td><td style="color:var(--green)">Nízká</td></tr>
-  <tr><td>5</td><td>Přehodnotit limit pro dopravné zdarma: místo ≥500 Kč zkusit ≥350 Kč — 3 ze 5 zákazníků zaplatili 39 Kč</td><td style="color:#ffd740">Střední</td><td style="color:var(--green)">Velmi nízká</td></tr>
+  <tr><td>5</td><td>Práh dopravného zdarma ≥1 000 Kč motivuje zákazníky navyšovat hodnotu košíku — sledovat průměrnou tržbu, zda roste k tomuto prahu</td><td style="color:var(--yellow)">Střední</td><td style="color:var(--green)">Velmi nízká</td></tr>
 </table>
 
 <div class="highlight positive" style="margin-top:20px;">
