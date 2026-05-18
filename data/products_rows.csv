@@ -1,0 +1,37 @@
+id,created_at,name,category,price,emoji,img,stock
+efe3b81d-9902-4381-bc60-254f842881cb,2026-03-13 20:29:45.346383,Kelímek na pivo 500ml transparentní 5ks,Doplňky,17,🥛,https://i.imgur.com/0nlc9nn.png,20
+2eeffe43-75d3-4def-9c76-8624b2f90a56,2026-03-13 20:20:50.056547,"Monster Ultra Zero 0,5",Energy,69,⚡,https://i.imgur.com/aNJh2Ga.png,24
+0264885a-5ae1-49ad-b11b-d6ed11b54692,2026-03-13 19:17:58.092497,"Monster Energy 0,5l",Energy,69,⚡,https://i.imgur.com/5dTbz02.png,24
+c75068ce-51bf-4b4c-b470-d536f41eece7,2026-03-13 19:17:58.092497,"Red Bull 0,25l",Energy,75,⚡,https://i.imgur.com/XmtdaIM.png,50
+bb128f66-a172-46bd-b493-822f060a53d4,2026-03-13 19:17:58.092497,"Jägermeister 0,7l",Lihoviny,499,🥃,https://i.imgur.com/HFxT0et.png,6
+00da5119-9cbd-489f-b691-64f085e924ad,2026-03-13 19:17:58.092497,"Jägermeister 0,5l",Lihoviny,429,🥃,https://i.imgur.com/2ylvblo.png,6
+791ddc73-1660-4e86-a682-5e37ada6a116,2026-03-13 19:17:58.092497,"Beefeater Pink Gin 0,7l",Lihoviny,549,🥃,https://i.imgur.com/ca7Lm4E.png,4
+d4fed475-9489-44b5-a709-682e0405597a,2026-03-13 19:17:58.092497,"Finlandia Vodka 0,7l",Lihoviny,499,🥃,https://i.imgur.com/sbYGrNm.png,5
+53fb0c00-1561-477a-b422-b6e9a31dc0f5,2026-03-13 19:17:58.092497,"Captain Morgan Spiced 0,7l",Lihoviny,449,🥃,https://i.imgur.com/uKE4ytP.png,4
+e5763ad8-590b-4c8f-b5cb-8874757e657a,2026-03-13 19:17:58.092497,"Amundsen Vodka 0,5l",Lihoviny,299,🥃,https://i.imgur.com/rWLgKPU.png,3
+5042b8ef-36a3-45f5-8f8f-1360cf4b5a2c,2026-03-13 19:17:58.092497,"Republica Honey 0,7l",Lihoviny,499,🥃,https://i.imgur.com/tbS1DOG.png,2
+2344cc55-c68e-404c-827c-81941ed49392,2026-03-13 19:17:58.092497,"Božkov Originál 0,5l",Lihoviny,269,🥃,https://i.imgur.com/hJnf6z6.png,5
+913f1b07-e8ca-4653-894a-78ab411b3c6f,2026-03-13 19:17:58.092497,"Jack Daniel's Black 0,7l",Lihoviny,699,🥃,https://i.imgur.com/60O8002.png,3
+3fba7bd8-b59a-44f9-a181-3346f77924a2,2026-03-13 19:17:58.092497,"Jack Daniel's Honey 0,7l",Lihoviny,699,🥃,https://i.imgur.com/RVrWc3O.png,1
+b7218446-8588-4378-b4e3-8720a510833e,2026-04-20 20:36:47.017579,"Beefeater 0,7l · Tonic 1,5l",Party Mix,449,🍸,https://i.imgur.com/GHrdSYJ.png,
+b01049f2-5d9e-4d80-8f73-7497c71ba0d3,2026-04-20 20:36:47.017579,6× Pilsner Urquell 12° · 2× Lays,Party Mix,289,🍺,https://i.imgur.com/GeqKxXT.png,7
+b719f95f-d02a-403e-b4f0-323fcc06ea84,2026-03-13 19:17:58.092497,Braník 2l,Pivo,69,🍺,https://i.imgur.com/szediMN.png,6
+6263e0b6-3530-4b55-afdf-48e935f32e15,2026-03-13 19:17:58.092497,"Pilsner Urquell 0,5l",Pivo,59,🍺,https://i.imgur.com/z6sXixq.png,30
+c2fbc2db-deca-47a8-a914-2007d4aee502,2026-03-13 19:17:58.092497,"Radegast 0,5l 10",Pivo,49,🍺,https://i.imgur.com/pii5UX1.png,30
+b180ec22-372b-4e2e-a67a-f8b1ecb162af,2026-03-13 19:32:56.625841,"Radegast 0,5 12",Pivo,55,🍺,https://i.imgur.com/QLrNLN4.png,29
+5dfdb6af-8790-4e3d-98c3-1a2823994a62,2026-03-13 19:17:58.092497,"Birell nealko 0,5l",Pivo,45,🍺,https://i.imgur.com/x3uF2Cq.png,23
+7b73acdb-582e-401c-8a4d-2fb80d2cce7d,2026-03-13 19:17:58.092497,Kinder Bueno White,Snacky,55,🍫,https://i.imgur.com/m7VPWly.png,30
+5525f89e-8fc8-4d93-a021-c1e7a20f06dd,2026-03-13 19:17:58.092497,Havlík Trvanlivé tyčinky se sýrem a solí,Snacky,65,🥨,https://i.imgur.com/UeuBZWs.png,30
+6308bb12-acc5-40bd-b8f8-4670eb8b2fd0,2026-03-13 19:17:58.092497,Arašídy solené,Snacky,55,🥜,https://i.imgur.com/sogvCQQ.png,60
+cf1efafd-7a28-46f8-922e-56275b7adeff,2026-03-13 19:17:58.092497,Lay's 60g,Snacky,59,🍟,https://i.imgur.com/J9hYTkW.png,14
+954ca3cd-8d60-452d-b45c-a56e638534ac,2026-03-13 19:17:58.092497,"Aquila voda 1,5l",Soft drinky,39,💧,https://i.imgur.com/FPMTBe2.png,6
+40487634-0861-4aa0-a2f2-3428c10e20aa,2026-03-13 19:17:58.092497,"Schweppes 1,5l",Soft drinky,59,🥤,https://i.imgur.com/YZS8e6Z.png,5
+e965864f-d1e6-4563-a4b2-ecd52050913d,2026-03-13 19:17:58.092497,Coca-Cola 2l zero,Soft drinky,79,🥤,https://i.imgur.com/sIKeGml.png,6
+391f0bec-c086-40f5-8d1e-d8b7ca32198e,2026-03-13 19:17:58.092497,"Top Topic Malina 1,5l",Soft drinky,49,🥤,https://i.imgur.com/AtvJdqN.png,5
+2db9f0a4-d32f-4e0a-95cc-9a5c9c3f17ba,2026-03-13 19:17:58.092497,"Coca-Cola 1,5l",Soft drinky,69,🥤,https://i.imgur.com/GQDsJGw.png,6
+7b1ab084-9b40-4b26-83d6-a3bd91b9cc96,2026-03-13 20:41:01.664355,LM Blue Label,Tabák,168,🚬,https://i.imgur.com/SJM8Y9Q.png,10
+996ac23a-0caf-4fd1-9550-826c36568518,2026-03-13 20:41:01.664355,Marlboro Red,Tabák,179,🚬,https://i.imgur.com/dyYXuDV.png,10
+8af82cbf-2fbb-4986-8ef2-653f9d01b244,2026-03-13 20:31:00.897925,"Znovín Ryzlink rýnský 0,75",Víno,179,🍾,https://i.imgur.com/DTTLFZj.png,0
+8b0198ae-e836-4b02-bc26-83769430fbd2,2026-03-13 19:17:58.092497,Bohemia Sekt brut,Víno,269,🥂,https://i.imgur.com/HjiI7G6.png,5
+380344d5-b779-4c2d-98d2-86ce8f4d97c6,2026-03-13 20:31:00.897925,"Znovín Sauvignon 0,75",Víno,179,🥂,https://i.imgur.com/Gro5phu.png,0
+9f511f85-868b-42a4-ba88-0433b6ae9c22,2026-03-13 20:31:00.897925,"Znovín Tramín 0,75",Víno,179,🍷,https://i.imgur.com/nP1RJ3f.png,0

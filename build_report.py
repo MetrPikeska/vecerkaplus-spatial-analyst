@@ -85,11 +85,15 @@ free_delivery  = int((df_zak["dopravne_zakaznik_kc"] == 0).sum())
 # Prodejní kategorie
 kat_counts = df_zak["produkt_kategorie"].value_counts().to_dict()
 
+# Scénáře vzdáleností
+scenare = pd.read_csv(os.path.join(OUT_DIR, "scenare_vzdalenosti.csv"))
+
 print("Data načtena, generuji report...")
 
 # ── HTML report ────────────────────────────────────────────────────────────
 def fmt_n(n): return f"{n:,}".replace(",", " ")
 
+def _hl(km): return ' style="background:var(--bg3);border:1px solid var(--cyan);"' if km == 20 else ""
 HTML = f"""<!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -234,6 +238,7 @@ HTML = f"""<!DOCTYPE html>
     <li><a href="#zakaznici">Zákazníci a objednávky</a></li>
     <li><a href="#finance">Finanční přehled</a></li>
     <li><a href="#marketing">Marketingové příležitosti</a></li>
+    <li><a href="#scenare">Scénáře vzdálenosti</a></li>
     <li><a href="#mapa">Interaktivní mapa</a></li>
     <li><a href="#zaver">Závěry a doporučení</a></li>
   </ol>
@@ -439,9 +444,74 @@ HTML = f"""<!DOCTYPE html>
 </div>
 </div>
 
-<!-- ── 8. MAPA ─────────────────────────────────────────────────────────── -->
+<!-- ── 8. SCÉNÁŘE ─────────────────────────────────────────────────────── -->
+<div class="section" id="scenare">
+<h2>8. Scénáře rozvozové vzdálenosti</h2>
+<p>Analýza porovnává dopad různých limitů jízdní vzdálenosti na dosažitelný trh. Všechny scénáře vychází z reálných Google Distance Matrix dat (1 093 bodů gridu). Aktuální provozní limit VečerkaPlus je <strong>20 km</strong>.</p>
+
+<div style="overflow-x:auto;margin:20px 0;">
+<table>
+  <tr>
+    <th>Limit</th>
+    <th class="num">Plocha</th>
+    <th class="num">Odh. obyvatel</th>
+    <th class="num">Domácností</th>
+    <th class="num">Bytů celkem</th>
+    <th class="num">Bytů v paneláku</th>
+    <th class="num">Restaurace</th>
+    <th class="num">Nightlife</th>
+  </tr>
+{"".join(
+    f'<tr{_hl(row.limit_km)}>' \
+    f'<td><strong>{"▶ " if row.limit_km == 20 else ""}≤ {row.limit_km} km</strong></td>'
+    f'<td class="num">{int(row.plocha_km2):,} km²</td>'
+    f'<td class="num">{int(row.pop_grid):,}</td>'
+    f'<td class="num">{int(row.hh):,}</td>'
+    f'<td class="num">{int(row.byty):,}</td>'
+    f'<td class="num">{int(row.byty_panel):,}</td>'
+    f'<td class="num">{int(row.restaurace)}</td>'
+    f'<td class="num">{int(row.nightlife)}</td>'
+    f'</tr>'
+    for row in scenare.itertuples()
+)}
+</table>
+</div>
+
+<div class="charts-2col" style="margin:20px 0;">
+<div class="chart-wrap">
+  <h3 style="margin-bottom:14px;">Obyvatelé a domácnosti podle limitu</h3>
+  <canvas id="chartScenareOb" height="220"></canvas>
+</div>
+<div class="chart-wrap">
+  <h3 style="margin-bottom:14px;">Byty v panelovém fondu</h3>
+  <canvas id="chartScenarePan" height="220"></canvas>
+</div>
+</div>
+
+<div class="highlight">
+  <strong>Klíčový poznatek:</strong> Přechod z 15 km na 20 km přidá <strong>{int(scenare[scenare.limit_km==20]["pop_grid"].values[0] - scenare[scenare.limit_km==15]["pop_grid"].values[0]):,} obyvatel</strong> a <strong>{int(scenare[scenare.limit_km==20]["byty_panel"].values[0] - scenare[scenare.limit_km==15]["byty_panel"].values[0]):,} bytů v paneláku</strong> — největší skok v celé škále. Přechod z 10 na 15 km pak přidá zejména <strong>{int(scenare[scenare.limit_km==15]["restaurace"].values[0] - scenare[scenare.limit_km==10]["restaurace"].values[0])} restaurací</strong> a podniků — dobré pro B2B partnerství. Zóna ≤ 5 km pokrývá již <strong>{int(scenare[scenare.limit_km==5]["byty_panel"].values[0]):,} bytů v paneláku</strong> — hustou zástavbu centra FM — při minimálních dopravních nákladech.
+</div>
+
+<h3 style="margin-top:20px;">Marginalní přínos každého km navíc</h3>
+<div style="overflow-x:auto;">
+<table>
+  <tr><th>Přechod</th><th class="num">+Obyvatel</th><th class="num">+Domácností</th><th class="num">+Bytů panel.</th><th class="num">+Plocha km²</th></tr>
+{"".join(
+    f'<tr><td>{"▶ " if scenare.iloc[i]["limit_km"]==20 else ""}{int(scenare.iloc[i-1]["limit_km"])} → {int(scenare.iloc[i]["limit_km"])} km</td>'
+    f'<td class="num">+{int(scenare.iloc[i]["pop_grid"]-scenare.iloc[i-1]["pop_grid"]):,}</td>'
+    f'<td class="num">+{int(scenare.iloc[i]["hh"]-scenare.iloc[i-1]["hh"]):,}</td>'
+    f'<td class="num">+{int(scenare.iloc[i]["byty_panel"]-scenare.iloc[i-1]["byty_panel"]):,}</td>'
+    f'<td class="num">+{int(scenare.iloc[i]["plocha_km2"]-scenare.iloc[i-1]["plocha_km2"]):,}</td>'
+    f'</tr>'
+    for i in range(1, len(scenare))
+)}
+</table>
+</div>
+</div>
+
+<!-- ── 9. MAPA ─────────────────────────────────────────────────────────── -->
 <div class="section" id="mapa">
-<h2>8. Interaktivní mapa</h2>
+<h2>9. Interaktivní mapa</h2>
 <p>Mapa zobrazuje Google rozvozovou zónu (oranžová), buffer 20 km (modrá přerušovaná), ZUJ hranice, 1km gridy domácností, OSM marketing spoty a geocodované zákazníky. Vrstvy lze přepínat v pravém horním rohu.</p>
 <div class="map-container">
   <iframe src="vecerkaplus_mapa.html" loading="lazy"></iframe>
@@ -549,6 +619,56 @@ new Chart(document.getElementById('chartSpoty'), {{
     scales: {{
       x: {{ ticks: {{ color: '#888' }}, grid: {{ color: '#1a1a28' }} }},
       y: {{ ticks: {{ color: '#bbb' }}, grid: {{ display: false }} }}
+    }}
+  }}
+}});
+
+// ── Scénáře: Obyvatelé a domácnosti ──
+new Chart(document.getElementById('chartScenareOb'), {{
+  type: 'bar',
+  data: {{
+    labels: {json.dumps([f'≤ {int(r.limit_km)} km' for r in scenare.itertuples()])},
+    datasets: [
+      {{
+        label: 'Obyvatelé (odh.)',
+        data: {json.dumps(list(scenare['pop_grid'].astype(int)))},
+        backgroundColor: '#29B6F6',
+        borderRadius: 2,
+      }},
+      {{
+        label: 'Domácnosti',
+        data: {json.dumps(list(scenare['hh'].astype(int)))},
+        backgroundColor: '#FF3D9A',
+        borderRadius: 2,
+      }}
+    ]
+  }},
+  options: {{
+    plugins: {{ legend: {{ labels: {{ color: '#bbb', font: {{ size: 11 }} }} }} }},
+    scales: {{
+      x: {{ ticks: {{ color: '#888' }}, grid: {{ color: '#1a1a28' }} }},
+      y: {{ ticks: {{ color: '#888' }}, grid: {{ color: '#1a1a28' }} }}
+    }}
+  }}
+}});
+
+// ── Scénáře: Byty v panelovém fondu ──
+new Chart(document.getElementById('chartScenarePan'), {{
+  type: 'bar',
+  data: {{
+    labels: {json.dumps([f'≤ {int(r.limit_km)} km' for r in scenare.itertuples()])},
+    datasets: [{{
+      label: 'Byty v panelovém fondu',
+      data: {json.dumps(list(scenare['byty_panel'].astype(int)))},
+      backgroundColor: {json.dumps(['#ffd740' if int(r.limit_km) != 20 else '#00e676' for r in scenare.itertuples()])},
+      borderRadius: 2,
+    }}]
+  }},
+  options: {{
+    plugins: {{ legend: {{ display: false }} }},
+    scales: {{
+      x: {{ ticks: {{ color: '#888' }}, grid: {{ color: '#1a1a28' }} }},
+      y: {{ ticks: {{ color: '#888' }}, grid: {{ color: '#1a1a28' }} }}
     }}
   }}
 }});
