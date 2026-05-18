@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VečerkaPlus — Prostorová analýza dosahu</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #080808;
+    --bg2: #111118;
+    --bg3: #1a1a28;
+    --cyan: #29B6F6;
+    --pink: #FF3D9A;
+    --green: #00e676;
+    --yellow: #ffd740;
+    --muted: #666;
+    --text: #e0e0e0;
+    --border: #222;
+    --radius: 2px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6; }
+  a { color: var(--cyan); }
+
+  /* Layout */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+  .section { margin: 48px 0; }
+  h1 { font-size: 2rem; color: var(--cyan); letter-spacing: -.5px; margin-bottom: 4px; }
+  h2 { font-size: 1.3rem; color: var(--cyan); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 20px; margin-top: 8px; }
+  h3 { font-size: 1rem; color: var(--yellow); margin-bottom: 10px; }
+  p { margin-bottom: 12px; color: #bbb; }
+  .lead { font-size: 1.05rem; color: var(--text); }
+  strong { color: var(--text); }
+
+  /* Header */
+  .header { background: var(--bg2); border-bottom: 2px solid var(--cyan); padding: 28px 0; margin-bottom: 8px; }
+  .header .container { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+  .header-meta { color: var(--muted); font-size: 0.85rem; text-align: right; }
+  .badge { display: inline-block; background: var(--bg3); border: 1px solid var(--cyan); color: var(--cyan); border-radius: var(--radius); padding: 2px 10px; font-size: 0.78rem; margin-right: 6px; }
+
+  /* KPI grid */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .kpi { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .kpi .val { font-size: 1.9rem; font-weight: 700; color: var(--cyan); line-height: 1.1; }
+  .kpi .val.pink { color: var(--pink); }
+  .kpi .val.green { color: var(--green); }
+  .kpi .val.yellow { color: var(--yellow); }
+  .kpi .lbl { font-size: 0.78rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .4px; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th { background: var(--bg3); color: var(--cyan); padding: 8px 12px; text-align: left; font-weight: 600; border-bottom: 1px solid var(--border); }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: #ccc; }
+  tr:hover td { background: var(--bg3); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .tag { display: inline-block; padding: 1px 7px; border-radius: 2px; font-size: 0.75rem; font-weight: 600; }
+  .tag-lihoviny { background: #1a0a0f; color: var(--pink); border: 1px solid var(--pink); }
+  .tag-vino { background: #1a0d15; color: #e879a0; border: 1px solid #e879a0; }
+  .tag-tabak { background: #0d1017; color: #90a4ae; border: 1px solid #90a4ae; }
+  .tag-snack { background: #0f1208; color: var(--yellow); border: 1px solid var(--yellow); }
+
+  /* Charts */
+  .chart-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  .charts-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .charts-2col { grid-template-columns: 1fr; } }
+
+  /* Highlight box */
+  .highlight { background: var(--bg3); border-left: 3px solid var(--cyan); padding: 14px 18px; border-radius: var(--radius); margin: 16px 0; }
+  .highlight.warn { border-color: var(--yellow); }
+  .highlight.positive { border-color: var(--green); }
+
+  /* Order cards */
+  .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .order-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .order-card .order-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .order-card .order-id { color: var(--cyan); font-weight: 700; font-size: 0.85rem; }
+  .order-card .order-val { color: var(--green); font-weight: 700; font-size: 1.1rem; }
+  .order-card .order-meta { font-size: 0.82rem; color: var(--muted); margin-bottom: 6px; }
+  .order-card .order-items { font-size: 0.88rem; color: #bbb; }
+
+  /* Two-col text + data */
+  .two-col { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* Progress bars */
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.88rem; }
+  .bar-label { width: 120px; color: #aaa; flex-shrink: 0; }
+  .bar-track { flex: 1; background: var(--bg3); height: 8px; border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; background: var(--cyan); }
+  .bar-fill.pink { background: var(--pink); }
+  .bar-fill.green { background: var(--green); }
+  .bar-val { width: 60px; text-align: right; color: var(--text); font-variant-numeric: tabular-nums; }
+
+  /* Map iframe */
+  .map-container { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .map-container iframe { width: 100%; height: 520px; border: none; display: block; }
+
+  /* Footer */
+  .footer { margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+  /* TOC */
+  .toc { background: var(--bg2); border: 1px solid var(--border); padding: 16px 20px; border-radius: var(--radius); margin-bottom: 40px; }
+  .toc h3 { margin-bottom: 10px; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: .6px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 4px 0; }
+  .toc a { color: #888; text-decoration: none; font-size: 0.9rem; }
+  .toc a:hover { color: var(--cyan); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="container">
+    <div>
+      <div style="color:var(--muted);font-size:.8rem;margin-bottom:4px;">PROSTOROVÁ ANALÝZA</div>
+      <h1>VečerkaPlus</h1>
+      <div style="color:#888;margin-top:4px;">Noční rozvoz alkoholu &amp; doplňkového zboží · Frýdek-Místek</div>
+      <div style="margin-top:10px;">
+        <span class="badge">Pá–Ne 22:00–6:00</span>
+        <span class="badge">≤ 20 km jízdy</span>
+        <span class="badge">spuštění 14. 3. 2026</span>
+      </div>
+    </div>
+    <div class="header-meta">
+      Zpracováno: 19. 5. 2026<br>
+      Datové zdroje: Google Maps · ČSÚ SLDB 2021<br>
+      RÚIAN · OSM · ArcČR 4.3
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="toc">
+  <h3>Obsah</h3>
+  <ol>
+    <li><a href="#summary">Executive summary</a></li>
+    <li><a href="#zona">Rozvozová zóna</a></li>
+    <li><a href="#demografie">Demografický profil</a></li>
+    <li><a href="#zastavba">Bytová zástavba (RÚIAN)</a></li>
+    <li><a href="#zakaznici">Zákazníci a objednávky</a></li>
+    <li><a href="#finance">Finanční přehled</a></li>
+    <li><a href="#marketing">Marketingové příležitosti</a></li>
+    <li><a href="#mapa">Interaktivní mapa</a></li>
+    <li><a href="#zaver">Závěry a doporučení</a></li>
+  </ol>
+</div>
+
+<!-- ── 1. EXECUTIVE SUMMARY ──────────────────────────────────────────────── -->
+<div class="section" id="summary">
+<h2>1. Executive summary</h2>
+<p class="lead">VečerkaPlus je první noční rozvozová služba ve Frýdku-Místku specializovaná na alkohol a doplňkové zboží. Provoz byl zahájen 14. března 2026; první objednávka přišla 18. dubna 2026 po&nbsp;pěti týdnech od spuštění. Do 15. května 2026 bylo doručeno <strong>5 objednávek</strong> celkové tržby <strong>2 258 Kč</strong>.</p>
+
+<div class="kpi-grid" style="margin:24px 0;">
+  <div class="kpi"><div class="val">265 783</div><div class="lbl">Odh. obyvatel v dosahu</div></div>
+  <div class="kpi"><div class="val">112 145</div><div class="lbl">Domácností v dosahu</div></div>
+  <div class="kpi"><div class="val">119 977</div><div class="lbl">Bytů (RÚIAN)</div></div>
+  <div class="kpi"><div class="val pink">5</div><div class="lbl">Objednávek (celkem)</div></div>
+  <div class="kpi"><div class="val green">452 Kč</div><div class="lbl">Průměrná tržba</div></div>
+  <div class="kpi"><div class="val yellow">630 km²</div><div class="lbl">Plocha rozvozové zóny</div></div>
+</div>
+
+<div class="highlight positive">
+  <strong>Potenciál:</strong> V reálné rozvozové zóně žije odhadem <strong>265 783 obyvatel</strong> v <strong>112 145 domácnostech</strong>. Bytové domy (panelová zástavba ≥5 podlaží) koncentrují <strong>43 237 bytů</strong> — to je hlavní cílový segment pro noční rozvoz. Všechny dosavadní objednávky pocházejí z centra FM, do vzdálenosti max. 3,3 km od výchozího bodu.
+</div>
+<div class="highlight warn">
+  <strong>Limitace dat:</strong> Analýza vychází z 5 objednávek za první 4 týdny provozu. Statistické závěry o zákaznickém chování jsou orientační — data jsou prezentována jako raná fáze provozu, nikoli reprezentativní vzorek.
+</div>
+</div>
+
+<!-- ── 2. ROZVOZOVÁ ZÓNA ──────────────────────────────────────────────── -->
+<div class="section" id="zona">
+<h2>2. Rozvozová zóna</h2>
+<div class="two-col">
+<div>
+<p>Rozvozová zóna VečerkaPlus je definována jako <strong>jízdní vzdálenost ≤ 20 km</strong> z Frýdku-Místku — shodně s logikou na webu vecerkaplus.cz (Google Distance Matrix API, mód <em>driving</em>). Tato definice se zásadně liší od prosté vzdušné vzdálenosti: hornatý terén Beskyd na jihu a jihovýchodě výrazně omezuje reálný dosah.</p>
+<p>Porovnání zón ukazuje, že <strong>kruhový buffer 20 km nadhodnocuje reálný dosah o 49 %</strong>. Skutečná rozvozová zóna pokrývá zejména urbanizované území Frýdku-Místku, Havířova, Třince a přilehlých obcí v rovinnější části okresu.</p>
+</div>
+<div>
+<table>
+  <tr><th>Zóna</th><th class="num">Plocha</th><th class="num">Odh. obyvatel</th></tr>
+  <tr><td>Buffer 20 km (vzdušná)</td><td class="num">1 254 km²</td><td class="num">617 960</td></tr>
+  <tr><td>ORS izochróna 20 min</td><td class="num">803 km²</td><td class="num">386&nbsp;042</td></tr>
+  <tr><td><strong>Google zóna ≤ 20 km</strong></td><td class="num"><strong>630 km²</strong></td><td class="num"><strong>265 783</strong></td></tr>
+</table>
+<p style="font-size:.8rem;color:var(--muted);margin-top:8px;">Google zóna = 1 093 bodů gridu dotázáno přes Google Distance Matrix API, stejný origin jako vecerkaplus.cz.</p>
+</div>
+</div>
+</div>
+
+<!-- ── 3. DEMOGRAFIE ──────────────────────────────────────────────────── -->
+<div class="section" id="demografie">
+<h2>3. Demografický profil zóny</h2>
+<div class="two-col">
+<div>
+<p>Věková struktura obyvatel v Google rozvozové zóně vychází z dat ČSÚ SLDB 2021 agregovaných na úrovni obcí (centroid v zóně). Klíčová cílová skupina nočního rozvozu alkoholu — osoby ve věku <strong>15–64 let — tvoří 64 % populace</strong>, tj. odhadem <strong>170 101 osob</strong> v dosahu.</p>
+<p>Průměrný věk obyvatel obcí v zóně je <strong>42.0 let</strong>, což odpovídá průměru Moravskoslezského kraje. Frýdek-Místek jako centrum zóny má rozvinutou noční ekonomiku — 120 nočních podniků (puby, bary, kluby) v dosahu.</p>
+</div>
+<div class="chart-wrap">
+  <canvas id="chartVek" height="180"></canvas>
+</div>
+</div>
+
+<div style="margin-top:20px;">
+<h3>Věková struktura populace v zóně</h3>
+<div class="bar-row">
+  <div class="bar-label">0–14 let</div>
+  <div class="bar-track"><div class="bar-fill" style="width:16%"></div></div>
+  <div class="bar-val">16.5 %</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">15–64 let</div>
+  <div class="bar-track"><div class="bar-fill" style="width:63%"></div></div>
+  <div class="bar-val">63.5 %</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">65+ let</div>
+  <div class="bar-track"><div class="bar-fill pink" style="width:20%"></div></div>
+  <div class="bar-val">20.0 %</div>
+</div>
+</div>
+</div>
+
+<!-- ── 4. ZÁSTAVBA ────────────────────────────────────────────────────── -->
+<div class="section" id="zastavba">
+<h2>4. Bytová zástavba — RÚIAN</h2>
+<p>Data Registru územní identifikace, adres a nemovitostí (RÚIAN, ČÚZK) umožňují přesné zmapování rezidenční zástavby v rozvozové zóně. Celkem bylo analyzováno <strong>80 431 stavebních objektů</strong> s celkovým počtem <strong>119 977 bytů</strong>.</p>
+
+<div class="kpi-grid" style="margin:20px 0;">
+  <div class="kpi"><div class="val">3 491</div><div class="lbl">Bytových domů</div></div>
+  <div class="kpi"><div class="val">58 152</div><div class="lbl">Bytů v byt. domech</div></div>
+  <div class="kpi"><div class="val">42 046</div><div class="lbl">Rodinných domů</div></div>
+  <div class="kpi"><div class="val">53 175</div><div class="lbl">Bytů v rod. domech</div></div>
+  <div class="kpi"><div class="val yellow">1 723</div><div class="lbl">Budov ≥5 podlaží</div></div>
+  <div class="kpi"><div class="val yellow">43 237</div><div class="lbl">Bytů v panelákovém fondu</div></div>
+</div>
+
+<div class="two-col">
+<div>
+<p><strong>Panelová zástavba</strong> (budovy s ≥5 nadzemními podlažími) tvoří pouze <strong>2.1 % počtu budov</strong>, ale koncentruje <strong>36 % všech bytů</strong> — tj. 43 237 bytových jednotek. Tato hustě osídlená zástavba ve Frýdku-Místku, Havířově a Třinci představuje primární geografický cíl pro akvizici zákazníků nočního rozvozu.</p>
+<p>Průměrný bytový dům v zóně má <strong>16,7 bytů</strong> a <strong>4,6 nadzemního podlaží</strong>. Rodinné domy mají průměrně 1,3 bytu na objekt — jejich obsluha je sice možná, ale ekonomicky méně efektivní vzhledem k rozptylu adres.</p>
+</div>
+<div class="chart-wrap">
+  <canvas id="chartBudovy" height="220"></canvas>
+</div>
+</div>
+</div>
+
+<!-- ── 5. ZÁKAZNÍCI ───────────────────────────────────────────────────── -->
+<div class="section" id="zakaznici">
+<h2>5. Zákazníci a objednávky</h2>
+<p>V období od 18. dubna do 15. května 2026 bylo přijato a doručeno <strong>5 objednávek</strong>. Všechny objednávky pocházejí z centra Frýdku-Místku, v jízdní vzdálenosti <strong>1,8–3,3 km</strong> od výchozího bodu. Žádná objednávka zatím nepřišla z větší vzdálenosti než 3,3 km, přestože zóna umožňuje rozvoz až na 20 km.</p>
+
+<div class="orders-grid" style="margin:20px 0;">
+
+  <div class="order-card">
+    <div class="order-header"><span class="order-id">#1 · 18. 4. 2026 · pátek 20:13</span><span class="order-val">547 Kč</span></div>
+    <div class="order-meta">📍 K Hájku 29, FM · 2,8 km · hotově · dopravné zdarma</div>
+    <div class="order-items"><span class="tag tag-lihoviny">lihoviny</span> Beefeater Pink Gin 0,7l + Schweppes 1,5l</div>
+  </div>
+
+  <div class="order-card">
+    <div class="order-header"><span class="order-id">#2 · 19. 4. 2026 · sobota 00:04</span><span class="order-val">325 Kč</span></div>
+    <div class="order-meta">📍 Heydukova, FM · 3,2 km · kartou · dopravné 39 Kč</div>
+    <div class="order-items"><span class="tag tag-vino">víno</span> Znovín Tramín + Sauvignon 2× 0,75l</div>
+  </div>
+
+  <div class="order-card">
+    <div class="order-header"><span class="order-id">#3 · 1. 5. 2026 · pátek 21:20</span><span class="order-val">262 Kč</span></div>
+    <div class="order-meta">📍 Dr. Vančury 1924, FM · 1,8 km · kartou · dopravné 39 Kč</div>
+    <div class="order-items"><span class="tag tag-tabak">tabák</span><span class="tag tag-snack" style="margin-left:4px">sladkosti</span> LM Blue karton + Kinder Bueno White</div>
+  </div>
+
+  <div class="order-card">
+    <div class="order-header"><span class="order-id">#4 · 8. 5. 2026 · sobota 22:56</span><span class="order-val">547 Kč</span></div>
+    <div class="order-meta">📍 Boženy Němcové 568, FM · 3,3 km · kartou · dopravné 39 Kč</div>
+    <div class="order-items"><span class="tag tag-lihoviny">lihoviny</span> Captain Morgan Spiced 0,7l + Lay's 60g</div>
+  </div>
+
+  <div class="order-card">
+    <div class="order-header"><span class="order-id">#5 · 15. 5. 2026 · pátek 21:30</span><span class="order-val">577 Kč</span></div>
+    <div class="order-meta">📍 Malý Koloredov 565, FM · 2,5 km · hotově · dopravné 39 Kč</div>
+    <div class="order-items"><span class="tag tag-lihoviny">lihoviny</span> 2× Božkov Originál 0,5l</div>
+  </div>
+
+</div>
+
+<div class="highlight">
+  <strong>Vzorec objednávek:</strong> 3 objednávky přišly v pátek (20:13, 21:20, 21:30), 2 v sobotu (00:04 — tedy v noci z pátku, 22:56). Všechny objednávky jsou v úzkém časovém okně 20–01 hodin — žádná ve druhé polovině noční směny (01–06). Produktový mix dominují lihoviny (3/5 objednávek), jednou víno a jednou tabák se sladkostmi.
+</div>
+</div>
+
+<!-- ── 6. FINANCE ─────────────────────────────────────────────────────── -->
+<div class="section" id="finance">
+<h2>6. Finanční přehled</h2>
+<div class="two-col">
+<div>
+<table>
+  <tr><th>Metrika</th><th class="num">Hodnota</th></tr>
+  <tr><td>Celková tržba (5 obj.)</td><td class="num"><strong style="color:var(--green)">2 258 Kč</strong></td></tr>
+  <tr><td>Průměrná tržba / objednávka</td><td class="num">452 Kč</td></tr>
+  <tr><td>Min / Max tržba</td><td class="num">262 / 577 Kč</td></tr>
+  <tr><td>Celkové přímé náklady na rozvoz</td><td class="num">86 Kč</td></tr>
+  <tr><td>Průměrné náklady rozvoz / obj.</td><td class="num">17.1 Kč</td></tr>
+  <tr><td>Průměrná vzdálenost doručení</td><td class="num">2.7 km</td></tr>
+  <tr><td>Objednávky s dopravným zdarma (≥500 Kč)</td><td class="num">1 / 5</td></tr>
+  <tr><td>Platba kartou / hotově</td><td class="num">3 / 2</td></tr>
+</table>
+</div>
+<div class="chart-wrap">
+  <canvas id="chartTrzby" height="220"></canvas>
+</div>
+</div>
+
+<div class="highlight positive" style="margin-top:20px;">
+  <strong>Nákladová efektivita rozvozu:</strong> Průměrné přímé náklady na jedno doručení jsou <strong>17.1 Kč</strong> (pohonné hmoty, opotřebení vozidla). Při průměrné tržbě 452 Kč a průměrné hrubé marži na zboží ~37 % jde o ekonomicky životaschopný model — klíčem ke škálování je zvýšení četnosti objednávek, nikoli rozšiřování zóny.
+</div>
+</div>
+
+<!-- ── 7. MARKETING ───────────────────────────────────────────────────── -->
+<div class="section" id="marketing">
+<h2>7. Marketingové příležitosti</h2>
+<p>Na základě OSM dat bylo v Google rozvozové zóně identifikováno celkem <strong>427 podniků</strong> relevantních pro noční rozvoz (restaurace, puby, bary, fast foody, kavárny, noční kluby).</p>
+
+<div class="charts-2col" style="margin:20px 0;">
+<div class="chart-wrap">
+  <canvas id="chartSpoty" height="260"></canvas>
+</div>
+<div>
+  <h3>Potenciál partnerské spolupráce</h3>
+  <p>Restaurace a puby v blízkosti centra FM jsou přirozenými distribučními body — zákazníci odcházející z podniku večer mohou objednat dovoz na cestu. Kavárny a bary s pozdní otevírací dobou představují příležitost pro <strong>spolupráci na cross-promotion</strong>.</p>
+  <table style="margin-top:12px;">
+    <tr><th>Kategorie</th><th class="num">V zóně</th></tr>
+    <tr><td>🍽 Restaurace</td><td class="num">212</td></tr>
+    <tr><td>🍺 Puby</td><td class="num">85</td></tr>
+    <tr><td>🍔 Fast food</td><td class="num">53</td></tr>
+    <tr><td>☕ Kavárny</td><td class="num">42</td></tr>
+    <tr><td>🍸 Bary</td><td class="num">35</td></tr>
+    <tr><td>🎵 Noční kluby</td><td class="num">0</td></tr>
+  </table>
+</div>
+</div>
+
+<div class="highlight">
+  <strong>Prioritní akvizice:</strong> 43 237 bytů v panelovém fondu (≥5 podlaží) tvoří nejhustší rezidenční zástavbu v zóně. Cílená distribuce letáků nebo QR kódů ve vchodech bytových domů v okruhu 5 km od FM centra má výrazně vyšší návratnost než pokrytí celé 20km zóny.
+</div>
+</div>
+
+<!-- ── 8. MAPA ─────────────────────────────────────────────────────────── -->
+<div class="section" id="mapa">
+<h2>8. Interaktivní mapa</h2>
+<p>Mapa zobrazuje Google rozvozovou zónu (oranžová), buffer 20 km (modrá přerušovaná), ZUJ hranice, 1km gridy domácností, OSM marketing spoty a geocodované zákazníky. Vrstvy lze přepínat v pravém horním rohu.</p>
+<div class="map-container">
+  <iframe src="vecerkaplus_mapa.html" loading="lazy"></iframe>
+</div>
+</div>
+
+<!-- ── 9. ZÁVĚRY ──────────────────────────────────────────────────────── -->
+<div class="section" id="zaver">
+<h2>9. Závěry a doporučení</h2>
+
+<h3>Silné stránky</h3>
+<p>VečerkaPlus operuje v nezaplněné tržní mezeře — noční rozvoz alkoholu a doplňkového zboží v FM nemá přímého konkurenta. Rozvozová zóna pokrývá <strong>265 783 obyvatel</strong> v <strong>112 145 domácnostech</strong>. Průměrná tržba 452 Kč na objednávku při přímých nákladech rozvozu ~17 Kč zaručuje zdravou základní marži.</p>
+
+<h3>Klíčové výzvy</h3>
+<p>Nízká povědomost trhu — 5 objednávek za 4 týdny provozu naznačuje, že hlavní bariérou není logistika ani dosah, ale <strong>zákaznická akvizice</strong>. Žádná objednávka nepřišla po 01:00 ani ze vzdálenosti větší než 3,3 km — potenciál zóny je z 80 % nevyužitý. Druhý Pátku/So vzorec ukazuje velmi koncentrovanou poptávku — rozložení do více nocí bude vyžadovat aktivní marketing.</p>
+
+<h3>Doporučení</h3>
+<table>
+  <tr><th>#</th><th>Akce</th><th>Dopad</th><th>Obtížnost</th></tr>
+  <tr><td>1</td><td>Letákování bytových domů (≥5 podlaží) do 5 km od FM centra — <strong>43 237 bytů</strong></td><td style="color:var(--green)">Vysoký</td><td style="color:var(--yellow)">Nízká</td></tr>
+  <tr><td>2</td><td>Partnerství s nočními podniky — QR kódy na stolech v <strong>120</strong> pubech a barech</td><td style="color:var(--green)">Vysoký</td><td style="color:var(--yellow)">Nízká</td></tr>
+  <tr><td>3</td><td>Instagram/TikTok cílení na věk 18–35, geolokace FM centrum, aktivní Pá–So 20–00</td><td style="color:var(--green)">Střední</td><td style="color:var(--yellow)">Nízká</td></tr>
+  <tr><td>4</td><td>Rozšíření sortimentu o energetické nápoje a snacks — 1 ze 5 objednávek cílila na tabák+sladkosti</td><td style="color:#ffd740)">Střední</td><td style="color:var(--green)">Nízká</td></tr>
+  <tr><td>5</td><td>Přehodnotit limit pro dopravné zdarma: místo ≥500 Kč zkusit ≥350 Kč — 3 ze 5 zákazníků zaplatili 39 Kč</td><td style="color:#ffd740">Střední</td><td style="color:var(--green)">Velmi nízká</td></tr>
+</table>
+
+<div class="highlight positive" style="margin-top:20px;">
+  <strong>Výhled:</strong> Při úspěšné akvizici 1 % domácností z panelového fondu v 5km okruhu (~129 aktivních zákazníků, průměr 1 objednávka/měsíc) by tržba dosáhla řádu <strong>stovek tisíc Kč ročně</strong> — a to pouze z centra FM bez využití plného 20km dosahu.
+</div>
+</div>
+
+</div><!-- /.container -->
+
+<div class="container">
+<div class="footer">
+  <div>VečerkaPlus · Prostorová analýza dosahu · 19. 5. 2026</div>
+  <div>Datové zdroje: Google Maps API · ČSÚ SLDB 2021 · RÚIAN (ČÚZK) · OpenStreetMap · ArcČR 4.3 · OpenRouteService</div>
+</div>
+</div>
+
+<script>
+// ── Věkový koláč ──
+new Chart(document.getElementById('chartVek'), {
+  type: 'doughnut',
+  data: {
+    labels: ['0–14 let', '15–64 let', '65+ let'],
+    datasets: [{ data: [26242, 101105, 31899],
+      backgroundColor: ['#37474f','#29B6F6','#FF3D9A'],
+      borderColor: '#111118', borderWidth: 2 }]
+  },
+  options: { plugins: { legend: { labels: { color: '#bbb', font: { size: 12 } } } },
+    cutout: '60%' }
+});
+
+// ── Budovy koláč ──
+new Chart(document.getElementById('chartBudovy'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Byty v bytových domech', 'Byty v rodinných domech', 'Ostatní'],
+    datasets: [{ data: [58152, 53175, 8650],
+      backgroundColor: ['#29B6F6','#FF3D9A','#37474f'],
+      borderColor: '#111118', borderWidth: 2 }]
+  },
+  options: { plugins: { legend: { labels: { color: '#bbb', font: { size: 11 } } } },
+    cutout: '55%' }
+});
+
+// ── Tržby bar ──
+new Chart(document.getElementById('chartTrzby'), {
+  type: 'bar',
+  data: {
+    labels: ['#1 18.4', '#2 19.4', '#3 1.5', '#4 8.5', '#5 15.5'],
+    datasets: [{
+      label: 'Tržba (Kč)',
+      data: [547, 325, 262, 547, 577],
+      backgroundColor: ['#29B6F6','#29B6F6','#FF3D9A','#29B6F6','#00e676'],
+      borderRadius: 2,
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#888' }, grid: { color: '#1a1a28' } },
+      y: { ticks: { color: '#888' }, grid: { color: '#1a1a28' },
+           suggestedMin: 0, suggestedMax: 700 }
+    }
+  }
+});
+
+// ── Spoty horizontální bar ──
+new Chart(document.getElementById('chartSpoty'), {
+  type: 'bar',
+  data: {
+    labels: ['Restaurace', 'Puby', 'Fast food', 'Kavárny', 'Bary', 'Noční kluby'],
+    datasets: [{
+      label: 'Počet v zóně',
+      data: [212, 85, 53, 42, 35, 0],
+      backgroundColor: ['#FF3D9A','#ffd740','#ff6d00','#69f0ae','#e040fb','#f06292'],
+      borderRadius: 2,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#888' }, grid: { color: '#1a1a28' } },
+      y: { ticks: { color: '#bbb' }, grid: { display: false } }
+    }
+  }
+});
+</script>
+</body>
+</html>
