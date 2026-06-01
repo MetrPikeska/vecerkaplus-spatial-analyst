@@ -12,7 +12,7 @@ import numpy as np
 import requests
 import geopandas as gpd
 import pandas as pd
-from shapely.geometry import Point, MultiPoint
+from shapely.geometry import Point
 from shapely.ops import unary_union
 import os
 
@@ -134,15 +134,20 @@ print(f"\n    V zóně (≤ {MAX_KM} km):  {len(in_zone)} bodů")
 print(f"    Mimo zónu:              {len(out_zone)} bodů")
 print(f"    Nedostupné:             {sum(1 for km in distances.values() if km is None)} bodů")
 
-# Vytvořit polygon z bodů v zóně — buffer o půl kroku gridu + unary_union
-step_deg = GRID_STEP_KM / 111.0 * 0.75
-zone_polys = [Point(lon, lat).buffer(step_deg) for lat, lon in in_zone]
-zone_polygon = unary_union(zone_polys)
+# Sestavit polygon v metrickém CRS — morfologický uzávěr zaručuje celistvý polygon
+CLOSE_R_M = GRID_STEP_KM * 1000   # 1 krok gridu = 1 500 m
+pts_gdf = gpd.GeoDataFrame(
+    geometry=[Point(lon, lat) for lat, lon in in_zone], crs="EPSG:4326"
+).to_crs("EPSG:5514")
+zone_union_m = pts_gdf.geometry.buffer(CLOSE_R_M).union_all()
+zone_closed_m = zone_union_m.buffer(-CLOSE_R_M)   # morfologický uzávěr → celistvý polygon
 
-# Uložit jako GeoJSON
-zone_gdf = gpd.GeoDataFrame([{"geometry": zone_polygon, "source": "Google Distance Matrix",
-                               "origin": ORIGIN, "max_km": MAX_KM}],
-                            crs="EPSG:4326")
+zone_gdf = gpd.GeoDataFrame(
+    [{"geometry": zone_closed_m, "source": "Google Distance Matrix",
+      "origin": ORIGIN, "max_km": MAX_KM}],
+    crs="EPSG:5514"
+).to_crs("EPSG:4326")
+zone_polygon = zone_gdf.geometry.iloc[0]
 zone_path = os.path.join(DATA_DIR, "google_zone_20km.geojson")
 zone_gdf.to_file(zone_path, driver="GeoJSON")
 print(f"\n    Zóna uložena: data/google_zone_20km.geojson")

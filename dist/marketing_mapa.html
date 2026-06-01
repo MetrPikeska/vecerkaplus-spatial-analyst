@@ -1,0 +1,4026 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_3881cf5d6ebd1c24067b0e01ba1b111d {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+<div style="position:fixed;bottom:24px;left:24px;z-index:1000;
+     background:white;padding:12px 16px;border-radius:10px;
+     box-shadow:0 2px 10px rgba(0,0,0,0.25);font-size:12px;line-height:2;
+     font-family:sans-serif;">
+  <b style="font-size:13px">VečerkaPlus — Marketing</b><br>
+  <span style="color:#d62020">●</span> 100+ bytů &nbsp;
+  <span style="color:#ff6600">●</span> 50–99 &nbsp;
+  <span style="color:#ffaa00">●</span> &lt;50<br>
+  <span style="color:#7700cc">★ A</span> Bar do 500 m &nbsp;
+  <span style="color:#cc0000">● B</span> do 2 km &nbsp;
+  <span style="color:#ff8800">● C</span> 2–4 km<br>
+  <span style="color:#228833">●</span> Zákazník &nbsp;
+  <span style="color:#1155cc">◻</span> Rozvozová zóna
+</div>
+    
+            <div class="folium-map" id="map_3881cf5d6ebd1c24067b0e01ba1b111d" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_3881cf5d6ebd1c24067b0e01ba1b111d = L.map(
+                "map_3881cf5d6ebd1c24067b0e01ba1b111d",
+                {
+                    center: [49.6754886, 18.3389397],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_942ede49a6236eeb4376b53998a940c2 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_942ede49a6236eeb4376b53998a940c2.addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        function geo_json_f1f69380ad2cc3ab2a6b07a969325fa8_styler(feature) {
+            switch(feature.id) {
+                default:
+                    return {"color": "#1144aa", "dashArray": null, "fillColor": "#2255cc", "fillOpacity": 0.08, "weight": 2};
+            }
+        }
+
+        function geo_json_f1f69380ad2cc3ab2a6b07a969325fa8_onEachFeature(feature, layer) {
+
+            layer.on({
+            });
+        };
+        var geo_json_f1f69380ad2cc3ab2a6b07a969325fa8 = L.geoJson(null, {
+                onEachFeature: geo_json_f1f69380ad2cc3ab2a6b07a969325fa8_onEachFeature,
+            
+                style: geo_json_f1f69380ad2cc3ab2a6b07a969325fa8_styler,
+            ...{
+}
+        });
+
+        function geo_json_f1f69380ad2cc3ab2a6b07a969325fa8_add (data) {
+            geo_json_f1f69380ad2cc3ab2a6b07a969325fa8
+                .addData(data);
+        }
+            geo_json_f1f69380ad2cc3ab2a6b07a969325fa8_add({"features": [{"geometry": {"coordinates": [[[18.122693436005992, 49.63156420335971], [18.119722589523178, 49.66191016623175], [18.12721006032128, 49.67156185873442], [18.1611234711639, 49.67410038706843], [18.161494651038897, 49.688937193258774], [18.168982121836997, 49.698588885761446], [18.202895532679616, 49.70112741409545], [18.181757950501964, 49.72068942996772], [18.18161201016816, 49.76654834183952], [18.188416497837345, 49.77864130673861], [18.247014653917446, 49.78161408092719], [18.245674287955115, 49.798707097156516], [18.260102585452245, 49.80940785187707], [18.272666220035376, 49.80626082524138], [18.27987209822607, 49.79572200869005], [18.307325686468918, 49.79572200869005], [18.312851450162412, 49.804921621621624], [18.306802439699506, 49.8180425937405], [18.31238884406321, 49.83152936692027], [18.349097747984636, 49.83626254923059], [18.364532739241543, 49.84994839241761], [18.393223224016644, 49.84917972078902], [18.42607431353109, 49.822749035717074], [18.459987724373708, 49.82021050738307], [18.467846375046808, 49.80923552220356], [18.48002064537285, 49.80720832818083], [18.488732405804665, 49.79572200869005], [18.507305070308593, 49.78763819593688], [18.50961843656253, 49.74166795463599], [18.582133974706743, 49.74073653697259], [18.592791379718967, 49.729477733799314], [18.590815499871855, 49.71404651335963], [18.606189939678725, 49.71210239927496], [18.61444608210542, 49.69898077427195], [18.608985432757528, 49.683719281728386], [18.593162559593967, 49.67898609941807], [18.593414111013757, 49.653121862400155], [18.587362440881193, 49.64251079856444], [18.55139049807825, 49.63844555887753], [18.54267873764643, 49.62695923938674], [18.528157407598275, 49.625526459613354], [18.54423126144181, 49.617037044318], [18.561973265869167, 49.6188144771745], [18.572133246465196, 49.607104834789794], [18.567768508605862, 49.58967982449784], [18.55139049807825, 49.58439150482347], [18.54498350216266, 49.56093166623437], [18.48873240580467, 49.55736447779645], [18.481526527613973, 49.54682566124511], [18.46896289303084, 49.54367863460942], [18.456869928131745, 49.55048312227863], [18.453527901773935, 49.570877991309956], [18.446960344288946, 49.570877991309956], [18.439754466098254, 49.54682566124511], [18.4237208990148, 49.54444730623801], [18.40518828277323, 49.55736447779645], [18.39732963210013, 49.54638949261694], [18.38430225201537, 49.54385096428293], [18.38250022007271, 49.52576085976779], [18.36886726075846, 49.516651607582396], [18.35630362617533, 49.519798634218084], [18.349097747984636, 49.530337450769416], [18.315184337142014, 49.53287597910342], [18.307696866343914, 49.542527671606095], [18.307325686468914, 49.55736447779645], [18.233185705075414, 49.559021586354184], [18.224487819020794, 49.56861822476376], [18.223781563437473, 49.58439150482347], [18.189868152594855, 49.58693003315748], [18.182380681796754, 49.59658172566015], [18.18200950192176, 49.6114185318505], [18.148096091079136, 49.613957060184504], [18.140237440406036, 49.62493204536401], [18.122693436005992, 49.63156420335971]]], "type": "Polygon"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+            geo_json_f1f69380ad2cc3ab2a6b07a969325fa8.bindTooltip(
+                `<div>
+                     Rozvozová zóna ≤ 20 km (Google)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            geo_json_f1f69380ad2cc3ab2a6b07a969325fa8.addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var circle_734d3763970024e6e2d037188d58b67e = L.circle(
+                [49.6754886, 18.3389397],
+                {"bubblingMouseEvents": true, "color": "#999", "dashArray": "6,4", "dashOffset": null, "fill": false, "fillColor": "#999", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 2000, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            circle_734d3763970024e6e2d037188d58b67e.bindTooltip(
+                `<div>
+                     2 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_85d6ca8710703edc56e7809e89d6a505 = L.circle(
+                [49.6754886, 18.3389397],
+                {"bubblingMouseEvents": true, "color": "#bbb", "dashArray": "4,8", "dashOffset": null, "fill": false, "fillColor": "#bbb", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4000, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            circle_85d6ca8710703edc56e7809e89d6a505.bindTooltip(
+                `<div>
+                     4 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_97f44194c32db2b0c045e72a328e2095 = L.circleMarker(
+                [49.68074103724609, 18.33888709345711],
+                {"bubblingMouseEvents": true, "color": "#991111", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d62020", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_2f54313dfcd6a4e33f303772a69a0366 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_62fb633f53122a0e98aa02018ed05808 = $(`<div id="html_62fb633f53122a0e98aa02018ed05808" style="width: 100.0%; height: 100.0%;"><b>Bytovka #1</b><br>271 bytů, 13 pater<br>0.6 km od výchozího bodu<br><small>GPS 49.68074, 18.33889</small></div>`)[0];
+                popup_2f54313dfcd6a4e33f303772a69a0366.setContent(html_62fb633f53122a0e98aa02018ed05808);
+            
+        
+
+        circle_marker_97f44194c32db2b0c045e72a328e2095.bindPopup(popup_2f54313dfcd6a4e33f303772a69a0366)
+        ;
+
+        
+    
+    
+            circle_marker_97f44194c32db2b0c045e72a328e2095.bindTooltip(
+                `<div>
+                     #1 🏘 271 bytů · 13 pater · 0.6 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f8ea5067cf72dde97efe36910150e2d3 = L.circleMarker(
+                [49.678884040393264, 18.337705424294235],
+                {"bubblingMouseEvents": true, "color": "#991111", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d62020", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 18, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_f7f0d8d8dd751c8c9f0ed50146c716b5 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_af89ddef0468f3766ddd3380db8f6d5c = $(`<div id="html_af89ddef0468f3766ddd3380db8f6d5c" style="width: 100.0%; height: 100.0%;"><b>Bytovka #2</b><br>168 bytů, 9 pater<br>0.4 km od výchozího bodu<br><small>GPS 49.67888, 18.33771</small></div>`)[0];
+                popup_f7f0d8d8dd751c8c9f0ed50146c716b5.setContent(html_af89ddef0468f3766ddd3380db8f6d5c);
+            
+        
+
+        circle_marker_f8ea5067cf72dde97efe36910150e2d3.bindPopup(popup_f7f0d8d8dd751c8c9f0ed50146c716b5)
+        ;
+
+        
+    
+    
+            circle_marker_f8ea5067cf72dde97efe36910150e2d3.bindTooltip(
+                `<div>
+                     #2 🏘 168 bytů · 9 pater · 0.4 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f6ebd39606c7b7c939ad40bdc54683a1 = L.circleMarker(
+                [49.68869314784137, 18.345945938212996],
+                {"bubblingMouseEvents": true, "color": "#991111", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d62020", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_17a8e771595513ba76e6502061cdc39a = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_49a6ffef551756e2a083b7c4ec434ecd = $(`<div id="html_49a6ffef551756e2a083b7c4ec434ecd" style="width: 100.0%; height: 100.0%;"><b>Bytovka #3</b><br>158 bytů, 3 pater<br>1.6 km od výchozího bodu<br><small>GPS 49.68869, 18.34595</small></div>`)[0];
+                popup_17a8e771595513ba76e6502061cdc39a.setContent(html_49a6ffef551756e2a083b7c4ec434ecd);
+            
+        
+
+        circle_marker_f6ebd39606c7b7c939ad40bdc54683a1.bindPopup(popup_17a8e771595513ba76e6502061cdc39a)
+        ;
+
+        
+    
+    
+            circle_marker_f6ebd39606c7b7c939ad40bdc54683a1.bindTooltip(
+                `<div>
+                     #3 🏘 158 bytů · 3 pater · 1.6 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_6594ee89ba9f630a0b630cd0550093cb = L.circleMarker(
+                [49.675999279955946, 18.330361319508143],
+                {"bubblingMouseEvents": true, "color": "#991111", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d62020", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_c3a8f61e3cc9d0bc925b84785d44ef75 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_a63d924142acf6eb5d2c976e8fda4189 = $(`<div id="html_a63d924142acf6eb5d2c976e8fda4189" style="width: 100.0%; height: 100.0%;"><b>Bytovka #4</b><br>133 bytů, 6 pater<br>0.6 km od výchozího bodu<br><small>GPS 49.67600, 18.33036</small></div>`)[0];
+                popup_c3a8f61e3cc9d0bc925b84785d44ef75.setContent(html_a63d924142acf6eb5d2c976e8fda4189);
+            
+        
+
+        circle_marker_6594ee89ba9f630a0b630cd0550093cb.bindPopup(popup_c3a8f61e3cc9d0bc925b84785d44ef75)
+        ;
+
+        
+    
+    
+            circle_marker_6594ee89ba9f630a0b630cd0550093cb.bindTooltip(
+                `<div>
+                     #4 🏘 133 bytů · 6 pater · 0.6 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_6a36988339ac943d6de4c804c3396500 = L.circleMarker(
+                [49.67987575060869, 18.34276925416569],
+                {"bubblingMouseEvents": true, "color": "#991111", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d62020", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_024ef4228c65ed7b80102d7478478e90 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_8278cb1da38cea924ccc47dd4ea6f362 = $(`<div id="html_8278cb1da38cea924ccc47dd4ea6f362" style="width: 100.0%; height: 100.0%;"><b>Bytovka #5</b><br>130 bytů, 13 pater<br>0.6 km od výchozího bodu<br><small>GPS 49.67988, 18.34277</small></div>`)[0];
+                popup_024ef4228c65ed7b80102d7478478e90.setContent(html_8278cb1da38cea924ccc47dd4ea6f362);
+            
+        
+
+        circle_marker_6a36988339ac943d6de4c804c3396500.bindPopup(popup_024ef4228c65ed7b80102d7478478e90)
+        ;
+
+        
+    
+    
+            circle_marker_6a36988339ac943d6de4c804c3396500.bindTooltip(
+                `<div>
+                     #5 🏘 130 bytů · 13 pater · 0.6 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0c1656e18639572fd476acf04e33313e = L.circleMarker(
+                [49.678478616584066, 18.34272252015331],
+                {"bubblingMouseEvents": true, "color": "#991111", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d62020", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_24adfa3c70e50ae59cc875d999265201 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_59d11d6c43aaf17f8d1cb02be05bc5d9 = $(`<div id="html_59d11d6c43aaf17f8d1cb02be05bc5d9" style="width: 100.0%; height: 100.0%;"><b>Bytovka #6</b><br>126 bytů, 6 pater<br>0.4 km od výchozího bodu<br><small>GPS 49.67848, 18.34272</small></div>`)[0];
+                popup_24adfa3c70e50ae59cc875d999265201.setContent(html_59d11d6c43aaf17f8d1cb02be05bc5d9);
+            
+        
+
+        circle_marker_0c1656e18639572fd476acf04e33313e.bindPopup(popup_24adfa3c70e50ae59cc875d999265201)
+        ;
+
+        
+    
+    
+            circle_marker_0c1656e18639572fd476acf04e33313e.bindTooltip(
+                `<div>
+                     #6 🏘 126 bytů · 6 pater · 0.4 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_10d7294cb133e00b8808d571f4643a01 = L.circleMarker(
+                [49.68129209105094, 18.337453547986474],
+                {"bubblingMouseEvents": true, "color": "#991111", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d62020", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_bd3ff9abc4a742a35c7d7ab84a8d1abd = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_01ed20c0b29233133aec8d97c071886b = $(`<div id="html_01ed20c0b29233133aec8d97c071886b" style="width: 100.0%; height: 100.0%;"><b>Bytovka #7</b><br>102 bytů, 5 pater<br>0.7 km od výchozího bodu<br><small>GPS 49.68129, 18.33745</small></div>`)[0];
+                popup_bd3ff9abc4a742a35c7d7ab84a8d1abd.setContent(html_01ed20c0b29233133aec8d97c071886b);
+            
+        
+
+        circle_marker_10d7294cb133e00b8808d571f4643a01.bindPopup(popup_bd3ff9abc4a742a35c7d7ab84a8d1abd)
+        ;
+
+        
+    
+    
+            circle_marker_10d7294cb133e00b8808d571f4643a01.bindTooltip(
+                `<div>
+                     #7 🏘 102 bytů · 5 pater · 0.7 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7a3c77b082f1637cb1130ed9c0c6fd61 = L.circleMarker(
+                [49.67611561944968, 18.33147549055676],
+                {"bubblingMouseEvents": true, "color": "#991111", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d62020", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_4e40148444ae12e796a60e8ec6b3a19e = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_c21953429854fffc6ae1ba250278c2de = $(`<div id="html_c21953429854fffc6ae1ba250278c2de" style="width: 100.0%; height: 100.0%;"><b>Bytovka #8</b><br>100 bytů, 18 pater<br>0.5 km od výchozího bodu<br><small>GPS 49.67612, 18.33148</small></div>`)[0];
+                popup_4e40148444ae12e796a60e8ec6b3a19e.setContent(html_c21953429854fffc6ae1ba250278c2de);
+            
+        
+
+        circle_marker_7a3c77b082f1637cb1130ed9c0c6fd61.bindPopup(popup_4e40148444ae12e796a60e8ec6b3a19e)
+        ;
+
+        
+    
+    
+            circle_marker_7a3c77b082f1637cb1130ed9c0c6fd61.bindTooltip(
+                `<div>
+                     #8 🏘 100 bytů · 18 pater · 0.5 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_10481a0aa623f380b3d76b502ffbfdba = L.circleMarker(
+                [49.6741465270485, 18.334018485497477],
+                {"bubblingMouseEvents": true, "color": "#991111", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d62020", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_05ec61de271ba70720c36728d83d8795 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_636c51d341ced5c23f9ad0c1586f41a4 = $(`<div id="html_636c51d341ced5c23f9ad0c1586f41a4" style="width: 100.0%; height: 100.0%;"><b>Bytovka #9</b><br>100 bytů, 17 pater<br>0.4 km od výchozího bodu<br><small>GPS 49.67415, 18.33402</small></div>`)[0];
+                popup_05ec61de271ba70720c36728d83d8795.setContent(html_636c51d341ced5c23f9ad0c1586f41a4);
+            
+        
+
+        circle_marker_10481a0aa623f380b3d76b502ffbfdba.bindPopup(popup_05ec61de271ba70720c36728d83d8795)
+        ;
+
+        
+    
+    
+            circle_marker_10481a0aa623f380b3d76b502ffbfdba.bindTooltip(
+                `<div>
+                     #9 🏘 100 bytů · 17 pater · 0.4 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_046a4ab48933ea1a27a5b5ab95c7afed = L.circleMarker(
+                [49.693507488196595, 18.35145867972241],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_7235d85d04daa05edccdbd4424e6cd11 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_8889390195510a77b80696d350074e75 = $(`<div id="html_8889390195510a77b80696d350074e75" style="width: 100.0%; height: 100.0%;"><b>Bytovka #10</b><br>96 bytů, 5 pater<br>2.2 km od výchozího bodu<br><small>GPS 49.69351, 18.35146</small></div>`)[0];
+                popup_7235d85d04daa05edccdbd4424e6cd11.setContent(html_8889390195510a77b80696d350074e75);
+            
+        
+
+        circle_marker_046a4ab48933ea1a27a5b5ab95c7afed.bindPopup(popup_7235d85d04daa05edccdbd4424e6cd11)
+        ;
+
+        
+    
+    
+            circle_marker_046a4ab48933ea1a27a5b5ab95c7afed.bindTooltip(
+                `<div>
+                     #10 🏘 96 bytů · 5 pater · 2.2 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_85e9e1a4633ef3cc48a70d7227097a2c = L.circleMarker(
+                [49.679917125641516, 18.336788824488707],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_79b6cbfe57ce40878e097396bc504da5 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_3d8b1b61452b7f7b669399c244fd1b7b = $(`<div id="html_3d8b1b61452b7f7b669399c244fd1b7b" style="width: 100.0%; height: 100.0%;"><b>Bytovka #11</b><br>96 bytů, 9 pater<br>0.5 km od výchozího bodu<br><small>GPS 49.67992, 18.33679</small></div>`)[0];
+                popup_79b6cbfe57ce40878e097396bc504da5.setContent(html_3d8b1b61452b7f7b669399c244fd1b7b);
+            
+        
+
+        circle_marker_85e9e1a4633ef3cc48a70d7227097a2c.bindPopup(popup_79b6cbfe57ce40878e097396bc504da5)
+        ;
+
+        
+    
+    
+            circle_marker_85e9e1a4633ef3cc48a70d7227097a2c.bindTooltip(
+                `<div>
+                     #11 🏘 96 bytů · 9 pater · 0.5 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_aba166f41f8d063895d43244f57cad28 = L.circleMarker(
+                [49.672826188919714, 18.341233515560333],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_500cf22f2b6f73ad193be86419b2d260 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_a411010a19e1c1b725d4edd38a2d5c8d = $(`<div id="html_a411010a19e1c1b725d4edd38a2d5c8d" style="width: 100.0%; height: 100.0%;"><b>Bytovka #12</b><br>94 bytů, 18 pater<br>0.3 km od výchozího bodu<br><small>GPS 49.67283, 18.34123</small></div>`)[0];
+                popup_500cf22f2b6f73ad193be86419b2d260.setContent(html_a411010a19e1c1b725d4edd38a2d5c8d);
+            
+        
+
+        circle_marker_aba166f41f8d063895d43244f57cad28.bindPopup(popup_500cf22f2b6f73ad193be86419b2d260)
+        ;
+
+        
+    
+    
+            circle_marker_aba166f41f8d063895d43244f57cad28.bindTooltip(
+                `<div>
+                     #12 🏘 94 bytů · 18 pater · 0.3 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_6c27c9bbcca3464b9a13428a6001dc87 = L.circleMarker(
+                [49.673287688971136, 18.341754649669383],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_09d24ec8db7af3223dfbf8a6971423cf = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_4caeab1f8c8752fcb295bfabf1830c19 = $(`<div id="html_4caeab1f8c8752fcb295bfabf1830c19" style="width: 100.0%; height: 100.0%;"><b>Bytovka #13</b><br>94 bytů, 18 pater<br>0.3 km od výchozího bodu<br><small>GPS 49.67329, 18.34175</small></div>`)[0];
+                popup_09d24ec8db7af3223dfbf8a6971423cf.setContent(html_4caeab1f8c8752fcb295bfabf1830c19);
+            
+        
+
+        circle_marker_6c27c9bbcca3464b9a13428a6001dc87.bindPopup(popup_09d24ec8db7af3223dfbf8a6971423cf)
+        ;
+
+        
+    
+    
+            circle_marker_6c27c9bbcca3464b9a13428a6001dc87.bindTooltip(
+                `<div>
+                     #13 🏘 94 bytů · 18 pater · 0.3 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_4ab3c8d962908a6141325c1cd8355893 = L.circleMarker(
+                [49.673058952315884, 18.342204621103075],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_af05a82a320837f38c5b99e02f3b2f98 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_3810d6e132ade3467a8396502d1e49c0 = $(`<div id="html_3810d6e132ade3467a8396502d1e49c0" style="width: 100.0%; height: 100.0%;"><b>Bytovka #14</b><br>94 bytů, 18 pater<br>0.4 km od výchozího bodu<br><small>GPS 49.67306, 18.34220</small></div>`)[0];
+                popup_af05a82a320837f38c5b99e02f3b2f98.setContent(html_3810d6e132ade3467a8396502d1e49c0);
+            
+        
+
+        circle_marker_4ab3c8d962908a6141325c1cd8355893.bindPopup(popup_af05a82a320837f38c5b99e02f3b2f98)
+        ;
+
+        
+    
+    
+            circle_marker_4ab3c8d962908a6141325c1cd8355893.bindTooltip(
+                `<div>
+                     #14 🏘 94 bytů · 18 pater · 0.4 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7bfdb02cac4fbf4e02f51a3ccd5af80f = L.circleMarker(
+                [49.67971419932707, 18.36591535155761],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_1bbe9a839fc00c83e90e034ef04e22c5 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_71e16580e9a8e80090aec8ab0e06b593 = $(`<div id="html_71e16580e9a8e80090aec8ab0e06b593" style="width: 100.0%; height: 100.0%;"><b>Bytovka #15</b><br>93 bytů, 8 pater<br>2.0 km od výchozího bodu<br><small>GPS 49.67971, 18.36592</small></div>`)[0];
+                popup_1bbe9a839fc00c83e90e034ef04e22c5.setContent(html_71e16580e9a8e80090aec8ab0e06b593);
+            
+        
+
+        circle_marker_7bfdb02cac4fbf4e02f51a3ccd5af80f.bindPopup(popup_1bbe9a839fc00c83e90e034ef04e22c5)
+        ;
+
+        
+    
+    
+            circle_marker_7bfdb02cac4fbf4e02f51a3ccd5af80f.bindTooltip(
+                `<div>
+                     #15 🏘 93 bytů · 8 pater · 2.0 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_cacc3e02eb589e9b482b5216a8455b4a = L.circleMarker(
+                [49.679880986598626, 18.36457715652884],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_43426f9d8130ae7c96c433e7fef359e6 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_520fac71270a103f8f58bf285f46aa1a = $(`<div id="html_520fac71270a103f8f58bf285f46aa1a" style="width: 100.0%; height: 100.0%;"><b>Bytovka #16</b><br>93 bytů, 8 pater<br>1.9 km od výchozího bodu<br><small>GPS 49.67988, 18.36458</small></div>`)[0];
+                popup_43426f9d8130ae7c96c433e7fef359e6.setContent(html_520fac71270a103f8f58bf285f46aa1a);
+            
+        
+
+        circle_marker_cacc3e02eb589e9b482b5216a8455b4a.bindPopup(popup_43426f9d8130ae7c96c433e7fef359e6)
+        ;
+
+        
+    
+    
+            circle_marker_cacc3e02eb589e9b482b5216a8455b4a.bindTooltip(
+                `<div>
+                     #16 🏘 93 bytů · 8 pater · 1.9 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_ac93b5c6e22145f4f60517fdfffc1e37 = L.circleMarker(
+                [49.67909338132043, 18.365195005270774],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_53d2fb4e7a9a4a7de8d24f3b8c7e7606 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_971ada2a53758486479f51a836b1ed9e = $(`<div id="html_971ada2a53758486479f51a836b1ed9e" style="width: 100.0%; height: 100.0%;"><b>Bytovka #17</b><br>92 bytů, 8 pater<br>1.9 km od výchozího bodu<br><small>GPS 49.67909, 18.36520</small></div>`)[0];
+                popup_53d2fb4e7a9a4a7de8d24f3b8c7e7606.setContent(html_971ada2a53758486479f51a836b1ed9e);
+            
+        
+
+        circle_marker_ac93b5c6e22145f4f60517fdfffc1e37.bindPopup(popup_53d2fb4e7a9a4a7de8d24f3b8c7e7606)
+        ;
+
+        
+    
+    
+            circle_marker_ac93b5c6e22145f4f60517fdfffc1e37.bindTooltip(
+                `<div>
+                     #17 🏘 92 bytů · 8 pater · 1.9 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_ddf2994579d0ef8027cf71261b4054c4 = L.circleMarker(
+                [49.67792320154002, 18.366393071936656],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_2546a6de61f216683842621a802fedc2 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_ab67a90ce30c7cccee38176be151707a = $(`<div id="html_ab67a90ce30c7cccee38176be151707a" style="width: 100.0%; height: 100.0%;"><b>Bytovka #18</b><br>92 bytů, 8 pater<br>2.0 km od výchozího bodu<br><small>GPS 49.67792, 18.36639</small></div>`)[0];
+                popup_2546a6de61f216683842621a802fedc2.setContent(html_ab67a90ce30c7cccee38176be151707a);
+            
+        
+
+        circle_marker_ddf2994579d0ef8027cf71261b4054c4.bindPopup(popup_2546a6de61f216683842621a802fedc2)
+        ;
+
+        
+    
+    
+            circle_marker_ddf2994579d0ef8027cf71261b4054c4.bindTooltip(
+                `<div>
+                     #18 🏘 92 bytů · 8 pater · 2.0 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_591513e66efde2c8b13f1d23382239e8 = L.circleMarker(
+                [49.67131196558828, 18.341643795394607],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_b288d91ed4f0310d94b5733b8a17d29d = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_d04b4dd805e8c2127c2ddaf8dc0b8414 = $(`<div id="html_d04b4dd805e8c2127c2ddaf8dc0b8414" style="width: 100.0%; height: 100.0%;"><b>Bytovka #19</b><br>92 bytů, 8 pater<br>0.5 km od výchozího bodu<br><small>GPS 49.67131, 18.34164</small></div>`)[0];
+                popup_b288d91ed4f0310d94b5733b8a17d29d.setContent(html_d04b4dd805e8c2127c2ddaf8dc0b8414);
+            
+        
+
+        circle_marker_591513e66efde2c8b13f1d23382239e8.bindPopup(popup_b288d91ed4f0310d94b5733b8a17d29d)
+        ;
+
+        
+    
+    
+            circle_marker_591513e66efde2c8b13f1d23382239e8.bindTooltip(
+                `<div>
+                     #19 🏘 92 bytů · 8 pater · 0.5 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0223e066ec5ef978534b25046f340a76 = L.circleMarker(
+                [49.67054926472694, 18.343208723152394],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_56a5eea5dfe9e332fdbf08699576447c = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_ed4038798f1f9200a475f533bbd76d7d = $(`<div id="html_ed4038798f1f9200a475f533bbd76d7d" style="width: 100.0%; height: 100.0%;"><b>Bytovka #20</b><br>92 bytů, 8 pater<br>0.6 km od výchozího bodu<br><small>GPS 49.67055, 18.34321</small></div>`)[0];
+                popup_56a5eea5dfe9e332fdbf08699576447c.setContent(html_ed4038798f1f9200a475f533bbd76d7d);
+            
+        
+
+        circle_marker_0223e066ec5ef978534b25046f340a76.bindPopup(popup_56a5eea5dfe9e332fdbf08699576447c)
+        ;
+
+        
+    
+    
+            circle_marker_0223e066ec5ef978534b25046f340a76.bindTooltip(
+                `<div>
+                     #20 🏘 92 bytů · 8 pater · 0.6 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e25070515da1d43e3660fff8c768b5bc = L.circleMarker(
+                [49.679630332833746, 18.358314265157063],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 12, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_2bbd6e82e4474e203c5a748f95045376 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_12e04edcc525fa2bc233625acf1408a2 = $(`<div id="html_12e04edcc525fa2bc233625acf1408a2" style="width: 100.0%; height: 100.0%;"><b>Bytovka #21</b><br>86 bytů, 8 pater<br>1.5 km od výchozího bodu<br><small>GPS 49.67963, 18.35831</small></div>`)[0];
+                popup_2bbd6e82e4474e203c5a748f95045376.setContent(html_12e04edcc525fa2bc233625acf1408a2);
+            
+        
+
+        circle_marker_e25070515da1d43e3660fff8c768b5bc.bindPopup(popup_2bbd6e82e4474e203c5a748f95045376)
+        ;
+
+        
+    
+    
+            circle_marker_e25070515da1d43e3660fff8c768b5bc.bindTooltip(
+                `<div>
+                     #21 🏘 86 bytů · 8 pater · 1.5 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_93f006c29f6e816cc4bef1ad31ff1d74 = L.circleMarker(
+                [49.688528781458224, 18.34291230276422],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 12, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_607457fb73ff0f9d1c6c37b246f75387 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_7a0a7e4ec8c709af8b4ea12764e11fa0 = $(`<div id="html_7a0a7e4ec8c709af8b4ea12764e11fa0" style="width: 100.0%; height: 100.0%;"><b>Bytovka #22</b><br>80 bytů, 10 pater<br>1.5 km od výchozího bodu<br><small>GPS 49.68853, 18.34291</small></div>`)[0];
+                popup_607457fb73ff0f9d1c6c37b246f75387.setContent(html_7a0a7e4ec8c709af8b4ea12764e11fa0);
+            
+        
+
+        circle_marker_93f006c29f6e816cc4bef1ad31ff1d74.bindPopup(popup_607457fb73ff0f9d1c6c37b246f75387)
+        ;
+
+        
+    
+    
+            circle_marker_93f006c29f6e816cc4bef1ad31ff1d74.bindTooltip(
+                `<div>
+                     #22 🏘 80 bytů · 10 pater · 1.5 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_594cc654aabb657c567ab7e67a89a2c3 = L.circleMarker(
+                [49.67923066270825, 18.35846968639647],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 12, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_b6c13b4c2cfa989ed6af31b72321b7ad = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_bcdd41a937c1d14b8a274b7caf3ea112 = $(`<div id="html_bcdd41a937c1d14b8a274b7caf3ea112" style="width: 100.0%; height: 100.0%;"><b>Bytovka #23</b><br>78 bytů, 8 pater<br>1.5 km od výchozího bodu<br><small>GPS 49.67923, 18.35847</small></div>`)[0];
+                popup_b6c13b4c2cfa989ed6af31b72321b7ad.setContent(html_bcdd41a937c1d14b8a274b7caf3ea112);
+            
+        
+
+        circle_marker_594cc654aabb657c567ab7e67a89a2c3.bindPopup(popup_b6c13b4c2cfa989ed6af31b72321b7ad)
+        ;
+
+        
+    
+    
+            circle_marker_594cc654aabb657c567ab7e67a89a2c3.bindTooltip(
+                `<div>
+                     #23 🏘 78 bytů · 8 pater · 1.5 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e67085663517da889c7da62419292ad5 = L.circleMarker(
+                [49.6972689002513, 18.336395750920335],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 12, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_2150ef523494b1458bb9de1254a2687b = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_e620ca49fa03b5c25993e42c8b573763 = $(`<div id="html_e620ca49fa03b5c25993e42c8b573763" style="width: 100.0%; height: 100.0%;"><b>Bytovka #24</b><br>77 bytů, 3 pater<br>2.4 km od výchozího bodu<br><small>GPS 49.69727, 18.33640</small></div>`)[0];
+                popup_2150ef523494b1458bb9de1254a2687b.setContent(html_e620ca49fa03b5c25993e42c8b573763);
+            
+        
+
+        circle_marker_e67085663517da889c7da62419292ad5.bindPopup(popup_2150ef523494b1458bb9de1254a2687b)
+        ;
+
+        
+    
+    
+            circle_marker_e67085663517da889c7da62419292ad5.bindTooltip(
+                `<div>
+                     #24 🏘 77 bytů · 3 pater · 2.4 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_43f548bc0199d2dc113b31dfa8dc54bb = L.circleMarker(
+                [49.67981741377617, 18.337927523738664],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_fa2138f0565ad4740013c0fac18bf6b9 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_25cb167ebc391712fd91924149b0ccb8 = $(`<div id="html_25cb167ebc391712fd91924149b0ccb8" style="width: 100.0%; height: 100.0%;"><b>Bytovka #25</b><br>75 bytů, 16 pater<br>0.5 km od výchozího bodu<br><small>GPS 49.67982, 18.33793</small></div>`)[0];
+                popup_fa2138f0565ad4740013c0fac18bf6b9.setContent(html_25cb167ebc391712fd91924149b0ccb8);
+            
+        
+
+        circle_marker_43f548bc0199d2dc113b31dfa8dc54bb.bindPopup(popup_fa2138f0565ad4740013c0fac18bf6b9)
+        ;
+
+        
+    
+    
+            circle_marker_43f548bc0199d2dc113b31dfa8dc54bb.bindTooltip(
+                `<div>
+                     #25 🏘 75 bytů · 16 pater · 0.5 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_81d271b5a1b595bd5934203a9ea5a4f8 = L.circleMarker(
+                [49.679583024943845, 18.338066274889705],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_c489da9a8dde4fe932830a6e9228f3b5 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_d3f6a555eb5163aa8981ff084bc11620 = $(`<div id="html_d3f6a555eb5163aa8981ff084bc11620" style="width: 100.0%; height: 100.0%;"><b>Bytovka #26</b><br>75 bytů, 16 pater<br>0.5 km od výchozího bodu<br><small>GPS 49.67958, 18.33807</small></div>`)[0];
+                popup_c489da9a8dde4fe932830a6e9228f3b5.setContent(html_d3f6a555eb5163aa8981ff084bc11620);
+            
+        
+
+        circle_marker_81d271b5a1b595bd5934203a9ea5a4f8.bindPopup(popup_c489da9a8dde4fe932830a6e9228f3b5)
+        ;
+
+        
+    
+    
+            circle_marker_81d271b5a1b595bd5934203a9ea5a4f8.bindTooltip(
+                `<div>
+                     #26 🏘 75 bytů · 16 pater · 0.5 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_83f4182940476d88be17038ede750f29 = L.circleMarker(
+                [49.680647767780336, 18.33623381448261],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_f2ecae913120ac159b80e0c70def780b = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_a1b8de3990cb115173149a2defd444bd = $(`<div id="html_a1b8de3990cb115173149a2defd444bd" style="width: 100.0%; height: 100.0%;"><b>Bytovka #27</b><br>75 bytů, 16 pater<br>0.6 km od výchozího bodu<br><small>GPS 49.68065, 18.33623</small></div>`)[0];
+                popup_f2ecae913120ac159b80e0c70def780b.setContent(html_a1b8de3990cb115173149a2defd444bd);
+            
+        
+
+        circle_marker_83f4182940476d88be17038ede750f29.bindPopup(popup_f2ecae913120ac159b80e0c70def780b)
+        ;
+
+        
+    
+    
+            circle_marker_83f4182940476d88be17038ede750f29.bindTooltip(
+                `<div>
+                     #27 🏘 75 bytů · 16 pater · 0.6 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_53a2d1ef2678010bea09901517af4ae4 = L.circleMarker(
+                [49.69035038225588, 18.350982604362258],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_6762d877825ee26cbf605e4dd63329b1 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_2cc98175aed248ee9b1fe7c32d510b11 = $(`<div id="html_2cc98175aed248ee9b1fe7c32d510b11" style="width: 100.0%; height: 100.0%;"><b>Bytovka #28</b><br>72 bytů, 7 pater<br>1.9 km od výchozího bodu<br><small>GPS 49.69035, 18.35098</small></div>`)[0];
+                popup_6762d877825ee26cbf605e4dd63329b1.setContent(html_2cc98175aed248ee9b1fe7c32d510b11);
+            
+        
+
+        circle_marker_53a2d1ef2678010bea09901517af4ae4.bindPopup(popup_6762d877825ee26cbf605e4dd63329b1)
+        ;
+
+        
+    
+    
+            circle_marker_53a2d1ef2678010bea09901517af4ae4.bindTooltip(
+                `<div>
+                     #28 🏘 72 bytů · 7 pater · 1.9 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_53b6d8ab27d7fd47e273e790b15bf62a = L.circleMarker(
+                [49.68694000717355, 18.352688719366114],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_dd15e39ea75017c9e43e130d03a6a5e9 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_dca4ca3a7081a71a0619f47e8f7111f5 = $(`<div id="html_dca4ca3a7081a71a0619f47e8f7111f5" style="width: 100.0%; height: 100.0%;"><b>Bytovka #29</b><br>72 bytů, 6 pater<br>1.6 km od výchozího bodu<br><small>GPS 49.68694, 18.35269</small></div>`)[0];
+                popup_dd15e39ea75017c9e43e130d03a6a5e9.setContent(html_dca4ca3a7081a71a0619f47e8f7111f5);
+            
+        
+
+        circle_marker_53b6d8ab27d7fd47e273e790b15bf62a.bindPopup(popup_dd15e39ea75017c9e43e130d03a6a5e9)
+        ;
+
+        
+    
+    
+            circle_marker_53b6d8ab27d7fd47e273e790b15bf62a.bindTooltip(
+                `<div>
+                     #29 🏘 72 bytů · 6 pater · 1.6 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_6cd79f8876e066999267b13fb77e263b = L.circleMarker(
+                [49.68738625415048, 18.354571991528502],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_080edc69e4740f81411e9d5efef8778f = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_d52921b015cac66ad97a950df0c3e66e = $(`<div id="html_d52921b015cac66ad97a950df0c3e66e" style="width: 100.0%; height: 100.0%;"><b>Bytovka #30</b><br>72 bytů, 6 pater<br>1.7 km od výchozího bodu<br><small>GPS 49.68739, 18.35457</small></div>`)[0];
+                popup_080edc69e4740f81411e9d5efef8778f.setContent(html_d52921b015cac66ad97a950df0c3e66e);
+            
+        
+
+        circle_marker_6cd79f8876e066999267b13fb77e263b.bindPopup(popup_080edc69e4740f81411e9d5efef8778f)
+        ;
+
+        
+    
+    
+            circle_marker_6cd79f8876e066999267b13fb77e263b.bindTooltip(
+                `<div>
+                     #30 🏘 72 bytů · 6 pater · 1.7 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_fb786e1732dcf8b8afc380dfd9a2a2ce = L.circleMarker(
+                [49.69354341295624, 18.350798424039397],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_99df05ea45c7f7e6a3501ac8602e8813 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_dd53090e0dfacbb2f87e4cebdbfa5bf3 = $(`<div id="html_dd53090e0dfacbb2f87e4cebdbfa5bf3" style="width: 100.0%; height: 100.0%;"><b>Bytovka #31</b><br>72 bytů, 9 pater<br>2.2 km od výchozího bodu<br><small>GPS 49.69354, 18.35080</small></div>`)[0];
+                popup_99df05ea45c7f7e6a3501ac8602e8813.setContent(html_dd53090e0dfacbb2f87e4cebdbfa5bf3);
+            
+        
+
+        circle_marker_fb786e1732dcf8b8afc380dfd9a2a2ce.bindPopup(popup_99df05ea45c7f7e6a3501ac8602e8813)
+        ;
+
+        
+    
+    
+            circle_marker_fb786e1732dcf8b8afc380dfd9a2a2ce.bindTooltip(
+                `<div>
+                     #31 🏘 72 bytů · 9 pater · 2.2 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_16401561c17cca0e685b5235955e7686 = L.circleMarker(
+                [49.67663311489494, 18.331862444641914],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_5a2140e69b5805405ce83a01c42d220a = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_6558d8da597874343860f0da7653ca11 = $(`<div id="html_6558d8da597874343860f0da7653ca11" style="width: 100.0%; height: 100.0%;"><b>Bytovka #32</b><br>71 bytů, 13 pater<br>0.5 km od výchozího bodu<br><small>GPS 49.67663, 18.33186</small></div>`)[0];
+                popup_5a2140e69b5805405ce83a01c42d220a.setContent(html_6558d8da597874343860f0da7653ca11);
+            
+        
+
+        circle_marker_16401561c17cca0e685b5235955e7686.bindPopup(popup_5a2140e69b5805405ce83a01c42d220a)
+        ;
+
+        
+    
+    
+            circle_marker_16401561c17cca0e685b5235955e7686.bindTooltip(
+                `<div>
+                     #32 🏘 71 bytů · 13 pater · 0.5 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_24e0945f65f6b9134f7725e7263e87a4 = L.circleMarker(
+                [49.66860650082845, 18.35273502037438],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_f36fa2dd36f4c4b367f536fe1b9803c4 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_a189fee11604ecc5ec59308e0e419cdd = $(`<div id="html_a189fee11604ecc5ec59308e0e419cdd" style="width: 100.0%; height: 100.0%;"><b>Bytovka #33</b><br>71 bytů, 8 pater<br>1.3 km od výchozího bodu<br><small>GPS 49.66861, 18.35274</small></div>`)[0];
+                popup_f36fa2dd36f4c4b367f536fe1b9803c4.setContent(html_a189fee11604ecc5ec59308e0e419cdd);
+            
+        
+
+        circle_marker_24e0945f65f6b9134f7725e7263e87a4.bindPopup(popup_f36fa2dd36f4c4b367f536fe1b9803c4)
+        ;
+
+        
+    
+    
+            circle_marker_24e0945f65f6b9134f7725e7263e87a4.bindTooltip(
+                `<div>
+                     #33 🏘 71 bytů · 8 pater · 1.3 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_25d1e6a30d39e69f3bb906af60b08d39 = L.circleMarker(
+                [49.66815719732898, 18.35378234145369],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_d3f9227c19bcd61a454989c5ef9924c3 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_91bcf184ca94661683692639141cfabc = $(`<div id="html_91bcf184ca94661683692639141cfabc" style="width: 100.0%; height: 100.0%;"><b>Bytovka #34</b><br>71 bytů, 8 pater<br>1.3 km od výchozího bodu<br><small>GPS 49.66816, 18.35378</small></div>`)[0];
+                popup_d3f9227c19bcd61a454989c5ef9924c3.setContent(html_91bcf184ca94661683692639141cfabc);
+            
+        
+
+        circle_marker_25d1e6a30d39e69f3bb906af60b08d39.bindPopup(popup_d3f9227c19bcd61a454989c5ef9924c3)
+        ;
+
+        
+    
+    
+            circle_marker_25d1e6a30d39e69f3bb906af60b08d39.bindTooltip(
+                `<div>
+                     #34 🏘 71 bytů · 8 pater · 1.3 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_ddf7d80783d22771b8a93ce078929607 = L.circleMarker(
+                [49.6674653299513, 18.352225255719667],
+                {"bubblingMouseEvents": true, "color": "#cc4400", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 1.5}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+        var popup_2e936e27713a7f16ed386918e53655ba = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_9222c938bf08884dbf29ce75f63a8a0c = $(`<div id="html_9222c938bf08884dbf29ce75f63a8a0c" style="width: 100.0%; height: 100.0%;"><b>Bytovka #35</b><br>71 bytů, 1 pater<br>1.3 km od výchozího bodu<br><small>GPS 49.66747, 18.35223</small></div>`)[0];
+                popup_2e936e27713a7f16ed386918e53655ba.setContent(html_9222c938bf08884dbf29ce75f63a8a0c);
+            
+        
+
+        circle_marker_ddf7d80783d22771b8a93ce078929607.bindPopup(popup_2e936e27713a7f16ed386918e53655ba)
+        ;
+
+        
+    
+    
+            circle_marker_ddf7d80783d22771b8a93ce078929607.bindTooltip(
+                `<div>
+                     #35 🏘 71 bytů · 1 pater · 1.3 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_f0f022bb092e59fc8590a9849afafc5e = L.marker(
+                [49.6755625, 18.3402988],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_6131b0295200f04a927e8995a7ac3fa2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f4a6cdd662206f7f09a9cc56bcfd1be1 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_88afc4c099cfb8cd455f343984d6ac99 = $(`<div id="html_88afc4c099cfb8cd455f343984d6ac99" style="width: 100.0%; height: 100.0%;"><b>[A] vinárna U Staré Herty</b><br>bar · 98 m<br>Mo-Th 17:00-23:00; Fr 17:00-24:00; Sa 18:00-24:00</div>`)[0];
+                popup_f4a6cdd662206f7f09a9cc56bcfd1be1.setContent(html_88afc4c099cfb8cd455f343984d6ac99);
+            
+        
+
+        marker_f0f022bb092e59fc8590a9849afafc5e.bindPopup(popup_f4a6cdd662206f7f09a9cc56bcfd1be1)
+        ;
+
+        
+    
+    
+            marker_f0f022bb092e59fc8590a9849afafc5e.bindTooltip(
+                `<div>
+                     [A] vinárna U Staré Herty · 98 m · Mo-Th 17:00-23:00; Fr 17:00-24:00; Sa 18:00-24:00
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f0f022bb092e59fc8590a9849afafc5e.setIcon(icon_6131b0295200f04a927e8995a7ac3fa2);
+            
+    
+            var marker_7c6b7c85a72fccbc9552fe0e0b4b55ab = L.marker(
+                [49.6764414, 18.3402807],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_a4721eb2a8d2fddb5d3150c4bb2f49bb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_71290ac653b00317ecd86a0e6914e55c = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_93f763634cd87f64adf8ff34ed4b24f9 = $(`<div id="html_93f763634cd87f64adf8ff34ed4b24f9" style="width: 100.0%; height: 100.0%;"><b>[A] San Marco</b><br>bar · 144 m<br></div>`)[0];
+                popup_71290ac653b00317ecd86a0e6914e55c.setContent(html_93f763634cd87f64adf8ff34ed4b24f9);
+            
+        
+
+        marker_7c6b7c85a72fccbc9552fe0e0b4b55ab.bindPopup(popup_71290ac653b00317ecd86a0e6914e55c)
+        ;
+
+        
+    
+    
+            marker_7c6b7c85a72fccbc9552fe0e0b4b55ab.bindTooltip(
+                `<div>
+                     [A] San Marco · 144 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7c6b7c85a72fccbc9552fe0e0b4b55ab.setIcon(icon_a4721eb2a8d2fddb5d3150c4bb2f49bb);
+            
+    
+            var marker_f804ea06ea597364271fd0b7a3143bde = L.marker(
+                [49.676622, 18.3402982],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_b6436fb1637a4d746ca995aca8d18ba6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2c2d02bd661546a66211c3cbcb4b26ea = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_a840c848e65755502e90c2d37a424126 = $(`<div id="html_a840c848e65755502e90c2d37a424126" style="width: 100.0%; height: 100.0%;"><b>[A] (bez názvu)</b><br>pub · 160 m<br></div>`)[0];
+                popup_2c2d02bd661546a66211c3cbcb4b26ea.setContent(html_a840c848e65755502e90c2d37a424126);
+            
+        
+
+        marker_f804ea06ea597364271fd0b7a3143bde.bindPopup(popup_2c2d02bd661546a66211c3cbcb4b26ea)
+        ;
+
+        
+    
+    
+            marker_f804ea06ea597364271fd0b7a3143bde.bindTooltip(
+                `<div>
+                     [A] (bez názvu) · 160 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f804ea06ea597364271fd0b7a3143bde.setIcon(icon_b6436fb1637a4d746ca995aca8d18ba6);
+            
+    
+            var marker_144ba687ee0569580696cb84edaa3f85 = L.marker(
+                [49.6765328, 18.3406239],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_de4f4df0c78c2a9d407a5caab3917495 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f9f316591591347bd0644e2183d3aac8 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_0231760cc95f31f9497737cd99425560 = $(`<div id="html_0231760cc95f31f9497737cd99425560" style="width: 100.0%; height: 100.0%;"><b>[A] Music bar Stará pošta</b><br>bar · 168 m<br></div>`)[0];
+                popup_f9f316591591347bd0644e2183d3aac8.setContent(html_0231760cc95f31f9497737cd99425560);
+            
+        
+
+        marker_144ba687ee0569580696cb84edaa3f85.bindPopup(popup_f9f316591591347bd0644e2183d3aac8)
+        ;
+
+        
+    
+    
+            marker_144ba687ee0569580696cb84edaa3f85.bindTooltip(
+                `<div>
+                     [A] Music bar Stará pošta · 168 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_144ba687ee0569580696cb84edaa3f85.setIcon(icon_de4f4df0c78c2a9d407a5caab3917495);
+            
+    
+            var marker_19c1cde66248823797bfbef25dccacaa = L.marker(
+                [49.6765162, 18.3407165],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_a24214fa44ed4f0ff63bb54d478029f5 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7a75e1ccd8e9eebaf7b918ca1aac7298 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_eb795c19b4eb6ff79a16de7fc87267df = $(`<div id="html_eb795c19b4eb6ff79a16de7fc87267df" style="width: 100.0%; height: 100.0%;"><b>[A] Sport bar</b><br>bar · 172 m<br></div>`)[0];
+                popup_7a75e1ccd8e9eebaf7b918ca1aac7298.setContent(html_eb795c19b4eb6ff79a16de7fc87267df);
+            
+        
+
+        marker_19c1cde66248823797bfbef25dccacaa.bindPopup(popup_7a75e1ccd8e9eebaf7b918ca1aac7298)
+        ;
+
+        
+    
+    
+            marker_19c1cde66248823797bfbef25dccacaa.bindTooltip(
+                `<div>
+                     [A] Sport bar · 172 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_19c1cde66248823797bfbef25dccacaa.setIcon(icon_a24214fa44ed4f0ff63bb54d478029f5);
+            
+    
+            var marker_360394f7ece8d41b001cb9f55e05c285 = L.marker(
+                [49.6748172, 18.3416234],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_ea3d337647a430a2f74783f936d790a5 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_83e5020e1b171c63fc40f785cba80a38 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_127229d8de0bf1438051e2ccb6ff51bf = $(`<div id="html_127229d8de0bf1438051e2ccb6ff51bf" style="width: 100.0%; height: 100.0%;"><b>[A] Hospoda ve dvoře</b><br>pub · 208 m<br></div>`)[0];
+                popup_83e5020e1b171c63fc40f785cba80a38.setContent(html_127229d8de0bf1438051e2ccb6ff51bf);
+            
+        
+
+        marker_360394f7ece8d41b001cb9f55e05c285.bindPopup(popup_83e5020e1b171c63fc40f785cba80a38)
+        ;
+
+        
+    
+    
+            marker_360394f7ece8d41b001cb9f55e05c285.bindTooltip(
+                `<div>
+                     [A] Hospoda ve dvoře · 208 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_360394f7ece8d41b001cb9f55e05c285.setIcon(icon_ea3d337647a430a2f74783f936d790a5);
+            
+    
+            var marker_58b58977fb0f149abdbfd65894e97adb = L.marker(
+                [49.674664, 18.3416205],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_ecbdb3a604fed0337c5e719e4752c1c5 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2c16365143c7b0ba1f3cf74f8ed63c28 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_216b665ba6355cb0182c62571bff15df = $(`<div id="html_216b665ba6355cb0182c62571bff15df" style="width: 100.0%; height: 100.0%;"><b>[A] (bez názvu)</b><br>pub · 214 m<br></div>`)[0];
+                popup_2c16365143c7b0ba1f3cf74f8ed63c28.setContent(html_216b665ba6355cb0182c62571bff15df);
+            
+        
+
+        marker_58b58977fb0f149abdbfd65894e97adb.bindPopup(popup_2c16365143c7b0ba1f3cf74f8ed63c28)
+        ;
+
+        
+    
+    
+            marker_58b58977fb0f149abdbfd65894e97adb.bindTooltip(
+                `<div>
+                     [A] (bez názvu) · 214 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_58b58977fb0f149abdbfd65894e97adb.setIcon(icon_ecbdb3a604fed0337c5e719e4752c1c5);
+            
+    
+            var marker_d5c476a3fde81e223cb70888bb3a1a70 = L.marker(
+                [49.6763683, 18.3432063],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_4ed2827354e6cac572075f0817e568ae = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_72e067e7defc08a825a509001a0c7329 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_3a89936cd4b72a7c142114c0c575b484 = $(`<div id="html_3a89936cd4b72a7c142114c0c575b484" style="width: 100.0%; height: 100.0%;"><b>[A] Bašta</b><br>pub · 323 m<br></div>`)[0];
+                popup_72e067e7defc08a825a509001a0c7329.setContent(html_3a89936cd4b72a7c142114c0c575b484);
+            
+        
+
+        marker_d5c476a3fde81e223cb70888bb3a1a70.bindPopup(popup_72e067e7defc08a825a509001a0c7329)
+        ;
+
+        
+    
+    
+            marker_d5c476a3fde81e223cb70888bb3a1a70.bindTooltip(
+                `<div>
+                     [A] Bašta · 323 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d5c476a3fde81e223cb70888bb3a1a70.setIcon(icon_4ed2827354e6cac572075f0817e568ae);
+            
+    
+            var marker_99a5c60d41c211fd77449af34138ac2b = L.marker(
+                [49.6790361, 18.3400574],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_5c3d426387a2418939009f127c5ee566 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7fca631aad690bd8a026ff47038ecfab = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_91a8805b69fee95bc7747a4133817a17 = $(`<div id="html_91a8805b69fee95bc7747a4133817a17" style="width: 100.0%; height: 100.0%;"><b>[A] Bar Krokodýl</b><br>pub · 403 m<br></div>`)[0];
+                popup_7fca631aad690bd8a026ff47038ecfab.setContent(html_91a8805b69fee95bc7747a4133817a17);
+            
+        
+
+        marker_99a5c60d41c211fd77449af34138ac2b.bindPopup(popup_7fca631aad690bd8a026ff47038ecfab)
+        ;
+
+        
+    
+    
+            marker_99a5c60d41c211fd77449af34138ac2b.bindTooltip(
+                `<div>
+                     [A] Bar Krokodýl · 403 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_99a5c60d41c211fd77449af34138ac2b.setIcon(icon_5c3d426387a2418939009f127c5ee566);
+            
+    
+            var marker_bedf8af3dc9ec839344ad75d87e23405 = L.marker(
+                [49.6790374, 18.3402687],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_e0c528585ceed03eda26e7667b815bb7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a753b091755de6dbc32f67b23783b509 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_a0f4e3ad4c8af8e9ca89e702e0e84698 = $(`<div id="html_a0f4e3ad4c8af8e9ca89e702e0e84698" style="width: 100.0%; height: 100.0%;"><b>[A] Restaurace Lékárna</b><br>pub · 406 m<br></div>`)[0];
+                popup_a753b091755de6dbc32f67b23783b509.setContent(html_a0f4e3ad4c8af8e9ca89e702e0e84698);
+            
+        
+
+        marker_bedf8af3dc9ec839344ad75d87e23405.bindPopup(popup_a753b091755de6dbc32f67b23783b509)
+        ;
+
+        
+    
+    
+            marker_bedf8af3dc9ec839344ad75d87e23405.bindTooltip(
+                `<div>
+                     [A] Restaurace Lékárna · 406 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_bedf8af3dc9ec839344ad75d87e23405.setIcon(icon_e0c528585ceed03eda26e7667b815bb7);
+            
+    
+            var marker_571978b9b4adbd27c19b390e0cf9c962 = L.marker(
+                [49.6768976, 18.3331641],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_ea61c37ecf52ef764aaf319f50077f7b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d9e9ef023da52ee7d26f9d0a1399eb88 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_84e9d1b192834f333ed1660269079304 = $(`<div id="html_84e9d1b192834f333ed1660269079304" style="width: 100.0%; height: 100.0%;"><b>[A] Pivovárek Morava</b><br>pub · 445 m<br></div>`)[0];
+                popup_d9e9ef023da52ee7d26f9d0a1399eb88.setContent(html_84e9d1b192834f333ed1660269079304);
+            
+        
+
+        marker_571978b9b4adbd27c19b390e0cf9c962.bindPopup(popup_d9e9ef023da52ee7d26f9d0a1399eb88)
+        ;
+
+        
+    
+    
+            marker_571978b9b4adbd27c19b390e0cf9c962.bindTooltip(
+                `<div>
+                     [A] Pivovárek Morava · 445 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_571978b9b4adbd27c19b390e0cf9c962.setIcon(icon_ea61c37ecf52ef764aaf319f50077f7b);
+            
+    
+            var marker_7308ad0caff916d246ee426b9a1b4e2a = L.marker(
+                [49.6771587, 18.3450575],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_298c22b03f192f0e3e6f72272af599a9 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3e28ab01204ad6354506ede92fa1ba7f = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_9a9668615203e647678161e92a13acbc = $(`<div id="html_9a9668615203e647678161e92a13acbc" style="width: 100.0%; height: 100.0%;"><b>[A] (bez názvu)</b><br>bar · 479 m<br></div>`)[0];
+                popup_3e28ab01204ad6354506ede92fa1ba7f.setContent(html_9a9668615203e647678161e92a13acbc);
+            
+        
+
+        marker_7308ad0caff916d246ee426b9a1b4e2a.bindPopup(popup_3e28ab01204ad6354506ede92fa1ba7f)
+        ;
+
+        
+    
+    
+            marker_7308ad0caff916d246ee426b9a1b4e2a.bindTooltip(
+                `<div>
+                     [A] (bez názvu) · 479 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7308ad0caff916d246ee426b9a1b4e2a.setIcon(icon_298c22b03f192f0e3e6f72272af599a9);
+            
+    
+            var marker_ce6e00065e637a5185eb6fdd61edb654 = L.marker(
+                [49.6792088, 18.3428495],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_fe03d69cdffc761b447b3d21ab5fa2f2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7aa978c6a61d6f6ffaf127754c77ca19 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_533435640455e026b1590824e1e3e51a = $(`<div id="html_533435640455e026b1590824e1e3e51a" style="width: 100.0%; height: 100.0%;"><b>[B] Ponorka</b><br>pub · 501 m<br></div>`)[0];
+                popup_7aa978c6a61d6f6ffaf127754c77ca19.setContent(html_533435640455e026b1590824e1e3e51a);
+            
+        
+
+        marker_ce6e00065e637a5185eb6fdd61edb654.bindPopup(popup_7aa978c6a61d6f6ffaf127754c77ca19)
+        ;
+
+        
+    
+    
+            marker_ce6e00065e637a5185eb6fdd61edb654.bindTooltip(
+                `<div>
+                     [B] Ponorka · 501 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ce6e00065e637a5185eb6fdd61edb654.setIcon(icon_fe03d69cdffc761b447b3d21ab5fa2f2);
+            
+    
+            var marker_9997799d38355ef109fa290afbba80dc = L.marker(
+                [49.6706172, 18.339422],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_8a6eebfe413a8a53fcddb36a366c1912 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_cbee2e504a8d4e58b4fcc7f8a488afdf = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_68f45d640b1b53361671c10bc3ce8dd1 = $(`<div id="html_68f45d640b1b53361671c10bc3ce8dd1" style="width: 100.0%; height: 100.0%;"><b>[B] Na Zelené</b><br>pub · 543 m<br></div>`)[0];
+                popup_cbee2e504a8d4e58b4fcc7f8a488afdf.setContent(html_68f45d640b1b53361671c10bc3ce8dd1);
+            
+        
+
+        marker_9997799d38355ef109fa290afbba80dc.bindPopup(popup_cbee2e504a8d4e58b4fcc7f8a488afdf)
+        ;
+
+        
+    
+    
+            marker_9997799d38355ef109fa290afbba80dc.bindTooltip(
+                `<div>
+                     [B] Na Zelené · 543 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_9997799d38355ef109fa290afbba80dc.setIcon(icon_8a6eebfe413a8a53fcddb36a366c1912);
+            
+    
+            var marker_c09bd16b325e88a826ac6f138bdabc5f = L.marker(
+                [49.6798487, 18.3427065],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_778a8df8aa93d750b72afc3d275d4daa = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ac901184baeb0a0e69d60c8d6bbab4f7 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_11f8f7a95e46fd97579f5da7281abb53 = $(`<div id="html_11f8f7a95e46fd97579f5da7281abb53" style="width: 100.0%; height: 100.0%;"><b>[B] Metaxa</b><br>bar · 556 m<br></div>`)[0];
+                popup_ac901184baeb0a0e69d60c8d6bbab4f7.setContent(html_11f8f7a95e46fd97579f5da7281abb53);
+            
+        
+
+        marker_c09bd16b325e88a826ac6f138bdabc5f.bindPopup(popup_ac901184baeb0a0e69d60c8d6bbab4f7)
+        ;
+
+        
+    
+    
+            marker_c09bd16b325e88a826ac6f138bdabc5f.bindTooltip(
+                `<div>
+                     [B] Metaxa · 556 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c09bd16b325e88a826ac6f138bdabc5f.setIcon(icon_778a8df8aa93d750b72afc3d275d4daa);
+            
+    
+            var marker_40fadadf63cd72ea583a868eaf9df475 = L.marker(
+                [49.6798601, 18.3429718],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_e9ec045402264f64d0ec34e5ea08d265 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7c30b02a92e320ee962f38e2733d7c25 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_62b85d46ea989eacb8455ee7cf66bc73 = $(`<div id="html_62b85d46ea989eacb8455ee7cf66bc73" style="width: 100.0%; height: 100.0%;"><b>[B] Billiard Bar Koloredo</b><br>bar · 567 m<br></div>`)[0];
+                popup_7c30b02a92e320ee962f38e2733d7c25.setContent(html_62b85d46ea989eacb8455ee7cf66bc73);
+            
+        
+
+        marker_40fadadf63cd72ea583a868eaf9df475.bindPopup(popup_7c30b02a92e320ee962f38e2733d7c25)
+        ;
+
+        
+    
+    
+            marker_40fadadf63cd72ea583a868eaf9df475.bindTooltip(
+                `<div>
+                     [B] Billiard Bar Koloredo · 567 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_40fadadf63cd72ea583a868eaf9df475.setIcon(icon_e9ec045402264f64d0ec34e5ea08d265);
+            
+    
+            var marker_58749393212f85edf18be355c936a018 = L.marker(
+                [49.6719329, 18.3447768],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_4658b5a0455df8f0b65b60003606c62c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_81fbf4fbf17a33a39560607892246cb3 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_4dc96d107f4159ce7e664d8ee937ef50 = $(`<div id="html_4dc96d107f4159ce7e664d8ee937ef50" style="width: 100.0%; height: 100.0%;"><b>[B] Bar Domů</b><br>bar · 578 m<br></div>`)[0];
+                popup_81fbf4fbf17a33a39560607892246cb3.setContent(html_4dc96d107f4159ce7e664d8ee937ef50);
+            
+        
+
+        marker_58749393212f85edf18be355c936a018.bindPopup(popup_81fbf4fbf17a33a39560607892246cb3)
+        ;
+
+        
+    
+    
+            marker_58749393212f85edf18be355c936a018.bindTooltip(
+                `<div>
+                     [B] Bar Domů · 578 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_58749393212f85edf18be355c936a018.setIcon(icon_4658b5a0455df8f0b65b60003606c62c);
+            
+    
+            var marker_a0f564e0dcfb89ca04a14029cfbfac5c = L.marker(
+                [49.6803563, 18.3418069],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_ecedb7a91a9db87375d9852a85606dbc = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_45081f51c3577d5220c0823f9ae69fa8 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_9ef906fb3b3c734433d99c53a766190f = $(`<div id="html_9ef906fb3b3c734433d99c53a766190f" style="width: 100.0%; height: 100.0%;"><b>[B] U Černého kocoura</b><br>pub · 580 m<br></div>`)[0];
+                popup_45081f51c3577d5220c0823f9ae69fa8.setContent(html_9ef906fb3b3c734433d99c53a766190f);
+            
+        
+
+        marker_a0f564e0dcfb89ca04a14029cfbfac5c.bindPopup(popup_45081f51c3577d5220c0823f9ae69fa8)
+        ;
+
+        
+    
+    
+            marker_a0f564e0dcfb89ca04a14029cfbfac5c.bindTooltip(
+                `<div>
+                     [B] U Černého kocoura · 580 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a0f564e0dcfb89ca04a14029cfbfac5c.setIcon(icon_ecedb7a91a9db87375d9852a85606dbc);
+            
+    
+            var marker_083ecf587ee38e66161dd0153e869ab6 = L.marker(
+                [49.6719461, 18.3450813],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_78fdfca639966acc2ad6414a287f202e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2487103516713788ceacf4208bd174bb = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_8d6faeaa2c2559401b1a0282ba7c3c21 = $(`<div id="html_8d6faeaa2c2559401b1a0282ba7c3c21" style="width: 100.0%; height: 100.0%;"><b>[B] Bar Cross</b><br>bar · 593 m<br></div>`)[0];
+                popup_2487103516713788ceacf4208bd174bb.setContent(html_8d6faeaa2c2559401b1a0282ba7c3c21);
+            
+        
+
+        marker_083ecf587ee38e66161dd0153e869ab6.bindPopup(popup_2487103516713788ceacf4208bd174bb)
+        ;
+
+        
+    
+    
+            marker_083ecf587ee38e66161dd0153e869ab6.bindTooltip(
+                `<div>
+                     [B] Bar Cross · 593 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_083ecf587ee38e66161dd0153e869ab6.setIcon(icon_78fdfca639966acc2ad6414a287f202e);
+            
+    
+            var marker_b563fe64d1f460d49906ee91ebf3ac06 = L.marker(
+                [49.6813673, 18.339298],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_3b94ae6b700aa5bd8311b676b66f00ff = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6cf7976f194f66fcdc43e32043b6adef = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_36aa7380ed3408548338170e22491c43 = $(`<div id="html_36aa7380ed3408548338170e22491c43" style="width: 100.0%; height: 100.0%;"><b>[B] (bez názvu)</b><br>bar · 654 m<br></div>`)[0];
+                popup_6cf7976f194f66fcdc43e32043b6adef.setContent(html_36aa7380ed3408548338170e22491c43);
+            
+        
+
+        marker_b563fe64d1f460d49906ee91ebf3ac06.bindPopup(popup_6cf7976f194f66fcdc43e32043b6adef)
+        ;
+
+        
+    
+    
+            marker_b563fe64d1f460d49906ee91ebf3ac06.bindTooltip(
+                `<div>
+                     [B] (bez názvu) · 654 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b563fe64d1f460d49906ee91ebf3ac06.setIcon(icon_3b94ae6b700aa5bd8311b676b66f00ff);
+            
+    
+            var marker_b0187c202fb9e6edb2611ffd317cb2a5 = L.marker(
+                [49.6697057, 18.3355734],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_960b4471ab36ad95d4435378416b3a8c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_179b209b1f7e5ce467dacd9ef6891453 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_75fc324c4168132a82ff11ac2dd0eb39 = $(`<div id="html_75fc324c4168132a82ff11ac2dd0eb39" style="width: 100.0%; height: 100.0%;"><b>[B] Gřesanka</b><br>pub · 688 m<br>Mo-Sa 12:00-23:00; Su 12:00-22:00</div>`)[0];
+                popup_179b209b1f7e5ce467dacd9ef6891453.setContent(html_75fc324c4168132a82ff11ac2dd0eb39);
+            
+        
+
+        marker_b0187c202fb9e6edb2611ffd317cb2a5.bindPopup(popup_179b209b1f7e5ce467dacd9ef6891453)
+        ;
+
+        
+    
+    
+            marker_b0187c202fb9e6edb2611ffd317cb2a5.bindTooltip(
+                `<div>
+                     [B] Gřesanka · 688 m · Mo-Sa 12:00-23:00; Su 12:00-22:00
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b0187c202fb9e6edb2611ffd317cb2a5.setIcon(icon_960b4471ab36ad95d4435378416b3a8c);
+            
+    
+            var marker_42c1404b6fccb8e220e8ad28bfb9aa57 = L.marker(
+                [49.6714828, 18.3469302],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_9bffd64e0bc1348fca029b59fa068b63 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_fc1bdf964b68c0fffb9a2c8e63b905d7 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_80e884292b836cb816aa422d497c814e = $(`<div id="html_80e884292b836cb816aa422d497c814e" style="width: 100.0%; height: 100.0%;"><b>[B] Rybízák</b><br>bar · 729 m<br></div>`)[0];
+                popup_fc1bdf964b68c0fffb9a2c8e63b905d7.setContent(html_80e884292b836cb816aa422d497c814e);
+            
+        
+
+        marker_42c1404b6fccb8e220e8ad28bfb9aa57.bindPopup(popup_fc1bdf964b68c0fffb9a2c8e63b905d7)
+        ;
+
+        
+    
+    
+            marker_42c1404b6fccb8e220e8ad28bfb9aa57.bindTooltip(
+                `<div>
+                     [B] Rybízák · 729 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_42c1404b6fccb8e220e8ad28bfb9aa57.setIcon(icon_9bffd64e0bc1348fca029b59fa068b63);
+            
+    
+            var marker_97391606dd2d183d8106fc64ae485415 = L.marker(
+                [49.6712914, 18.3471669],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_d11953aee83e666235386974f27fd8b8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_39975c85a9887f7cc080077fdb946bfb = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_89f9c5ddba679e4af844df510daaf4a4 = $(`<div id="html_89f9c5ddba679e4af844df510daaf4a4" style="width: 100.0%; height: 100.0%;"><b>[B] Sport bar Riviera</b><br>bar · 755 m<br>Mo-Th 11:00-23:00; Fr,Sa 11:00-24:00; Su 11:00-22:00</div>`)[0];
+                popup_39975c85a9887f7cc080077fdb946bfb.setContent(html_89f9c5ddba679e4af844df510daaf4a4);
+            
+        
+
+        marker_97391606dd2d183d8106fc64ae485415.bindPopup(popup_39975c85a9887f7cc080077fdb946bfb)
+        ;
+
+        
+    
+    
+            marker_97391606dd2d183d8106fc64ae485415.bindTooltip(
+                `<div>
+                     [B] Sport bar Riviera · 755 m · Mo-Th 11:00-23:00; Fr,Sa 11:00-24:00; Su 11:00-22:00
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_97391606dd2d183d8106fc64ae485415.setIcon(icon_d11953aee83e666235386974f27fd8b8);
+            
+    
+            var marker_97cf6eb4638e4cf42c9792b1af78543f = L.marker(
+                [49.6710781, 18.3477743],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_2f13491ad4f5b26bf7b2db315226a479 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_694996015f325e43d8f835ef84c60623 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_2c5298aff27cee172bfbfd07be18dd55 = $(`<div id="html_2c5298aff27cee172bfbfd07be18dd55" style="width: 100.0%; height: 100.0%;"><b>[B] Pivní pohotovost</b><br>pub · 805 m<br></div>`)[0];
+                popup_694996015f325e43d8f835ef84c60623.setContent(html_2c5298aff27cee172bfbfd07be18dd55);
+            
+        
+
+        marker_97cf6eb4638e4cf42c9792b1af78543f.bindPopup(popup_694996015f325e43d8f835ef84c60623)
+        ;
+
+        
+    
+    
+            marker_97cf6eb4638e4cf42c9792b1af78543f.bindTooltip(
+                `<div>
+                     [B] Pivní pohotovost · 805 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_97cf6eb4638e4cf42c9792b1af78543f.setIcon(icon_2f13491ad4f5b26bf7b2db315226a479);
+            
+    
+            var marker_63c9c94d835e5111196225f4bf9e074e = L.marker(
+                [49.6696192, 18.3504719],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_ff017666626719e53c3873c4d7a84cad = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ef6d426aed6e96d25021a3cd144f09b7 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_a8e04be30b20012eab1951cc1f9ffbec = $(`<div id="html_a8e04be30b20012eab1951cc1f9ffbec" style="width: 100.0%; height: 100.0%;"><b>[B] Clubar</b><br>bar · 1058 m<br></div>`)[0];
+                popup_ef6d426aed6e96d25021a3cd144f09b7.setContent(html_a8e04be30b20012eab1951cc1f9ffbec);
+            
+        
+
+        marker_63c9c94d835e5111196225f4bf9e074e.bindPopup(popup_ef6d426aed6e96d25021a3cd144f09b7)
+        ;
+
+        
+    
+    
+            marker_63c9c94d835e5111196225f4bf9e074e.bindTooltip(
+                `<div>
+                     [B] Clubar · 1058 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_63c9c94d835e5111196225f4bf9e074e.setIcon(icon_ff017666626719e53c3873c4d7a84cad);
+            
+    
+            var marker_274d8e675343162298e5193e96fe0ad7 = L.marker(
+                [49.6782436, 18.3536849],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_3fafae15460ec63350df6c53c5895747 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_118f6d0a06567b0842268e3ee0b5c930 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_946d013f2c437f6facb3d28b01cfa005 = $(`<div id="html_946d013f2c437f6facb3d28b01cfa005" style="width: 100.0%; height: 100.0%;"><b>[B] Nádražka F-M</b><br>pub · 1107 m<br></div>`)[0];
+                popup_118f6d0a06567b0842268e3ee0b5c930.setContent(html_946d013f2c437f6facb3d28b01cfa005);
+            
+        
+
+        marker_274d8e675343162298e5193e96fe0ad7.bindPopup(popup_118f6d0a06567b0842268e3ee0b5c930)
+        ;
+
+        
+    
+    
+            marker_274d8e675343162298e5193e96fe0ad7.bindTooltip(
+                `<div>
+                     [B] Nádražka F-M · 1107 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_274d8e675343162298e5193e96fe0ad7.setIcon(icon_3fafae15460ec63350df6c53c5895747);
+            
+    
+            var marker_aa66372597eb6de7c6ad4f7a646c482a = L.marker(
+                [49.6693145, 18.3514381],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_a4708ef056bb019671250f70c0c183ef = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8d654ea55ccecd9b58352813c6003bd4 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_b5a83c6694eddab40aea475799a582b2 = $(`<div id="html_b5a83c6694eddab40aea475799a582b2" style="width: 100.0%; height: 100.0%;"><b>[B] pivnice Jadran</b><br>pub · 1134 m<br></div>`)[0];
+                popup_8d654ea55ccecd9b58352813c6003bd4.setContent(html_b5a83c6694eddab40aea475799a582b2);
+            
+        
+
+        marker_aa66372597eb6de7c6ad4f7a646c482a.bindPopup(popup_8d654ea55ccecd9b58352813c6003bd4)
+        ;
+
+        
+    
+    
+            marker_aa66372597eb6de7c6ad4f7a646c482a.bindTooltip(
+                `<div>
+                     [B] pivnice Jadran · 1134 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_aa66372597eb6de7c6ad4f7a646c482a.setIcon(icon_a4708ef056bb019671250f70c0c183ef);
+            
+    
+            var marker_81f54d15bd4ca4895aefc2208d6e0354 = L.marker(
+                [49.6828773, 18.3525016],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_bd1656cebd3fe9ed82358e7b700426fc = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_932bac82160f174039c095df2e5e0a4f = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_6e9b687a5e18c543a9ed01032af132de = $(`<div id="html_6e9b687a5e18c543a9ed01032af132de" style="width: 100.0%; height: 100.0%;"><b>[B] U Arnošta</b><br>pub · 1278 m<br></div>`)[0];
+                popup_932bac82160f174039c095df2e5e0a4f.setContent(html_6e9b687a5e18c543a9ed01032af132de);
+            
+        
+
+        marker_81f54d15bd4ca4895aefc2208d6e0354.bindPopup(popup_932bac82160f174039c095df2e5e0a4f)
+        ;
+
+        
+    
+    
+            marker_81f54d15bd4ca4895aefc2208d6e0354.bindTooltip(
+                `<div>
+                     [B] U Arnošta · 1278 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_81f54d15bd4ca4895aefc2208d6e0354.setIcon(icon_bd1656cebd3fe9ed82358e7b700426fc);
+            
+    
+            var marker_8802536326ae3f49edcfca60b12aa5a8 = L.marker(
+                [49.6809926, 18.3557127],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_46699a9cb256d4515f5a430c6c2f11bc = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c9ecfe16a2c44348dc36d6354942e505 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_ffbbb2ee5b543e59fbb1ea736bbfc3f9 = $(`<div id="html_ffbbb2ee5b543e59fbb1ea736bbfc3f9" style="width: 100.0%; height: 100.0%;"><b>[B] Bernard</b><br>pub · 1357 m<br></div>`)[0];
+                popup_c9ecfe16a2c44348dc36d6354942e505.setContent(html_ffbbb2ee5b543e59fbb1ea736bbfc3f9);
+            
+        
+
+        marker_8802536326ae3f49edcfca60b12aa5a8.bindPopup(popup_c9ecfe16a2c44348dc36d6354942e505)
+        ;
+
+        
+    
+    
+            marker_8802536326ae3f49edcfca60b12aa5a8.bindTooltip(
+                `<div>
+                     [B] Bernard · 1357 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_8802536326ae3f49edcfca60b12aa5a8.setIcon(icon_46699a9cb256d4515f5a430c6c2f11bc);
+            
+    
+            var marker_46aea1512fbb81b61722d3454173a9c7 = L.marker(
+                [49.6783472, 18.3575401],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_45bb223e9e9fe5d22154f9f77397ffd4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_993f145041e68be9ca41278e11a9b1a1 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_fcc37b1f7b910ae7c9de422af32f9a34 = $(`<div id="html_fcc37b1f7b910ae7c9de422af32f9a34" style="width: 100.0%; height: 100.0%;"><b>[B] SportBar Simon</b><br>bar · 1380 m<br>Mo-Fr 09:00-24:00; Sa,Su 00:00-02:00,09:00-24:00</div>`)[0];
+                popup_993f145041e68be9ca41278e11a9b1a1.setContent(html_fcc37b1f7b910ae7c9de422af32f9a34);
+            
+        
+
+        marker_46aea1512fbb81b61722d3454173a9c7.bindPopup(popup_993f145041e68be9ca41278e11a9b1a1)
+        ;
+
+        
+    
+    
+            marker_46aea1512fbb81b61722d3454173a9c7.bindTooltip(
+                `<div>
+                     [B] SportBar Simon · 1380 m · Mo-Fr 09:00-24:00; Sa,Su 00:00-02:00,09:00-24:00
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_46aea1512fbb81b61722d3454173a9c7.setIcon(icon_45bb223e9e9fe5d22154f9f77397ffd4);
+            
+    
+            var marker_4cf14a88aeef682571c12e2f4d59bed4 = L.marker(
+                [49.6697584, 18.3562445],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_55ad5fbdfcad02b9734b02e8d49cf722 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6f5ef1dce717de3a13597c816223f1e6 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_f1442e1f505acec7dac6a75d39c97deb = $(`<div id="html_f1442e1f505acec7dac6a75d39c97deb" style="width: 100.0%; height: 100.0%;"><b>[B] Vagón cafe bar</b><br>bar · 1402 m<br></div>`)[0];
+                popup_6f5ef1dce717de3a13597c816223f1e6.setContent(html_f1442e1f505acec7dac6a75d39c97deb);
+            
+        
+
+        marker_4cf14a88aeef682571c12e2f4d59bed4.bindPopup(popup_6f5ef1dce717de3a13597c816223f1e6)
+        ;
+
+        
+    
+    
+            marker_4cf14a88aeef682571c12e2f4d59bed4.bindTooltip(
+                `<div>
+                     [B] Vagón cafe bar · 1402 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4cf14a88aeef682571c12e2f4d59bed4.setIcon(icon_55ad5fbdfcad02b9734b02e8d49cf722);
+            
+    
+            var marker_4463e061a0a98a2cedf955185ea64517 = L.marker(
+                [49.679706, 18.3578024],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_1785d38255603d94ad5474af84729af8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c5294e544a9fbb6b78ef1a7816661601 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_b65417b706a9108152a007f10133c264 = $(`<div id="html_b65417b706a9108152a007f10133c264" style="width: 100.0%; height: 100.0%;"><b>[B] No. 101</b><br>bar · 1440 m<br></div>`)[0];
+                popup_c5294e544a9fbb6b78ef1a7816661601.setContent(html_b65417b706a9108152a007f10133c264);
+            
+        
+
+        marker_4463e061a0a98a2cedf955185ea64517.bindPopup(popup_c5294e544a9fbb6b78ef1a7816661601)
+        ;
+
+        
+    
+    
+            marker_4463e061a0a98a2cedf955185ea64517.bindTooltip(
+                `<div>
+                     [B] No. 101 · 1440 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4463e061a0a98a2cedf955185ea64517.setIcon(icon_1785d38255603d94ad5474af84729af8);
+            
+    
+            var marker_1094b1f76c555f09f1cb5342610f1411 = L.marker(
+                [49.6886066, 18.3297651],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_3201857e2145253c999e9dfe4ce67187 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6414ccb3f2902076d069e4f0e3c3f205 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_7e2a2aa11623860d389141a3e5b35d5e = $(`<div id="html_7e2a2aa11623860d389141a3e5b35d5e" style="width: 100.0%; height: 100.0%;"><b>[B] Coolárna</b><br>pub · 1602 m<br>Mo-Th 14:00-21:00; Fr 14:00-22:00; Sa 10:00-22:00; Su 10:00-21:00</div>`)[0];
+                popup_6414ccb3f2902076d069e4f0e3c3f205.setContent(html_7e2a2aa11623860d389141a3e5b35d5e);
+            
+        
+
+        marker_1094b1f76c555f09f1cb5342610f1411.bindPopup(popup_6414ccb3f2902076d069e4f0e3c3f205)
+        ;
+
+        
+    
+    
+            marker_1094b1f76c555f09f1cb5342610f1411.bindTooltip(
+                `<div>
+                     [B] Coolárna · 1602 m · Mo-Th 14:00-21:00; Fr 14:00-22:00; Sa 10:00-22:00; Su 10:00-21:00
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1094b1f76c555f09f1cb5342610f1411.setIcon(icon_3201857e2145253c999e9dfe4ce67187);
+            
+    
+            var marker_7e2ceb29d0ccc1b778745d1efef48291 = L.marker(
+                [49.677091, 18.3627654],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_8d6ad992d3bbad5a7b2c29241bd3da88 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_34c39496bf524ebe33ee241c58a78e1e = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_2fc096c2bacac4be1aea2114acbebf7e = $(`<div id="html_2fc096c2bacac4be1aea2114acbebf7e" style="width: 100.0%; height: 100.0%;"><b>[B] El Pancho</b><br>bar · 1729 m<br></div>`)[0];
+                popup_34c39496bf524ebe33ee241c58a78e1e.setContent(html_2fc096c2bacac4be1aea2114acbebf7e);
+            
+        
+
+        marker_7e2ceb29d0ccc1b778745d1efef48291.bindPopup(popup_34c39496bf524ebe33ee241c58a78e1e)
+        ;
+
+        
+    
+    
+            marker_7e2ceb29d0ccc1b778745d1efef48291.bindTooltip(
+                `<div>
+                     [B] El Pancho · 1729 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7e2ceb29d0ccc1b778745d1efef48291.setIcon(icon_8d6ad992d3bbad5a7b2c29241bd3da88);
+            
+    
+            var marker_ee1b8b552cdf66b2b21254d33689ac85 = L.marker(
+                [49.6894036, 18.3270717],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_7b14b8285dfb92e6890e41f7b5b5ff0a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_694ead32870f1b9ca2aff0e22a8e6757 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_7dbe2a286c83064f7d37e5efe3833ed1 = $(`<div id="html_7dbe2a286c83064f7d37e5efe3833ed1" style="width: 100.0%; height: 100.0%;"><b>[B] Bistro Na Husinci</b><br>pub · 1769 m<br></div>`)[0];
+                popup_694ead32870f1b9ca2aff0e22a8e6757.setContent(html_7dbe2a286c83064f7d37e5efe3833ed1);
+            
+        
+
+        marker_ee1b8b552cdf66b2b21254d33689ac85.bindPopup(popup_694ead32870f1b9ca2aff0e22a8e6757)
+        ;
+
+        
+    
+    
+            marker_ee1b8b552cdf66b2b21254d33689ac85.bindTooltip(
+                `<div>
+                     [B] Bistro Na Husinci · 1769 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ee1b8b552cdf66b2b21254d33689ac85.setIcon(icon_7b14b8285dfb92e6890e41f7b5b5ff0a);
+            
+    
+            var marker_bbb2bd61d5838ec5f50da4f57b0ccf2b = L.marker(
+                [49.6856865, 18.358106],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_9b8435592d5b1b7115950edf11f1561e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8a5eb725aac79e975175c7c153061ccd = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_dbf1c011795ab0b2793361df588dcdc1 = $(`<div id="html_dbf1c011795ab0b2793361df588dcdc1" style="width: 100.0%; height: 100.0%;"><b>[B] U kuřátek</b><br>pub · 1789 m<br>Mo-Fr 12:00-23:00; Sa-Su 12:00-01:00</div>`)[0];
+                popup_8a5eb725aac79e975175c7c153061ccd.setContent(html_dbf1c011795ab0b2793361df588dcdc1);
+            
+        
+
+        marker_bbb2bd61d5838ec5f50da4f57b0ccf2b.bindPopup(popup_8a5eb725aac79e975175c7c153061ccd)
+        ;
+
+        
+    
+    
+            marker_bbb2bd61d5838ec5f50da4f57b0ccf2b.bindTooltip(
+                `<div>
+                     [B] U kuřátek · 1789 m · Mo-Fr 12:00-23:00; Sa-Su 12:00-01:00
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_bbb2bd61d5838ec5f50da4f57b0ccf2b.setIcon(icon_9b8435592d5b1b7115950edf11f1561e);
+            
+    
+            var marker_88ece687655bc1dda6a733972912c0e3 = L.marker(
+                [49.6773771, 18.3640548],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_6fc8dd8df30a707d4eb0a51c1272fb0b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d1d023750f5c4b6ae632ca58cbe2a2ea = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_b824444f5853b0301a863961d4016b25 = $(`<div id="html_b824444f5853b0301a863961d4016b25" style="width: 100.0%; height: 100.0%;"><b>[B] Hvězda</b><br>bar · 1825 m<br></div>`)[0];
+                popup_d1d023750f5c4b6ae632ca58cbe2a2ea.setContent(html_b824444f5853b0301a863961d4016b25);
+            
+        
+
+        marker_88ece687655bc1dda6a733972912c0e3.bindPopup(popup_d1d023750f5c4b6ae632ca58cbe2a2ea)
+        ;
+
+        
+    
+    
+            marker_88ece687655bc1dda6a733972912c0e3.bindTooltip(
+                `<div>
+                     [B] Hvězda · 1825 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_88ece687655bc1dda6a733972912c0e3.setIcon(icon_6fc8dd8df30a707d4eb0a51c1272fb0b);
+            
+    
+            var marker_a8c6fe9601a9e33a603514ff3c121290 = L.marker(
+                [49.6810375, 18.3632677],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_cb4eb760303d03d415d3524606bcc081 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3b0eda9fd90412769781fd12a498bd78 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_ec23e4415c7e00bf432b0db376ddf0fa = $(`<div id="html_ec23e4415c7e00bf432b0db376ddf0fa" style="width: 100.0%; height: 100.0%;"><b>[B] Hudební klub Stoun</b><br>bar · 1861 m<br></div>`)[0];
+                popup_3b0eda9fd90412769781fd12a498bd78.setContent(html_ec23e4415c7e00bf432b0db376ddf0fa);
+            
+        
+
+        marker_a8c6fe9601a9e33a603514ff3c121290.bindPopup(popup_3b0eda9fd90412769781fd12a498bd78)
+        ;
+
+        
+    
+    
+            marker_a8c6fe9601a9e33a603514ff3c121290.bindTooltip(
+                `<div>
+                     [B] Hudební klub Stoun · 1861 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a8c6fe9601a9e33a603514ff3c121290.setIcon(icon_cb4eb760303d03d415d3524606bcc081);
+            
+    
+            var marker_a3be66c9bee3f7357abdca0146fe73a9 = L.marker(
+                [49.6771403, 18.3653333],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_0d3ec72e6a03058bf8a5537915352f1b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b246a4ab51b20341a7c1544fe166b8e1 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_67d1f7942962269ebff8695b9f73c3c7 = $(`<div id="html_67d1f7942962269ebff8695b9f73c3c7" style="width: 100.0%; height: 100.0%;"><b>[B] (bez názvu)</b><br>bar · 1914 m<br></div>`)[0];
+                popup_b246a4ab51b20341a7c1544fe166b8e1.setContent(html_67d1f7942962269ebff8695b9f73c3c7);
+            
+        
+
+        marker_a3be66c9bee3f7357abdca0146fe73a9.bindPopup(popup_b246a4ab51b20341a7c1544fe166b8e1)
+        ;
+
+        
+    
+    
+            marker_a3be66c9bee3f7357abdca0146fe73a9.bindTooltip(
+                `<div>
+                     [B] (bez názvu) · 1914 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a3be66c9bee3f7357abdca0146fe73a9.setIcon(icon_0d3ec72e6a03058bf8a5537915352f1b);
+            
+    
+            var marker_e952be8bed78858ef0fa5dd20a5c5813 = L.marker(
+                [49.676848, 18.3653832],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_9332ac61b4477cd699447b1b05570616 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f26b3f5309a0f21e534b7bc9150fcb4b = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_b2ee306c555a4ec443e29a6677b0d8c2 = $(`<div id="html_b2ee306c555a4ec443e29a6677b0d8c2" style="width: 100.0%; height: 100.0%;"><b>[B] Motor</b><br>bar · 1915 m<br></div>`)[0];
+                popup_f26b3f5309a0f21e534b7bc9150fcb4b.setContent(html_b2ee306c555a4ec443e29a6677b0d8c2);
+            
+        
+
+        marker_e952be8bed78858ef0fa5dd20a5c5813.bindPopup(popup_f26b3f5309a0f21e534b7bc9150fcb4b)
+        ;
+
+        
+    
+    
+            marker_e952be8bed78858ef0fa5dd20a5c5813.bindTooltip(
+                `<div>
+                     [B] Motor · 1915 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e952be8bed78858ef0fa5dd20a5c5813.setIcon(icon_9332ac61b4477cd699447b1b05570616);
+            
+    
+            var marker_7530eee222eab8263c5a84ed3b4db9d3 = L.marker(
+                [49.688322, 18.3568055],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_6b09ba576d814804054f4f85021572f8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_babeae9f1c2c57f3de235742f37c31df = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_a3375a141e35e977231e86548319cfcb = $(`<div id="html_a3375a141e35e977231e86548319cfcb" style="width: 100.0%; height: 100.0%;"><b>[B] (bez názvu)</b><br>pub · 1923 m<br></div>`)[0];
+                popup_babeae9f1c2c57f3de235742f37c31df.setContent(html_a3375a141e35e977231e86548319cfcb);
+            
+        
+
+        marker_7530eee222eab8263c5a84ed3b4db9d3.bindPopup(popup_babeae9f1c2c57f3de235742f37c31df)
+        ;
+
+        
+    
+    
+            marker_7530eee222eab8263c5a84ed3b4db9d3.bindTooltip(
+                `<div>
+                     [B] (bez názvu) · 1923 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7530eee222eab8263c5a84ed3b4db9d3.setIcon(icon_6b09ba576d814804054f4f85021572f8);
+            
+    
+            var marker_7172f36a9758a2d1fc1dbe63195d25a5 = L.marker(
+                [49.6887245, 18.3561886],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_63916c0b09cc0fada58bdd50be891264 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7d1c79d0d115cda5006461da419c357b = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_1d31ae1237d22ae0b8d3732e5c4f123b = $(`<div id="html_1d31ae1237d22ae0b8d3732e5c4f123b" style="width: 100.0%; height: 100.0%;"><b>[B] Mexiko</b><br>pub · 1928 m<br></div>`)[0];
+                popup_7d1c79d0d115cda5006461da419c357b.setContent(html_1d31ae1237d22ae0b8d3732e5c4f123b);
+            
+        
+
+        marker_7172f36a9758a2d1fc1dbe63195d25a5.bindPopup(popup_7d1c79d0d115cda5006461da419c357b)
+        ;
+
+        
+    
+    
+            marker_7172f36a9758a2d1fc1dbe63195d25a5.bindTooltip(
+                `<div>
+                     [B] Mexiko · 1928 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7172f36a9758a2d1fc1dbe63195d25a5.setIcon(icon_63916c0b09cc0fada58bdd50be891264);
+            
+    
+            var marker_6a6dbd385a9c7a5cd4e4e0006315a814 = L.marker(
+                [49.6882126, 18.3599463],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_bc148d59f403e7c5d5e2589918c2cf04 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_076b0c7f7aec7135cfd67e805f89f002 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_f73f10d9165bf7d8f35055e2503e497d = $(`<div id="html_f73f10d9165bf7d8f35055e2503e497d" style="width: 100.0%; height: 100.0%;"><b>[C] Bar Omega</b><br>pub · 2074 m<br></div>`)[0];
+                popup_076b0c7f7aec7135cfd67e805f89f002.setContent(html_f73f10d9165bf7d8f35055e2503e497d);
+            
+        
+
+        marker_6a6dbd385a9c7a5cd4e4e0006315a814.bindPopup(popup_076b0c7f7aec7135cfd67e805f89f002)
+        ;
+
+        
+    
+    
+            marker_6a6dbd385a9c7a5cd4e4e0006315a814.bindTooltip(
+                `<div>
+                     [C] Bar Omega · 2074 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6a6dbd385a9c7a5cd4e4e0006315a814.setIcon(icon_bc148d59f403e7c5d5e2589918c2cf04);
+            
+    
+            var marker_97548cfcdebcaafc0214387af8a3d31f = L.marker(
+                [49.6892625, 18.3583995],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_59c43c2c21c8c28f4c67a525e5ba3a47 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6664d7970e8508463a9fa400baa4cd78 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_6a54658057c3787e8cc5df645e97ac8a = $(`<div id="html_6a54658057c3787e8cc5df645e97ac8a" style="width: 100.0%; height: 100.0%;"><b>[C] (bez názvu)</b><br>pub · 2078 m<br></div>`)[0];
+                popup_6664d7970e8508463a9fa400baa4cd78.setContent(html_6a54658057c3787e8cc5df645e97ac8a);
+            
+        
+
+        marker_97548cfcdebcaafc0214387af8a3d31f.bindPopup(popup_6664d7970e8508463a9fa400baa4cd78)
+        ;
+
+        
+    
+    
+            marker_97548cfcdebcaafc0214387af8a3d31f.bindTooltip(
+                `<div>
+                     [C] (bez názvu) · 2078 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_97548cfcdebcaafc0214387af8a3d31f.setIcon(icon_59c43c2c21c8c28f4c67a525e5ba3a47);
+            
+    
+            var marker_c96639d199dcb2f7cee6727569024de6 = L.marker(
+                [49.6930416, 18.3571818],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_a3a7d61779fcaa886d24bf42951761f7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c61ec5f7ab2bb18f66d5e57da4236022 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_e030d043bb1441b677b710f8db807a6d = $(`<div id="html_e030d043bb1441b677b710f8db807a6d" style="width: 100.0%; height: 100.0%;"><b>[C] U lesa</b><br>pub · 2355 m<br></div>`)[0];
+                popup_c61ec5f7ab2bb18f66d5e57da4236022.setContent(html_e030d043bb1441b677b710f8db807a6d);
+            
+        
+
+        marker_c96639d199dcb2f7cee6727569024de6.bindPopup(popup_c61ec5f7ab2bb18f66d5e57da4236022)
+        ;
+
+        
+    
+    
+            marker_c96639d199dcb2f7cee6727569024de6.bindTooltip(
+                `<div>
+                     [C] U lesa · 2355 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c96639d199dcb2f7cee6727569024de6.setIcon(icon_a3a7d61779fcaa886d24bf42951761f7);
+            
+    
+            var marker_cfe978670837c9162e8fb523153523cc = L.marker(
+                [49.6863996, 18.368215],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_1c81be8aaf813d69a420dd714c46807c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b24ab56cf022597b964d9c744bd5eedc = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_a4214407eaf401a7f292336946cdaadf = $(`<div id="html_a4214407eaf401a7f292336946cdaadf" style="width: 100.0%; height: 100.0%;"><b>[C] (bez názvu)</b><br>pub · 2436 m<br></div>`)[0];
+                popup_b24ab56cf022597b964d9c744bd5eedc.setContent(html_a4214407eaf401a7f292336946cdaadf);
+            
+        
+
+        marker_cfe978670837c9162e8fb523153523cc.bindPopup(popup_b24ab56cf022597b964d9c744bd5eedc)
+        ;
+
+        
+    
+    
+            marker_cfe978670837c9162e8fb523153523cc.bindTooltip(
+                `<div>
+                     [C] (bez názvu) · 2436 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_cfe978670837c9162e8fb523153523cc.setIcon(icon_1c81be8aaf813d69a420dd714c46807c);
+            
+    
+            var marker_22c7861be49816e632b137d12e9110e4 = L.marker(
+                [49.6638428, 18.3679765],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_a0a007971cd7f39f5e335fbf073286b2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e8a3010319db97e162fe700f175d4f2d = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_278e8bdcbb98d74a59dc143c8b6d4cdb = $(`<div id="html_278e8bdcbb98d74a59dc143c8b6d4cdb" style="width: 100.0%; height: 100.0%;"><b>[C] Hospůdka U hřbitova</b><br>pub · 2464 m<br></div>`)[0];
+                popup_e8a3010319db97e162fe700f175d4f2d.setContent(html_278e8bdcbb98d74a59dc143c8b6d4cdb);
+            
+        
+
+        marker_22c7861be49816e632b137d12e9110e4.bindPopup(popup_e8a3010319db97e162fe700f175d4f2d)
+        ;
+
+        
+    
+    
+            marker_22c7861be49816e632b137d12e9110e4.bindTooltip(
+                `<div>
+                     [C] Hospůdka U hřbitova · 2464 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_22c7861be49816e632b137d12e9110e4.setIcon(icon_a0a007971cd7f39f5e335fbf073286b2);
+            
+    
+            var marker_124e4a71db42733d6558d68879a25fd7 = L.marker(
+                [49.6633653, 18.3093414],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_1ff43cbab9bfbacf9108be461f4fc31c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a141105652ec44ebbbb00f6f5089b772 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_c0fbcb99951be201aac6f7757611ba2b = $(`<div id="html_c0fbcb99951be201aac6f7757611ba2b" style="width: 100.0%; height: 100.0%;"><b>[C] beach bar</b><br>bar · 2526 m<br></div>`)[0];
+                popup_a141105652ec44ebbbb00f6f5089b772.setContent(html_c0fbcb99951be201aac6f7757611ba2b);
+            
+        
+
+        marker_124e4a71db42733d6558d68879a25fd7.bindPopup(popup_a141105652ec44ebbbb00f6f5089b772)
+        ;
+
+        
+    
+    
+            marker_124e4a71db42733d6558d68879a25fd7.bindTooltip(
+                `<div>
+                     [C] beach bar · 2526 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_124e4a71db42733d6558d68879a25fd7.setIcon(icon_1ff43cbab9bfbacf9108be461f4fc31c);
+            
+    
+            var marker_eabeb0dd741ca9f6c2188c305a62bbb5 = L.marker(
+                [49.6958176, 18.3207994],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_82a51e1d2145547ef5c948de9c70f2a8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_bdfd217ecac410791384140e52ce7f7f = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_46a6c511bbf5d1c61bb46f3b0f387987 = $(`<div id="html_46a6c511bbf5d1c61bb46f3b0f387987" style="width: 100.0%; height: 100.0%;"><b>[C] Hospoda Pod Šimlem</b><br>pub · 2613 m<br>Mo-Su 11:00-23:00</div>`)[0];
+                popup_bdfd217ecac410791384140e52ce7f7f.setContent(html_46a6c511bbf5d1c61bb46f3b0f387987);
+            
+        
+
+        marker_eabeb0dd741ca9f6c2188c305a62bbb5.bindPopup(popup_bdfd217ecac410791384140e52ce7f7f)
+        ;
+
+        
+    
+    
+            marker_eabeb0dd741ca9f6c2188c305a62bbb5.bindTooltip(
+                `<div>
+                     [C] Hospoda Pod Šimlem · 2613 m · Mo-Su 11:00-23:00
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_eabeb0dd741ca9f6c2188c305a62bbb5.setIcon(icon_82a51e1d2145547ef5c948de9c70f2a8);
+            
+    
+            var marker_06f6df5a1dfc44aa6b7c79ba2b4e98bd = L.marker(
+                [49.6984431, 18.3620534],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_b57be552f808aebb9f384409768467d0 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_43d1076d400b952f348f8463a53b80eb = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_b060a5aebc908afc7b066abdcd669ecc = $(`<div id="html_b060a5aebc908afc7b066abdcd669ecc" style="width: 100.0%; height: 100.0%;"><b>[C] Zátiší</b><br>pub · 3050 m<br></div>`)[0];
+                popup_43d1076d400b952f348f8463a53b80eb.setContent(html_b060a5aebc908afc7b066abdcd669ecc);
+            
+        
+
+        marker_06f6df5a1dfc44aa6b7c79ba2b4e98bd.bindPopup(popup_43d1076d400b952f348f8463a53b80eb)
+        ;
+
+        
+    
+    
+            marker_06f6df5a1dfc44aa6b7c79ba2b4e98bd.bindTooltip(
+                `<div>
+                     [C] Zátiší · 3050 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_06f6df5a1dfc44aa6b7c79ba2b4e98bd.setIcon(icon_b57be552f808aebb9f384409768467d0);
+            
+    
+            var marker_a15615e60cb23ddfac8453241300901e = L.marker(
+                [49.6474574, 18.3398289],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_0855d929d4d17020a1e112c52de3c6c8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8484728714f9abdd9272810cd8554109 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_bd02ce2d0e60632d92611d919c961153 = $(`<div id="html_bd02ce2d0e60632d92611d919c961153" style="width: 100.0%; height: 100.0%;"><b>[C] Hospůdka Pohoda</b><br>pub · 3118 m<br>Tu-Fr 15:00-22:00; Sa 12:00-23:00; Su 12:00-21:00</div>`)[0];
+                popup_8484728714f9abdd9272810cd8554109.setContent(html_bd02ce2d0e60632d92611d919c961153);
+            
+        
+
+        marker_a15615e60cb23ddfac8453241300901e.bindPopup(popup_8484728714f9abdd9272810cd8554109)
+        ;
+
+        
+    
+    
+            marker_a15615e60cb23ddfac8453241300901e.bindTooltip(
+                `<div>
+                     [C] Hospůdka Pohoda · 3118 m · Tu-Fr 15:00-22:00; Sa 12:00-23:00; Su 12:00-21:00
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a15615e60cb23ddfac8453241300901e.setIcon(icon_0855d929d4d17020a1e112c52de3c6c8);
+            
+    
+            var marker_5d6f3789509e3e8db569687882818ce5 = L.marker(
+                [49.6907312, 18.2943989],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_85846a1b0f4b664f9babf92292ae47b7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "glass",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_cd8288e265f61154d16517d2456c8947 = L.popup({
+  "maxWidth": 230,
+});
+
+        
+            
+                var html_b36f629ddd964e863ed5b215232ca93d = $(`<div id="html_b36f629ddd964e863ed5b215232ca93d" style="width: 100.0%; height: 100.0%;"><b>[C] U Mlýna</b><br>pub · 3634 m<br></div>`)[0];
+                popup_cd8288e265f61154d16517d2456c8947.setContent(html_b36f629ddd964e863ed5b215232ca93d);
+            
+        
+
+        marker_5d6f3789509e3e8db569687882818ce5.bindPopup(popup_cd8288e265f61154d16517d2456c8947)
+        ;
+
+        
+    
+    
+            marker_5d6f3789509e3e8db569687882818ce5.bindTooltip(
+                `<div>
+                     [C] U Mlýna · 3634 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_5d6f3789509e3e8db569687882818ce5.setIcon(icon_85846a1b0f4b664f9babf92292ae47b7);
+            
+    
+            var marker_911140d7572a3294da8631d0ec468c7f = L.marker(
+                [49.6925578, 18.346118],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_be4429f9308dff82c2874b31ca408ccb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "user",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_911140d7572a3294da8631d0ec468c7f.bindTooltip(
+                `<div>
+                     👤 Lucie Foldynová · 547 Kč · pátek 20:13
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_911140d7572a3294da8631d0ec468c7f.setIcon(icon_be4429f9308dff82c2874b31ca408ccb);
+            
+    
+            var marker_6cd69470cf907c6ed24eed845e0ecd89 = L.marker(
+                [49.69108, 18.3422378],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_905d27d67961aed0efb5f8fdc119c17e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "user",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_6cd69470cf907c6ed24eed845e0ecd89.bindTooltip(
+                `<div>
+                     👤 Ladislav Wojnar · 325 Kč · sobota 00:04
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6cd69470cf907c6ed24eed845e0ecd89.setIcon(icon_905d27d67961aed0efb5f8fdc119c17e);
+            
+    
+            var marker_137e9a1f19608298c5a684cc8ebc1715 = L.marker(
+                [49.68610839999999, 18.3591856],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_2ac5d93c82d285153a7005b29789d574 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "user",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_137e9a1f19608298c5a684cc8ebc1715.bindTooltip(
+                `<div>
+                     👤 Tereza Grunová · 262 Kč · pátek 21:20
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_137e9a1f19608298c5a684cc8ebc1715.setIcon(icon_2ac5d93c82d285153a7005b29789d574);
+            
+    
+            var marker_16614297e57a4d9723a729fb2f65628e = L.marker(
+                [49.6761217, 18.3384062],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_e916f2324fb12acd8ddf6ced343c6ba4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "user",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_16614297e57a4d9723a729fb2f65628e.bindTooltip(
+                `<div>
+                     👤 Tomáš Řeha · 547 Kč · sobota 22:56
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_16614297e57a4d9723a729fb2f65628e.setIcon(icon_e916f2324fb12acd8ddf6ced343c6ba4);
+            
+    
+            var marker_4676919d65320ef340e9844ea8657855 = L.marker(
+                [49.6788004, 18.3426659],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_969641dddd261bd4058428ba197b4aea = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "user",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_4676919d65320ef340e9844ea8657855.bindTooltip(
+                `<div>
+                     👤 Iveta Bystřická · 577 Kč · pátek 21:30
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4676919d65320ef340e9844ea8657855.setIcon(icon_969641dddd261bd4058428ba197b4aea);
+            
+    
+            var marker_310029e1aa89577afe323bc12922c3c3 = L.marker(
+                [49.6754886, 18.3389397],
+                {
+}
+            ).addTo(map_3881cf5d6ebd1c24067b0e01ba1b111d);
+        
+    
+            var icon_6dfac25f447045ceedfe67d1b5171154 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_310029e1aa89577afe323bc12922c3c3.bindTooltip(
+                `<div>
+                     📦 Výchozí bod
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_310029e1aa89577afe323bc12922c3c3.setIcon(icon_6dfac25f447045ceedfe67d1b5171154);
+            
+</script>
+</html>

@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "VecerkaPlus"
+AuthUserFile /ABSOLUTNI_CESTA_NA_SERVERU/.htpasswd
+Require valid-user

@@ -1,0 +1,9 @@
+id,nazev,poznamka,lat,lon,hh_3km,nightlife_3km,avg_dist_zak_m,dist_zone_center_m,in_zone,s_hh,s_nl,s_zak,s_zone,skore_total,rank
+G,FM – Sad B. Nikodema (byt řidiče – current),Stávající základna řidiče; referenční bod,49.6754886,18.3389397,21418,138,4714,2184,True,9.92758332559651,10.0,10.0,9.336060783167738,9.88,1
+A,Frýdek-Místek centrum (Pivovar / Nám. Svobody),"Srdce FM, max. dosah do okolí; dražší nájmy",49.683,18.3548,21574,131,4795,1048,True,10.0,9.492753623188406,9.956080897901643,10.0,9.84,2
+H,Místek – Nádražní / Vlakové nádraží,"Komerční lokace v jižní části FM, blízko osy zákazníků",49.692,18.36,18587,124,4945,1486,True,8.613406368953672,8.985507246376812,9.87474922734913,9.744009351256576,9.21,3
+C,"FM – Lískovecká (u Kauflandu, sever FM)","Hustá zástavba severu FM, blízko Ostravy; komerční zóna",49.702,18.348,12217,90,4761,2875,True,5.656392164144462,6.521739130434782,9.974516076560212,8.932203389830509,7.49,4
+B,FM – průmyslová zóna Chlebovice (Na Zahumení),"Levné sklady, snadný sjezd na R48/I-56; 3 km od centra FM",49.66,18.315,9021,79,6454,4444,False,4.172778757775508,5.72463768115942,9.056552621590848,8.015195791934541,4.44,5
+F,Ostrava – Hrabová / Rudná (průmyslová zóna),"Nejlepší dosah na Ostravu; drahé nájmy, daleko od FM zákazníků",49.77,18.22,5736,50,10663,14670,True,2.6478507102404607,3.6231884057971016,6.774385945887328,2.038573933372297,3.88,6
+D,Frýdlant nad Ostravicí – centrum,"Jižní brána zóny; nízké nájmy, horší dosah na FM a Ostravu",49.592,18.358,4120,26,13737,9796,True,1.8976882369325039,1.8840579710144927,5.107628910697826,4.887200467562828,3.14,7
+E,Třinec – západ (Oldřichovice),"Velké město, ale na okraji zóny; risknantní dosah na FM",49.676,18.62,32,0,23157,18158,False,0.0,0.0,0.0,0.0,0.0,8

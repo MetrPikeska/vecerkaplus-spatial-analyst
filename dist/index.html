@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VečerkaPlus — Analytika</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:     #0a0c10;
+    --bg2:    #10141c;
+    --border: #1e2535;
+    --text:   #c8d0e0;
+    --muted:  #5a6480;
+    --yellow: #f5c518;
+    --green:  #4caf82;
+    --radius: 10px;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+  .container {
+    max-width: 560px;
+    width: 100%;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--yellow);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #0a0c10;
+  }
+  .logo h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+  .logo p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 12px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .card:hover {
+    border-color: var(--yellow);
+    background: #13171f;
+  }
+  .card-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    width: 48px;
+    text-align: center;
+  }
+  .card-body h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .card-body p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .card-arrow {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .card:hover .card-arrow { color: var(--yellow); }
+  .footer {
+    margin-top: 32px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">
+    <div class="logo-icon">🌙</div>
+    <div>
+      <h1>VečerkaPlus Analytika</h1>
+      <p>Prostorová analýza &amp; obchodní metriky</p>
+    </div>
+  </div>
+
+  <a class="card" href="report.html">
+    <div class="card-icon">📊</div>
+    <div class="card-body">
+      <h2>Business report</h2>
+      <p>15 sekcí — Executive summary, demografie, zákazníci, marže, predikce, investorský rozbor</p>
+    </div>
+    <span class="card-arrow">›</span>
+  </a>
+
+  <a class="card" href="vecerkaplus_mapa.html">
+    <div class="card-icon">🗺️</div>
+    <div class="card-body">
+      <h2>Interaktivní mapa zón</h2>
+      <p>Google rozvozové zóny 5–35 km, ZUJ, 1 km grid domácností, zákazníci, nightlife spoty</p>
+    </div>
+    <span class="card-arrow">›</span>
+  </a>
+
+  <a class="card" href="marketing_mapa.html">
+    <div class="card-icon">📍</div>
+    <div class="card-body">
+      <h2>Marketingová mapa</h2>
+      <p>Bytové domy s potenciálem, OSM bary, restaurace a zastávky v dosahu</p>
+    </div>
+    <span class="card-arrow">›</span>
+  </a>
+
+  <div class="footer">VečerkaPlus · Frýdek-Místek · generováno 1.&nbsp;6.&nbsp;2026</div>
+</div>
+</body>
+</html>

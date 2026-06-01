@@ -103,6 +103,40 @@ kat_counts = df_zak["produkt_kategorie"].value_counts().to_dict()
 # Scénáře vzdáleností
 scenare = pd.read_csv(os.path.join(OUT_DIR, "scenare_vzdalenosti.csv"))
 
+# Analýza skladu
+sklad_csv = os.path.join(OUT_DIR, "sklad_scoring.csv")
+if os.path.exists(sklad_csv):
+    sklad_df = pd.read_csv(sklad_csv)
+    _rank_colors = {0: "#ffd740", 1: "#95a5a6", 2: "#cd7f32"}
+    _sklad_rows_html = "\n".join(
+        '<tr{top_style}>'
+        '<td style="color:{rc};font-weight:700">{rank}</td>'
+        '<td><strong>{id}</strong></td>'
+        '<td style="font-size:.88rem">{nazev}<br>'
+        '<span style="color:var(--muted);font-size:.78rem">{pozn}</span></td>'
+        '<td class="num">{hh}</td>'
+        '<td class="num">{nl}</td>'
+        '<td class="num">{dist}</td>'
+        '<td class="num"><strong style="color:{rc}">{score:.1f}</strong></td>'
+        '<td style="color:{zc}">{zs}</td>'
+        '</tr>'.format(
+            top_style=' style="background:var(--bg3);border-top:1px solid var(--cyan)"' if i == 0 else "",
+            rc=_rank_colors.get(i, "#888"),
+            rank=int(r.rank), id=r.id,
+            nazev=r.nazev, pozn=r.poznamka,
+            hh=f"{int(r.hh_3km):,}".replace(",", " "),
+            nl=int(r.nightlife_3km),
+            dist=f"{r.avg_dist_zak_m/1000:.1f} km",
+            score=r.skore_total,
+            zc="var(--green)" if r.in_zone else "var(--pink)",
+            zs="✓" if r.in_zone else "✗",
+        )
+        for i, r in enumerate(sklad_df.itertuples())
+    )
+else:
+    sklad_df = None
+    _sklad_rows_html = ""
+
 # Produkty a položky objednávek
 polozky = pd.read_csv(os.path.join(DATA_DIR, "polozky.csv"))
 katalog = pd.read_csv(os.path.join(DATA_DIR, "products_rows.csv"))
@@ -356,6 +390,7 @@ HTML = f"""<!DOCTYPE html>
     <li><a href="#mapa">Interaktivní mapa</a></li>
     <li><a href="#investori">Pro investory</a></li>
     <li><a href="#zaver">Závěry a doporučení</a></li>
+    <li><a href="#sklad">Analýza umístění skladu</a></li>
   </ol>
 </div>
 
@@ -967,6 +1002,69 @@ HTML = f"""<!DOCTYPE html>
 <div class="highlight positive" style="margin-top:20px;">
   <strong>Výhled:</strong> Při úspěšné akvizici 1 % domácností z panelového fondu v 5km okruhu (~{fmt_n(int(bytu_panelaky * 0.01 * 0.3))} aktivních zákazníků, průměr 1 objednávka/měsíc) by tržba dosáhla řádu <strong>stovek tisíc Kč ročně</strong> — a to pouze z centra FM bez využití plného 20km dosahu.
 </div>
+</div>
+
+
+<!-- ── 16. SKLAD ─────────────────────────────────────────────────────────── -->
+<div class="section" id="sklad">
+<h2>16. Analýza umístění skladu</h2>
+
+<p>Výběr lokality skladu je hodnocen dle čtyř prostorových kritérií s váhami přizpůsobenými nočnímu rozvozovému byznysu. Výsledek je <strong>skóre 0–10</strong> pro každou kandidátní lokalitu.</p>
+
+<div class="highlight" style="margin-bottom:20px;">
+  <strong>Metodika hodnocení</strong><br>
+  <span style="color:#bbb">
+  Domácnosti ≤ 3 km (30 %) · Nightlife podniky ≤ 3 km (30 %) · Průměrná vzdálenost ke stávajícím zákazníkům (25 %) · Centralita v rozvozové zóně (15 %).
+  Bod mimo zónu ≤ 20 km → penalizace −2 body.
+  </span>
+</div>
+
+{'<p style="color:var(--muted)">Scoring tabulka nebyla nalezena — spusťte nejprve analyze_sklad.py.</p>' if sklad_df is None else f"""
+<div class="kpi-grid" style="margin-bottom:24px;">
+  <div class="kpi" style="border-color:var(--yellow)">
+    <div class="val yellow">#{int(sklad_df.iloc[0]["rank"])} {sklad_df.iloc[0]["id"]}</div>
+    <div class="lbl">Doporučená lokalita</div>
+    <div style="color:#bbb;font-size:.82rem;margin-top:6px">{sklad_df.iloc[0]["nazev"]}</div>
+  </div>
+  <div class="kpi">
+    <div class="val">{sklad_df.iloc[0]["skore_total"]:.1f}/10</div>
+    <div class="lbl">Celkové skóre #1</div>
+  </div>
+  <div class="kpi">
+    <div class="val">{fmt_n(int(sklad_df.iloc[0]["hh_3km"]))}</div>
+    <div class="lbl">Domácností ≤ 3 km (#1)</div>
+  </div>
+  <div class="kpi">
+    <div class="val pink">{int(sklad_df.iloc[0]["nightlife_3km"])}</div>
+    <div class="lbl">Nightlife podniků ≤ 3 km (#1)</div>
+  </div>
+</div>
+
+<table>
+  <tr>
+    <th>#</th><th>ID</th><th>Lokalita</th>
+    <th class="num">Domácností ≤ 3 km</th>
+    <th class="num">Nightlife ≤ 3 km</th>
+    <th class="num">Průměr k zákazníkům</th>
+    <th class="num">Skóre</th>
+    <th>V zóně</th>
+  </tr>
+  {_sklad_rows_html}
+</table>
+
+<div class="highlight positive" style="margin-top:20px;">
+  <strong>Závěr:</strong>
+  Optimální oblast pro sklad je pás <strong>{sklad_df.iloc[0]["nazev"].split("(")[0].strip()} ↔ {sklad_df.iloc[1]["nazev"].split("(")[0].strip()}</strong>
+  — obě lokality mají prakticky stejné skóre ({sklad_df.iloc[0]["skore_total"]:.1f} vs. {sklad_df.iloc[1]["skore_total"]:.1f}).
+  Pokrývá ~{fmt_n(int(sklad_df.iloc[0]["hh_3km"]))} domácností a {int(sklad_df.iloc[0]["nightlife_3km"])} nightlife podniků v dosahu 3 km.
+  Průmyslová zóna Chlebovice a okolí Třince jsou nevhodné — buď mimo rozvozovou zónu, nebo příliš vzdálené od zákazníků.
+</div>
+
+<p style="margin-top:16px;color:var(--muted);font-size:.88rem;">
+  Interaktivní mapa kandidátů: <a href="sklad_analyza.html">sklad_analyza.html</a>
+  (heatmapa domácností, nightlife, 3km buffery, těžiště analýzy).
+</p>
+"""}
 </div>
 
 </div><!-- /.container -->
