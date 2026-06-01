@@ -10,3 +10,4 @@ data/obce_sldb/
 # Google Distance Matrix cache (obsahuje API klíč v URL historii, generovat lokálně)
 data/google_distance_cache.json
 data/ruian_budovy_fm.gpkg
+.env
