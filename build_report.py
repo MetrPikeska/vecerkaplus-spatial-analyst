@@ -87,7 +87,15 @@ trzba_total    = int(df_zak["trzba_kc"].sum())
 naklady_total  = round(df_zak["naklady_rozvoz_kc"].sum(), 1)
 vzdalenost_avg = round(df_zak["vzdalenost_km"].mean(), 1)
 vzdalenost_max = df_zak["vzdalenost_km"].max()
+min_trzba      = int(df_zak["trzba_kc"].min())
+max_trzba      = int(df_zak["trzba_kc"].max())
 free_delivery  = int((df_zak["dopravne_zakaznik_kc"] == 0).sum())
+kartou_count   = int((df_zak["platba"] == "kartou").sum())
+hotove_count   = int((df_zak["platba"] == "hotově").sum())
+import datetime as _dt
+date_last_order = pd.to_datetime(df_zak["datum"]).max()
+n_weeks_since_launch = round((date_last_order.date() - _dt.date(2026, 3, 14)).days / 7)
+date_last_str  = date_last_order.strftime("%-d. %-m. %Y")
 
 # Prodejní kategorie
 kat_counts = df_zak["produkt_kategorie"].value_counts().to_dict()
@@ -164,7 +172,8 @@ import numpy as np
 # Týdenní data: týden od spuštění (14.3.2026), počet objednávek
 weeks_data = [
     (1, 0), (2, 0), (3, 0), (4, 0), (5, 2),   # první objednávky v týdnu 5
-    (6, 0), (7, 1), (8, 1), (9, 1),             # stabilní 1/týden posledních 3 týdny
+    (6, 0), (7, 1), (8, 1), (9, 1),             # stabilní 1/týden (3. týdny v řadě)
+    (10, 0), (11, 0), (12, 2),                   # pauza a nárůst na 2 obj. v týdnu 12 (31.5.)
 ]
 # Aktuální trend: průměr posledních 3 týdnů = 1 obj/týden
 trend_weekly = 1.0
@@ -254,6 +263,8 @@ HTML = f"""<!DOCTYPE html>
   .tag-vino {{ background: #1a0d15; color: #e879a0; border: 1px solid #e879a0; }}
   .tag-tabak {{ background: #0d1017; color: #90a4ae; border: 1px solid #90a4ae; }}
   .tag-snack {{ background: #0f1208; color: var(--yellow); border: 1px solid var(--yellow); }}
+  .tag-pivo {{ background: #0a100a; color: #aed581; border: 1px solid #aed581; }}
+  .tag-nealko {{ background: #0a0f15; color: #4dd0e1; border: 1px solid #4dd0e1; }}
 
   /* Charts */
   .chart-wrap {{ background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }}
@@ -318,7 +329,7 @@ HTML = f"""<!DOCTYPE html>
       </div>
     </div>
     <div class="header-meta">
-      Zpracováno: 19. 5. 2026<br>
+      Zpracováno: {date_last_str}<br>
       Datové zdroje: Google Maps · ČSÚ SLDB 2021<br>
       RÚIAN · OSM · ArcČR 4.3
     </div>
@@ -351,7 +362,7 @@ HTML = f"""<!DOCTYPE html>
 <!-- ── 1. EXECUTIVE SUMMARY ──────────────────────────────────────────────── -->
 <div class="section" id="summary">
 <h2>1. Executive summary</h2>
-<p class="lead">VečerkaPlus je první noční rozvozová služba ve Frýdku-Místku specializovaná na alkohol a doplňkové zboží. Provoz byl zahájen 14. března 2026; první objednávka přišla 18. dubna 2026 po&nbsp;pěti týdnech od spuštění. Do 15. května 2026 bylo doručeno <strong>5 objednávek</strong> celkové tržby <strong>{fmt_n(trzba_total)} Kč</strong>.</p>
+<p class="lead">VečerkaPlus je první noční rozvozová služba ve Frýdku-Místku specializovaná na alkohol a doplňkové zboží. Provoz byl zahájen 14. března 2026; první objednávka přišla 18. dubna 2026 po&nbsp;pěti týdnech od spuštění. Do {date_last_str} bylo doručeno <strong>{n_objednavek} objednávek</strong> celkové tržby <strong>{fmt_n(trzba_total)} Kč</strong>.</p>
 
 <div class="kpi-grid" style="margin:24px 0;">
   <div class="kpi"><div class="val">{fmt_n(pop_grid_iso)}</div><div class="lbl">Odh. obyvatel v dosahu</div></div>
@@ -363,10 +374,10 @@ HTML = f"""<!DOCTYPE html>
 </div>
 
 <div class="highlight positive">
-  <strong>Potenciál:</strong> V reálné rozvozové zóně žije odhadem <strong>{fmt_n(pop_grid_iso)} obyvatel</strong> v <strong>{fmt_n(hh_iso)} domácnostech</strong>. Bytové domy (panelová zástavba ≥5 podlaží) koncentrují <strong>{fmt_n(bytu_panelaky)} bytů</strong> — to je hlavní cílový segment pro noční rozvoz. Všechny dosavadní objednávky pocházejí z centra FM, do vzdálenosti max. 3,3 km od výchozího bodu.
+  <strong>Potenciál:</strong> V reálné rozvozové zóně žije odhadem <strong>{fmt_n(pop_grid_iso)} obyvatel</strong> v <strong>{fmt_n(hh_iso)} domácnostech</strong>. Bytové domy (panelová zástavba ≥5 podlaží) koncentrují <strong>{fmt_n(bytu_panelaky)} bytů</strong> — to je hlavní cílový segment pro noční rozvoz. Nejdelší dosavadní doručení bylo na <strong>{vzdalenost_max} km</strong> (Ostrava-Polanka nad Odrou), první objednávka mimo 20km zónu.
 </div>
 <div class="highlight warn">
-  <strong>Limitace dat:</strong> Analýza vychází z 5 objednávek za první 4 týdny provozu. Statistické závěry o zákaznickém chování jsou orientační — data jsou prezentována jako raná fáze provozu, nikoli reprezentativní vzorek.
+  <strong>Limitace dat:</strong> Analýza vychází z {n_objednavek} objednávek za prvních {n_weeks_since_launch} týdnů provozu. Statistické závěry o zákaznickém chování jsou orientační — data jsou prezentována jako raná fáze provozu, nikoli reprezentativní vzorek.
 </div>
 </div>
 
@@ -451,7 +462,7 @@ HTML = f"""<!DOCTYPE html>
 <!-- ── 5. ZÁKAZNÍCI ───────────────────────────────────────────────────── -->
 <div class="section" id="zakaznici">
 <h2>5. Zákazníci a objednávky</h2>
-<p>V období od 18. dubna do 15. května 2026 bylo přijato a doručeno <strong>5 objednávek</strong>. Všechny objednávky pocházejí z centra Frýdku-Místku, v jízdní vzdálenosti <strong>1,8–3,3 km</strong> od výchozího bodu. Žádná objednávka zatím nepřišla z větší vzdálenosti než 3,3 km, přestože zóna umožňuje rozvoz až na 20 km.</p>
+<p>V období od 18. dubna do {date_last_str} bylo přijato a doručeno <strong>{n_objednavek} objednávek</strong>. Prvních 5 objednávek pochází z centra Frýdku-Místku (1,8–3,3 km). Objednávka #6 (Žabeň, 6,0 km) je první mimo centrum a objednávka #7 (Ostrava-Polanka, 22,3 km) je první za hranicí standardní 20km zóny.</p>
 
 <div class="orders-grid" style="margin:20px 0;">
 
@@ -485,10 +496,22 @@ HTML = f"""<!DOCTYPE html>
     <div class="order-items"><span class="tag tag-lihoviny">lihoviny</span> 2× Božkov Originál 0,5l</div>
   </div>
 
+  <div class="order-card">
+    <div class="order-header"><span class="order-id">#6 · 31. 5. 2026 · neděle 00:01</span><span class="order-val">678 Kč</span></div>
+    <div class="order-meta">📍 Žabeň · 6,0 km · hotově · dopravné zdarma</div>
+    <div class="order-items"><span class="tag tag-tabak">tabák</span><span class="tag tag-lihoviny" style="margin-left:4px">lihoviny</span> Marlboro Red + Finlandia Vodka 0,7l</div>
+  </div>
+
+  <div class="order-card" style="border-color:var(--yellow);">
+    <div class="order-header"><span class="order-id">#7 · 31. 5. 2026 · neděle 21:08</span><span class="order-val">629 Kč</span></div>
+    <div class="order-meta">📍 Za Humny 882, Ostrava-Polanka · <strong style="color:var(--yellow)">22,3 km ⚠ mimo zónu</strong> · kartou · dopravné 79 Kč</div>
+    <div class="order-items"><span class="tag tag-pivo">pivo</span> 10× Radegast 0,5 12</div>
+  </div>
+
 </div>
 
 <div class="highlight">
-  <strong>Vzorec objednávek:</strong> 3 objednávky přišly v pátek (20:13, 21:20, 21:30), 2 v sobotu (00:04 — tedy v noci z pátku, 22:56). Všechny objednávky jsou v úzkém časovém okně 20–01 hodin — žádná ve druhé polovině noční směny (01–06). Produktový mix dominují lihoviny (3/5 objednávek), jednou víno a jednou tabák se sladkostmi.
+  <strong>Vzorec objednávek:</strong> 3 objednávky přišly v pátek (20:13, 21:20, 21:30), 2 v sobotu (00:04, 22:56), 2 v neděli (00:01, 21:08). Produktový mix dominují lihoviny (4/7 objednávek). Objednávka #7 (Ostrava, 22,3 km) je první za hranicí 20km zóny a zároveň první objednávka piva — 10× Radegast za 550 Kč + 79 Kč dopravné. Kontribuční marže −52 Kč (palivo 131 Kč > marže + dopravné) — doručení za tuto vzdálenost je ztrátové při standardní ceně piva.
 </div>
 </div>
 
@@ -499,14 +522,14 @@ HTML = f"""<!DOCTYPE html>
 <div>
 <table>
   <tr><th>Metrika</th><th class="num">Hodnota</th></tr>
-  <tr><td>Celková tržba (5 obj.)</td><td class="num"><strong style="color:var(--green)">{fmt_n(trzba_total)} Kč</strong></td></tr>
+  <tr><td>Celková tržba ({n_objednavek} obj.)</td><td class="num"><strong style="color:var(--green)">{fmt_n(trzba_total)} Kč</strong></td></tr>
   <tr><td>Průměrná tržba / objednávka</td><td class="num">{int(trzba_avg)} Kč</td></tr>
-  <tr><td>Min / Max tržba</td><td class="num">262 / 577 Kč</td></tr>
+  <tr><td>Min / Max tržba</td><td class="num">{min_trzba} / {max_trzba} Kč</td></tr>
   <tr><td>Celkové přímé náklady na rozvoz</td><td class="num">{round(naklady_total, 0):.0f} Kč</td></tr>
   <tr><td>Průměrné náklady rozvoz / obj.</td><td class="num">{round(naklady_total/n_objednavek, 1)} Kč</td></tr>
   <tr><td>Průměrná vzdálenost doručení</td><td class="num">{vzdalenost_avg} km</td></tr>
   <tr><td>Objednávky s dopravným zdarma (≥{DOPRAVNE_ZDARMA_KC} Kč)</td><td class="num">{free_delivery} / {n_objednavek} <span style="color:var(--muted);font-size:.8rem">(1× promo/spuštění)</span></td></tr>
-  <tr><td>Platba kartou / hotově</td><td class="num">3 / 2</td></tr>
+  <tr><td>Platba kartou / hotově</td><td class="num">{kartou_count} / {hotove_count}</td></tr>
 </table>
 </div>
 <div class="chart-wrap">
@@ -527,7 +550,7 @@ HTML = f"""<!DOCTYPE html>
 <div class="kpi-grid" style="margin:20px 0;">
   <div class="kpi"><div class="val">{avg_marze_pct} %</div><div class="lbl">Průměrná hrubá marže na zboží</div></div>
   <div class="kpi"><div class="val green">{avg_kontribuce} Kč</div><div class="lbl">Kontribuční marže/objednávku</div></div>
-  <div class="kpi"><div class="val green">{total_kontribuce} Kč</div><div class="lbl">Celková kontribuce (5 obj.)</div></div>
+  <div class="kpi"><div class="val green">{total_kontribuce} Kč</div><div class="lbl">Celková kontribuce ({n_objednavek} obj.)</div></div>
   <div class="kpi"><div class="val pink">{avg_fuel_per_order:.1f} Kč</div><div class="lbl">Průměrné palivo/doručení</div></div>
 </div>
 
@@ -620,7 +643,7 @@ HTML = f"""<!DOCTYPE html>
 
 <div style="margin-top:20px;">
 <h3>Neprodané kategorie (nulová tržba)</h3>
-<p>Tyto kategorie v katalogu existují, ale zatím nikdo neobjednal: <strong>Pivo</strong>, <strong>Energy drinky</strong>, <strong>Party Mix</strong>, <strong>Doplňky</strong>, <strong>Soft drinky</strong> (jen Schweppes jako mixer). Nejsilnější příležitost je pivo — 5 SKU v katalogu, 0 prodejů, přitom v noční ekonomice standardní produkt.</p>
+<p>Tyto kategorie v katalogu existují, ale zatím nikdo neobjednal: <strong>Energy drinky</strong>, <strong>Party Mix</strong>, <strong>Doplňky</strong>. Pivo bylo dosud bez prodeje, ale objednávka #7 (10× Radegast) tuto mezeru prolomila — byť s negativní kontribuční marží kvůli vzdálenosti 22,3 km.</p>
 </div>
 
 <div class="highlight warn">
@@ -632,7 +655,7 @@ HTML = f"""<!DOCTYPE html>
 <!-- ── 9. CENOVÁ HISTORIE ────────────────────────────────────────────── -->
 <div class="section" id="cena-historie">
 <h2>9. Cenová historie produktů</h2>
-<p>Ceny jsou odvozeny porovnáním <strong>cen z emailových notifikací objednávek</strong> (dubna–května 2026) s aktuálním produktovým katalogem (Supabase, stav 19. 5. 2026). Pro produkty dosud neobjednané nelze historii odvodit.</p>
+<p>Ceny jsou odvozeny porovnáním <strong>cen z emailových notifikací objednávek</strong> (dubna–května 2026) s aktuálním produktovým katalogem (Supabase, stav {date_last_str}). Pro produkty dosud neobjednané nelze historii odvodit.</p>
 
 <div class="two-col">
 <div>
@@ -840,7 +863,7 @@ HTML = f"""<!DOCTYPE html>
 <p style="color:#bbb;">VečerkaPlus, spuštění 14. 3. 2026 · Frýdek-Místek · noční rozvoz alkoholu a doplňkového zboží · Pá–Ne 22:00–6:00</p>
 
 <div class="kpi-grid" style="margin:24px 0;">
-  <div class="kpi"><div class="val pink">5</div><div class="lbl">Objednávek (10 týdnů)</div></div>
+  <div class="kpi"><div class="val pink">{n_objednavek}</div><div class="lbl">Objednávek ({n_weeks_since_launch} týdnů)</div></div>
   <div class="kpi"><div class="val">{fmt_n(trzba_total)} Kč</div><div class="lbl">Celková tržba</div></div>
   <div class="kpi"><div class="val green">{avg_marze_pct} %</div><div class="lbl">Průměrná hrubá marže</div></div>
   <div class="kpi"><div class="val green">{avg_kontribuce:.0f} Kč</div><div class="lbl">Kontribuce/objednávku</div></div>
@@ -869,10 +892,10 @@ HTML = f"""<!DOCTYPE html>
 <div class="highlight warn">
 <h3 style="color:var(--yellow);margin-bottom:12px;">✗ Proč ne (rizika)</h3>
 <ul style="padding-left:18px;line-height:1.9;color:#ccc;">
-  <li><strong>Malý dataset.</strong> 5 objednávek za 10 týdnů je příliš málo pro spolehlivé závěry o poptávce, retenci ani sezónnosti.</li>
-  <li><strong>Nulová retence dat.</strong> Žádná ze 5 objednávek nepochází od zákazníka, který by objednal podruhé — LTV neznámé.</li>
+  <li><strong>Malý dataset.</strong> {n_objednavek} objednávek za {n_weeks_since_launch} týdnů je příliš málo pro spolehlivé závěry o poptávce, retenci ani sezónnosti.</li>
+  <li><strong>Nulová retence dat.</strong> Žádná z {n_objednavek} objednávek nepochází od zákazníka, který by objednal podruhé — LTV neznámé.</li>
   <li><strong>Operační single-point-of-failure.</strong> Celý provoz závisí na jednom člověku — nemoc, dovolená nebo jiná práce zastaví rozvoz.</li>
-  <li><strong>Geografická koncentrace.</strong> Všechny objednávky v okruhu 3,3 km z {fmt_n(int(zone_area_km2))} km² zóny — 97 % území nevyužito.</li>
+  <li><strong>Geografická koncentrace.</strong> 5 z {n_objednavek} objednávek stále pochází z okruhu 3,3 km od FM; první doručení na 6 km (Žabeň) a 22,3 km (Ostrava) — mimo standardní zónu.</li>
   <li><strong>Regulatorní riziko.</strong> Zákon o prodeji alkoholu, případné licenční změny nebo omezení nočního prodeje.</li>
   <li><strong>Sezónní neznámá.</strong> Provoz od března — letní měsíce ani zimní vrchol ještě neproběhly.</li>
 </ul>
@@ -929,7 +952,7 @@ HTML = f"""<!DOCTYPE html>
 <p>VečerkaPlus operuje v nezaplněné tržní mezeře — noční rozvoz alkoholu a doplňkového zboží v FM nemá přímého konkurenta. Rozvozová zóna pokrývá <strong>{fmt_n(pop_grid_iso)} obyvatel</strong> v <strong>{fmt_n(hh_iso)} domácnostech</strong>. Průměrná tržba {int(trzba_avg)} Kč na objednávku při přímých nákladech rozvozu ~{round(naklady_total/n_objednavek, 0):.0f} Kč zaručuje zdravou základní marži.</p>
 
 <h3>Klíčové výzvy</h3>
-<p>Nízká povědomost trhu — 5 objednávek za 4 týdny provozu naznačuje, že hlavní bariérou není logistika ani dosah, ale <strong>zákaznická akvizice</strong>. Žádná objednávka nepřišla po 01:00 ani ze vzdálenosti větší než 3,3 km — potenciál zóny je z 80 % nevyužitý. Druhý Pátku/So vzorec ukazuje velmi koncentrovanou poptávku — rozložení do více nocí bude vyžadovat aktivní marketing.</p>
+<p>Nízká povědomost trhu — {n_objednavek} objednávek za {n_weeks_since_launch} týdnů provozu naznačuje, že hlavní bariérou není logistika ani dosah, ale <strong>zákaznická akvizice</strong>. Objednávky pokrývají všechny tři provozní noci (Pá/So/Ne). První doručení za 20km zónu (Ostrava, 22,3 km) proběhlo se ztrátou — upozorňuje na nutnost přezkoumat cenu dopravného pro vzdálené doručení.</p>
 
 <h3>Doporučení</h3>
 <table>
@@ -937,7 +960,7 @@ HTML = f"""<!DOCTYPE html>
   <tr><td>1</td><td>Letákování bytových domů (≥5 podlaží) do 5 km od FM centra — <strong>{fmt_n(bytu_panelaky)} bytů</strong></td><td style="color:var(--green)">Vysoký</td><td style="color:var(--yellow)">Nízká</td></tr>
   <tr><td>2</td><td>Partnerství s nočními podniky — QR kódy na stolech v <strong>{spot_counts.get("pub",0) + spot_counts.get("bar",0)}</strong> pubech a barech</td><td style="color:var(--green)">Vysoký</td><td style="color:var(--yellow)">Nízká</td></tr>
   <tr><td>3</td><td>Instagram/TikTok cílení na věk 18–35, geolokace FM centrum, aktivní Pá–So 20–00</td><td style="color:var(--green)">Střední</td><td style="color:var(--yellow)">Nízká</td></tr>
-  <tr><td>4</td><td>Rozšíření sortimentu o energetické nápoje a snacks — 1 ze 5 objednávek cílila na tabák+sladkosti</td><td style="color:#ffd740)">Střední</td><td style="color:var(--green)">Nízká</td></tr>
+  <tr><td>4</td><td>Rozšíření sortimentu o energetické nápoje a snacks — 1 z {n_objednavek} objednávek cílila na tabák+sladkosti</td><td style="color:#ffd740)">Střední</td><td style="color:var(--green)">Nízká</td></tr>
   <tr><td>5</td><td>Práh dopravného zdarma ≥1 000 Kč motivuje zákazníky navyšovat hodnotu košíku — sledovat průměrnou tržbu, zda roste k tomuto prahu</td><td style="color:var(--yellow)">Střední</td><td style="color:var(--green)">Velmi nízká</td></tr>
 </table>
 
@@ -950,7 +973,7 @@ HTML = f"""<!DOCTYPE html>
 
 <div class="container">
 <div class="footer">
-  <div>VečerkaPlus · Prostorová analýza dosahu · 19. 5. 2026</div>
+  <div>VečerkaPlus · Prostorová analýza dosahu · {date_last_str}</div>
   <div>Datové zdroje: Google Maps API · ČSÚ SLDB 2021 · RÚIAN (ČÚZK) · OpenStreetMap · ArcČR 4.3 · OpenRouteService</div>
 </div>
 </div>
