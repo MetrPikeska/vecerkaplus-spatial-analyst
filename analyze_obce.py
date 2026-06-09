@@ -189,18 +189,28 @@ df["vyrazeno"] = df["nazev"].isin(VYRAZENE)
 
 # ── scoring ───────────────────────────────────────────────────────────────────
 df["s_trh"]       = score_0_10(df["hh_celkem"])
-df["s_pl"]        = score_0_10(df["net_per_order_kc"])
+# Absolutní P&L škála: 0–120 Kč → 0–10 (nepenalizuje 10-20km zónu na nulu)
+MAX_PL_KC = 120.0
+df["s_pl"]        = (df["net_per_order_kc"].clip(0, MAX_PL_KC) / MAX_PL_KC * 10).round(2)
 df["s_byty"]      = score_0_10(df["byt_podil"])
 df["s_nightlife"] = score_0_10(df["nightlife_per_1k"])
 
 df["skore_total"] = (
-    0.35 * df["s_trh"] +
-    0.30 * df["s_pl"]  +
+    0.45 * df["s_trh"] +
+    0.20 * df["s_pl"]  +
     0.20 * df["s_byty"] +
     0.15 * df["s_nightlife"]
 ).round(2).clip(0, 10)
 
-df["tier"] = df["skore_total"].apply(lambda s: "A" if s >= 6.5 else ("B" if s >= 4.0 else "C"))
+# Tiering podle absolutního měsíčního příspěvku (reálná P&L interpretace)
+#   A: ≥ 100 Kč/měsíc → aktivně marketovat, priorota doručení
+#   B: ≥ 30 Kč/měsíc  → rozvážet na objednávku, bez aktivního marketingu
+#   C: < 30 Kč/měsíc  → marginální, neinvestovat čas
+TIER_A_KC = 100
+TIER_B_KC = 30
+df["tier"] = df["monthly_contribution_kc"].apply(
+    lambda v: "A" if v >= TIER_A_KC else ("B" if v >= TIER_B_KC else "C")
+)
 df = df.sort_values("skore_total", ascending=False).reset_index(drop=True)
 df["rank"] = df.index + 1
 
@@ -354,9 +364,9 @@ legend_html = f"""
   box-shadow:2px 2px 10px rgba(0,0,0,.15);max-width:400px">
   <b style="font-size:14px">VečerkaPlus – Výběr obcí pro rozvoz</b>
   <hr style="margin:6px 0">
-  <div><span style="color:#2ecc71;font-size:16px">■</span> <b>Tier A</b> (≥6.5) — Prioritní — plně rozvážet &amp; marketovat</div>
-  <div><span style="color:#f1c40f;font-size:16px">■</span> <b>Tier B</b> (4–6.5) — Výhodné — rozvážet na objednávku</div>
-  <div><span style="color:#e74c3c;font-size:16px">■</span> <b>Tier C</b> (&lt;4) — Marginální — bez aktivního marketingu</div>
+  <div><span style="color:#2ecc71;font-size:16px">■</span> <b>Tier A</b> (≥100 Kč/měs) — Prioritní — aktivně marketovat</div>
+  <div><span style="color:#f1c40f;font-size:16px">■</span> <b>Tier B</b> (30–100 Kč/měs) — Výhodné — rozvážet na objednávku</div>
+  <div><span style="color:#e74c3c;font-size:16px">■</span> <b>Tier C</b> (&lt;30 Kč/měs) — Marginální — bez aktivního marketingu</div>
   <hr style="margin:6px 0">
   <b>Top 10 obcí</b>
   <table style="width:100%;border-collapse:collapse;margin-top:4px">

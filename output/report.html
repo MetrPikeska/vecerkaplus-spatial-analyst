@@ -139,6 +139,7 @@
   <ol>
     <li><a href="#summary">Executive summary</a></li>
     <li><a href="#zona">Rozvozová zóna</a></li>
+    <li><a href="#obce">Výběr obcí pro rozvoz</a></li>
     <li><a href="#demografie">Demografický profil</a></li>
     <li><a href="#zastavba">Bytová zástavba (RÚIAN)</a></li>
     <li><a href="#zakaznici">Zákazníci a objednávky</a></li>
@@ -196,6 +197,100 @@
 <p style="font-size:.8rem;color:var(--muted);margin-top:8px;">Google zóna = 1 093 bodů gridu dotázáno přes Google Distance Matrix API, stejný origin jako vecerkaplus.cz.</p>
 </div>
 </div>
+</div>
+
+<!-- ── VÝBĚR OBCÍ PRO ROZVOZ ────────────────────────────────────────── -->
+<div class="section" id="obce">
+<h2>Výběr obcí pro rozvoz — P&amp;L analýza</h2>
+<p>Každá obec v rozvozové zóně je klasifikována do tří tierů podle odhadovaného měsíčního příspěvku na pokrytí (tržba − náklady zboží − kurýr paušál + dopravné od zákazníka), při předpokladu konverzního poměru <strong>0,2 % domácností/měsíc</strong> a průměrné objednávce <strong>452 Kč</strong>.</p>
+
+<div style="display:flex;gap:16px;flex-wrap:wrap;margin:20px 0;">
+  <div style="flex:1;min-width:220px;background:rgba(0,230,118,.08);border:1px solid #00e676;border-radius:6px;padding:16px">
+    <div style="color:#00e676;font-size:1.2rem;font-weight:700">Tier A — Prioritní</div>
+    <div style="font-size:.85rem;color:var(--muted);margin:4px 0 10px">≥ 100 Kč/měsíc odhadovaný příspěvek</div>
+    <div style="font-size:1.8rem;font-weight:700;color:#00e676">{14} obcí</div>
+    <div style="color:#00e676">Celkem: 7 621 Kč/měs</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-top:6px">→ Aktivně marketovat, letáky, Instagram cílení</div>
+  </div>
+  <div style="flex:1;min-width:220px;background:rgba(255,215,64,.06);border:1px solid #ffd740;border-radius:6px;padding:16px">
+    <div style="color:#ffd740;font-size:1.2rem;font-weight:700">Tier B — Výhodné</div>
+    <div style="font-size:.85rem;color:var(--muted);margin:4px 0 10px">30–100 Kč/měsíc odhadovaný příspěvek</div>
+    <div style="font-size:1.8rem;font-weight:700;color:#ffd740">{20} obcí</div>
+    <div style="color:#ffd740">Celkem: 996 Kč/měs</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-top:6px">→ Doručovat na objednávku, bez aktivního marketingu</div>
+  </div>
+  <div style="flex:1;min-width:220px;background:rgba(231,76,60,.06);border:1px solid #e74c3c;border-radius:6px;padding:16px">
+    <div style="color:#e74c3c;font-size:1.2rem;font-weight:700">Tier C — Marginální</div>
+    <div style="font-size:.85rem;color:var(--muted);margin:4px 0 10px">&lt; 30 Kč/měsíc odhadovaný příspěvek</div>
+    <div style="font-size:1.8rem;font-weight:700;color:#e74c3c">{25} obcí</div>
+    <div style="color:var(--muted)">Malé vesnice, &lt; 1 obj/měsíc</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-top:6px">→ Doručit pokud zákazník sám objedná</div>
+  </div>
+</div>
+
+<div class="highlight warn">
+  <strong>P&amp;L upozornění:</strong> Kurýrský paušál skokově roste z 120 Kč (≤10 km) na 180 Kč (10–20 km), zatímco zákazníkovo dopravné zůstává 39 Kč.
+  Čistý příspěvek v 10–20km pásmu je jen <strong>24 Kč/obj</strong> vs. 84 Kč u ≤10 km.
+  Zvýšení dopravného pro 10–20 km zónu z 39 → 59 Kč by zlepšilo příspěvek na <strong>44 Kč/obj</strong> (+83 %).
+</div>
+
+
+<div class="two-col" style="margin-top:24px;">
+<div>
+<h3 style="color:#00e676;margin-bottom:8px">Tier A — Prioritní obce</h3>
+<table>
+  <tr><th>#</th><th>Obec</th><th class="num">Vzdál.</th><th class="num">Domác.</th><th class="num">Kč/obj</th><th class="num">Kč/měs</th></tr>
+  <tr><td style="color:#00e676;font-weight:700">2</td><td style="font-weight:600">Frýdek-Místek</td><td class="num">6 km</td><td class="num">23,003</td><td class="num" style="color:#00e676">84 Kč</td><td class="num"><strong style="color:#00e676">3,864 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">1</td><td style="font-weight:600">Havířov</td><td class="num">17 km</td><td class="num">33,388</td><td class="num" style="color:#00e676">24 Kč</td><td class="num"><strong style="color:#00e676">1,603 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">5</td><td style="font-weight:600">Staré Město</td><td class="num">3 km</td><td class="num">2,558</td><td class="num" style="color:#00e676">84 Kč</td><td class="num"><strong style="color:#00e676">428 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">4</td><td style="font-weight:600">Baška</td><td class="num">7 km</td><td class="num">1,412</td><td class="num" style="color:#00e676">84 Kč</td><td class="num"><strong style="color:#00e676">235 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">11</td><td style="font-weight:600">Dobrá</td><td class="num">4 km</td><td class="num">1,220</td><td class="num" style="color:#00e676">84 Kč</td><td class="num"><strong style="color:#00e676">202 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">10</td><td style="font-weight:600">Frýdlant nad Ostravicí</td><td class="num">14 km</td><td class="num">3,936</td><td class="num" style="color:#00e676">24 Kč</td><td class="num"><strong style="color:#00e676">190 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">13</td><td style="font-weight:600">Stará Ves nad Ondřejnicí</td><td class="num">20 km</td><td class="num">1,176</td><td class="num" style="color:#00e676">79 Kč</td><td class="num"><strong style="color:#00e676">190 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">38</td><td style="font-weight:600">Příbor</td><td class="num">19 km</td><td class="num">3,423</td><td class="num" style="color:#00e676">24 Kč</td><td class="num"><strong style="color:#00e676">163 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">8</td><td style="font-weight:600">Staříč</td><td class="num">10 km</td><td class="num">840</td><td class="num" style="color:#00e676">84 Kč</td><td class="num"><strong style="color:#00e676">143 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">25</td><td style="font-weight:600">Vratimov</td><td class="num">13 km</td><td class="num">2,881</td><td class="num" style="color:#00e676">24 Kč</td><td class="num"><strong style="color:#00e676">139 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">44</td><td style="font-weight:600">Petřvald</td><td class="num">19 km</td><td class="num">2,815</td><td class="num" style="color:#00e676">24 Kč</td><td class="num"><strong style="color:#00e676">134 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">35</td><td style="font-weight:600">Šenov</td><td class="num">14 km</td><td class="num">2,439</td><td class="num" style="color:#00e676">24 Kč</td><td class="num"><strong style="color:#00e676">118 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">7</td><td style="font-weight:600">Sviadnov</td><td class="num">5 km</td><td class="num">635</td><td class="num" style="color:#00e676">84 Kč</td><td class="num"><strong style="color:#00e676">109 Kč</strong></td></tr>
+<tr><td style="color:#00e676;font-weight:700">24</td><td style="font-weight:600">Ropice</td><td class="num">22 km</td><td class="num">648</td><td class="num" style="color:#00e676">79 Kč</td><td class="num"><strong style="color:#00e676">103 Kč</strong></td></tr>
+
+</table>
+</div>
+<div>
+<h3 style="color:#ffd740;margin-bottom:8px">Tier B — Výhodné obce</h3>
+<table>
+  <tr><th>#</th><th>Obec</th><th class="num">Vzdál.</th><th class="num">Domác.</th><th class="num">Kč/obj</th><th class="num">Kč/měs</th></tr>
+  <tr><td style="color:#ffd740;font-weight:700">14</td><td style="font-weight:600">Sedliště</td><td class="num">6 km</td><td class="num">517</td><td class="num" style="color:#ffd740">84 Kč</td><td class="num"><strong style="color:#ffd740">84 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">30</td><td style="font-weight:600">Brušperk</td><td class="num">18 km</td><td class="num">1,535</td><td class="num" style="color:#ffd740">24 Kč</td><td class="num"><strong style="color:#ffd740">74 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">31</td><td style="font-weight:600">Paskov</td><td class="num">12 km</td><td class="num">1,426</td><td class="num" style="color:#ffd740">24 Kč</td><td class="num"><strong style="color:#ffd740">70 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">20</td><td style="font-weight:600">Bruzovice</td><td class="num">8 km</td><td class="num">407</td><td class="num" style="color:#ffd740">84 Kč</td><td class="num"><strong style="color:#ffd740">67 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">12</td><td style="font-weight:600">Nošovice</td><td class="num">6 km</td><td class="num">336</td><td class="num" style="color:#ffd740">84 Kč</td><td class="num"><strong style="color:#ffd740">59 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">39</td><td style="font-weight:600">Palkovice</td><td class="num">12 km</td><td class="num">1,184</td><td class="num" style="color:#ffd740">24 Kč</td><td class="num"><strong style="color:#ffd740">58 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">19</td><td style="font-weight:600">Žabeň</td><td class="num">7 km</td><td class="num">314</td><td class="num" style="color:#ffd740">84 Kč</td><td class="num"><strong style="color:#ffd740">50 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">16</td><td style="font-weight:600">Pržno</td><td class="num">9 km</td><td class="num">306</td><td class="num" style="color:#ffd740">84 Kč</td><td class="num"><strong style="color:#ffd740">50 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">45</td><td style="font-weight:600">Horní Bludovice</td><td class="num">10 km</td><td class="num">1,036</td><td class="num" style="color:#ffd740">24 Kč</td><td class="num"><strong style="color:#ffd740">50 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">46</td><td style="font-weight:600">Kozlovice</td><td class="num">18 km</td><td class="num">1,051</td><td class="num" style="color:#ffd740">24 Kč</td><td class="num"><strong style="color:#ffd740">50 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">18</td><td style="font-weight:600">Horní Domaslavice</td><td class="num">8 km</td><td class="num">314</td><td class="num" style="color:#ffd740">84 Kč</td><td class="num"><strong style="color:#ffd740">50 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">26</td><td style="font-weight:600">Skotnice</td><td class="num">20 km</td><td class="num">313</td><td class="num" style="color:#ffd740">79 Kč</td><td class="num"><strong style="color:#ffd740">47 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">47</td><td style="font-weight:600">Fryčovice</td><td class="num">16 km</td><td class="num">908</td><td class="num" style="color:#ffd740">24 Kč</td><td class="num"><strong style="color:#ffd740">43 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">34</td><td style="font-weight:600">Řepiště</td><td class="num">11 km</td><td class="num">843</td><td class="num" style="color:#ffd740">24 Kč</td><td class="num"><strong style="color:#ffd740">41 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">17</td><td style="font-weight:600">Hukvaldy</td><td class="num">16 km</td><td class="num">817</td><td class="num" style="color:#ffd740">24 Kč</td><td class="num"><strong style="color:#ffd740">38 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">48</td><td style="font-weight:600">Václavovice</td><td class="num">10 km</td><td class="num">749</td><td class="num" style="color:#ffd740">24 Kč</td><td class="num"><strong style="color:#ffd740">36 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">33</td><td style="font-weight:600">Krmelín</td><td class="num">17 km</td><td class="num">693</td><td class="num" style="color:#ffd740">24 Kč</td><td class="num"><strong style="color:#ffd740">34 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">9</td><td style="font-weight:600">Krásná</td><td class="num">20 km</td><td class="num">211</td><td class="num" style="color:#ffd740">79 Kč</td><td class="num"><strong style="color:#ffd740">32 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">27</td><td style="font-weight:600">Trnávka</td><td class="num">20 km</td><td class="num">223</td><td class="num" style="color:#ffd740">79 Kč</td><td class="num"><strong style="color:#ffd740">32 Kč</strong></td></tr>
+<tr><td style="color:#ffd740;font-weight:700">53</td><td style="font-weight:600">Janovice</td><td class="num">11 km</td><td class="num">660</td><td class="num" style="color:#ffd740">24 Kč</td><td class="num"><strong style="color:#ffd740">31 Kč</strong></td></tr>
+
+</table>
+</div>
+</div>
+<p style="font-size:.8rem;color:var(--muted);margin-top:8px">
+  Konverzní poměr 0,2 % HH/měsíc = base rate odhad; driving distance z Google Distance Matrix cache;
+  náklady zboží 36,5 % z tržby; kurýr paušál 120/180/250 Kč; zákazník platí 39/164 Kč.
+  Interaktivní mapa: <a href="obce_analyza.html" style="color:var(--cyan)">obce_analyza.html</a>
+</p>
+
 </div>
 
 <!-- ── 3. DEMOGRAFIE ──────────────────────────────────────────────────── -->

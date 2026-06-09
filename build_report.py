@@ -103,6 +103,42 @@ kat_counts = df_zak["produkt_kategorie"].value_counts().to_dict()
 # Scénáře vzdáleností
 scenare = pd.read_csv(os.path.join(OUT_DIR, "scenare_vzdalenosti.csv"))
 
+# Scoring obcí
+obce_scoring_csv = os.path.join(OUT_DIR, "obce_scoring.csv")
+if os.path.exists(obce_scoring_csv):
+    obce_sc = pd.read_csv(obce_scoring_csv)
+    _tier_colors = {"A": "#00e676", "B": "#ffd740", "C": "#e74c3c"}
+    _tier_bg     = {"A": "rgba(0,230,118,.08)", "B": "rgba(255,215,64,.06)", "C": "rgba(231,76,60,.06)"}
+    _tier_label  = {"A": "Prioritní", "B": "Výhodné", "C": "Marginální"}
+    _tier_a = obce_sc[obce_sc["tier"] == "A"].sort_values("monthly_contribution_kc", ascending=False)
+    _tier_b = obce_sc[obce_sc["tier"] == "B"].sort_values("monthly_contribution_kc", ascending=False)
+    _total_pl_a = int(_tier_a["monthly_contribution_kc"].sum())
+    _total_pl_b = int(_tier_b["monthly_contribution_kc"].sum())
+
+    def _obce_rows(df_t, tier):
+        color = _tier_colors[tier]
+        rows = ""
+        for r in df_t.itertuples():
+            vyraz = " ⚠️" if r.vyrazeno else ""
+            rows += (
+                f'<tr>'
+                f'<td style="color:{color};font-weight:700">{int(r.rank)}</td>'
+                f'<td style="font-weight:600">{r.nazev}{vyraz}</td>'
+                f'<td class="num">{r.driving_dist_km:.0f} km</td>'
+                f'<td class="num">{int(r.hh_celkem):,}</td>'
+                f'<td class="num" style="color:{color}">{r.net_per_order_kc:.0f} Kč</td>'
+                f'<td class="num"><strong style="color:{color}">{int(r.monthly_contribution_kc):,} Kč</strong></td>'
+                f'</tr>\n'
+            )
+        return rows
+
+    _obce_rows_a = _obce_rows(_tier_a, "A")
+    _obce_rows_b = _obce_rows(_tier_b, "B")
+else:
+    obce_sc = None
+    _obce_rows_a = _obce_rows_b = ""
+    _total_pl_a = _total_pl_b = 0
+
 # Analýza skladu
 sklad_csv = os.path.join(OUT_DIR, "sklad_scoring.csv")
 if os.path.exists(sklad_csv):
@@ -377,6 +413,7 @@ HTML = f"""<!DOCTYPE html>
   <ol>
     <li><a href="#summary">Executive summary</a></li>
     <li><a href="#zona">Rozvozová zóna</a></li>
+    <li><a href="#obce">Výběr obcí pro rozvoz</a></li>
     <li><a href="#demografie">Demografický profil</a></li>
     <li><a href="#zastavba">Bytová zástavba (RÚIAN)</a></li>
     <li><a href="#zakaznici">Zákazníci a objednávky</a></li>
@@ -434,6 +471,66 @@ HTML = f"""<!DOCTYPE html>
 <p style="font-size:.8rem;color:var(--muted);margin-top:8px;">Google zóna = 1 093 bodů gridu dotázáno přes Google Distance Matrix API, stejný origin jako vecerkaplus.cz.</p>
 </div>
 </div>
+</div>
+
+<!-- ── VÝBĚR OBCÍ PRO ROZVOZ ────────────────────────────────────────── -->
+<div class="section" id="obce">
+<h2>Výběr obcí pro rozvoz — P&amp;L analýza</h2>
+<p>Každá obec v rozvozové zóně je klasifikována do tří tierů podle odhadovaného měsíčního příspěvku na pokrytí (tržba − náklady zboží − kurýr paušál + dopravné od zákazníka), při předpokladu konverzního poměru <strong>0,2 % domácností/měsíc</strong> a průměrné objednávce <strong>452 Kč</strong>.</p>
+
+<div style="display:flex;gap:16px;flex-wrap:wrap;margin:20px 0;">
+  <div style="flex:1;min-width:220px;background:rgba(0,230,118,.08);border:1px solid #00e676;border-radius:6px;padding:16px">
+    <div style="color:#00e676;font-size:1.2rem;font-weight:700">Tier A — Prioritní</div>
+    <div style="font-size:.85rem;color:var(--muted);margin:4px 0 10px">≥ 100 Kč/měsíc odhadovaný příspěvek</div>
+    <div style="font-size:1.8rem;font-weight:700;color:#00e676">{"{"}{len(_tier_a) if obce_sc is not None else "–"}{"}"} obcí</div>
+    <div style="color:#00e676">Celkem: {fmt_n(_total_pl_a)} Kč/měs</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-top:6px">→ Aktivně marketovat, letáky, Instagram cílení</div>
+  </div>
+  <div style="flex:1;min-width:220px;background:rgba(255,215,64,.06);border:1px solid #ffd740;border-radius:6px;padding:16px">
+    <div style="color:#ffd740;font-size:1.2rem;font-weight:700">Tier B — Výhodné</div>
+    <div style="font-size:.85rem;color:var(--muted);margin:4px 0 10px">30–100 Kč/měsíc odhadovaný příspěvek</div>
+    <div style="font-size:1.8rem;font-weight:700;color:#ffd740">{"{"}{len(_tier_b) if obce_sc is not None else "–"}{"}"} obcí</div>
+    <div style="color:#ffd740">Celkem: {fmt_n(_total_pl_b)} Kč/měs</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-top:6px">→ Doručovat na objednávku, bez aktivního marketingu</div>
+  </div>
+  <div style="flex:1;min-width:220px;background:rgba(231,76,60,.06);border:1px solid #e74c3c;border-radius:6px;padding:16px">
+    <div style="color:#e74c3c;font-size:1.2rem;font-weight:700">Tier C — Marginální</div>
+    <div style="font-size:.85rem;color:var(--muted);margin:4px 0 10px">&lt; 30 Kč/měsíc odhadovaný příspěvek</div>
+    <div style="font-size:1.8rem;font-weight:700;color:#e74c3c">{"{"}{len(obce_sc[obce_sc["tier"]=="C"]) if obce_sc is not None else "–"}{"}"} obcí</div>
+    <div style="color:var(--muted)">Malé vesnice, &lt; 1 obj/měsíc</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-top:6px">→ Doručit pokud zákazník sám objedná</div>
+  </div>
+</div>
+
+<div class="highlight warn">
+  <strong>P&amp;L upozornění:</strong> Kurýrský paušál skokově roste z 120 Kč (≤10 km) na 180 Kč (10–20 km), zatímco zákazníkovo dopravné zůstává 39 Kč.
+  Čistý příspěvek v 10–20km pásmu je jen <strong>24 Kč/obj</strong> vs. 84 Kč u ≤10 km.
+  Zvýšení dopravného pro 10–20 km zónu z 39 → 59 Kč by zlepšilo příspěvek na <strong>44 Kč/obj</strong> (+83 %).
+</div>
+
+{"" if obce_sc is None else f"""
+<div class="two-col" style="margin-top:24px;">
+<div>
+<h3 style="color:#00e676;margin-bottom:8px">Tier A — Prioritní obce</h3>
+<table>
+  <tr><th>#</th><th>Obec</th><th class="num">Vzdál.</th><th class="num">Domác.</th><th class="num">Kč/obj</th><th class="num">Kč/měs</th></tr>
+  {_obce_rows_a}
+</table>
+</div>
+<div>
+<h3 style="color:#ffd740;margin-bottom:8px">Tier B — Výhodné obce</h3>
+<table>
+  <tr><th>#</th><th>Obec</th><th class="num">Vzdál.</th><th class="num">Domác.</th><th class="num">Kč/obj</th><th class="num">Kč/měs</th></tr>
+  {_obce_rows_b}
+</table>
+</div>
+</div>
+<p style="font-size:.8rem;color:var(--muted);margin-top:8px">
+  Konverzní poměr 0,2 % HH/měsíc = base rate odhad; driving distance z Google Distance Matrix cache;
+  náklady zboží 36,5 % z tržby; kurýr paušál 120/180/250 Kč; zákazník platí 39/164 Kč.
+  Interaktivní mapa: <a href="obce_analyza.html" style="color:var(--cyan)">obce_analyza.html</a>
+</p>
+"""}
 </div>
 
 <!-- ── 3. DEMOGRAFIE ──────────────────────────────────────────────────── -->

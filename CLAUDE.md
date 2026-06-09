@@ -6,6 +6,7 @@ Prostorová analýza dosahu rozvozu VečerkaPlus (FM, Pá–Ne 22–6).
 
 ```bash
 python3 analyze.py           # hlavní analýza → output/
+python3 analyze_obce.py      # P&L scoring obcí → output/obce_scoring.csv + obce_analyza.html
 python3 build_report.py      # HTML report → output/report.html
 python3 build_google_zone.py # přebudovat Google zónu (volat jen při změně gridu/limitu)
 python3 -m pytest test_analyze.py -v

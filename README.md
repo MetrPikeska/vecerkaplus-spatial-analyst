@@ -2,7 +2,7 @@
 
 Hloubková prostorová a obchodní analýza nočního rozvozu VečerkaPlus (Frýdek-Místek, Pá–Ne 22:00–6:00). Analýza kombinuje reálná data Google Distance Matrix, ČSÚ SLDB 2021, RÚIAN, OSM a skutečné objednávky zákazníků.
 
-## Výsledky (stav 19. 5. 2026)
+## Výsledky (stav 10. 6. 2026)
 
 ### Rozvozové zóny
 
@@ -16,24 +16,35 @@ Hloubková prostorová a obchodní analýza nočního rozvozu VečerkaPlus (Frý
 
 V provozní zóně: 212 restaurací · 85 pubů · 53 fast foodů · 42 kaváren · 35 barů · 43 237 bytů v panelovém fondu.
 
-### Obchodní metriky (5 objednávek, duben–květen 2026)
+### Obchodní metriky (7 objednávek, duben–květen 2026)
 
 | Metrika | Hodnota |
 |---|---|
-| Celková tržba | 2 258 Kč |
+| Celková tržba | 3 565 Kč |
 | Průměrná tržba / objednávka | 452 Kč |
 | Průměrná hrubá marže na zboží | 36,5 % |
-| Průměrná kontribuční marže | ~191 Kč/objednávku |
-| Průměrná vzdálenost doručení | 2,7 km |
+| Průměrná vzdálenost doručení | 6,7 km |
 | Práh dopravné zdarma | ≥ 1 000 Kč |
+
+### P&L scoring obcí (59 obcí v Google ≤ 20 km zóně)
+
+| Tier | Počet obcí | Kritérium | Příklad |
+|---|---|---|---|
+| **A – Prioritní** | 14 | ≥ 100 Kč/měs odh. příspěvek | Frýdek-Místek (3 864 Kč), Havířov (1 603 Kč) |
+| **B – Výhodné** | 20 | 30–100 Kč/měs | Brušperk, Paskov, Krmelín |
+| **C – Marginální** | 25 | < 30 Kč/měs | Malé vesnice < 300 HH |
+
+**Klíčové P&L zjištění:** kurýrský paušál skočí z 120 → 180 Kč na 10 km, ale zákazníkovo dopravné zůstává 39 Kč → čistý příspěvek v 10–20 km pásmu je jen 24 Kč/obj. Zvýšení dopravného na 59 Kč by zlepšilo příspěvek na 44 Kč (+83 %).
 
 ## Spuštění
 
 ```bash
 pip install geopandas folium requests pandas pytest
 
-python3 analyze.py       # prostorová analýza → output/
-python3 build_report.py  # HTML report → output/report.html
+python3 analyze.py           # prostorová analýza → output/
+python3 analyze_obce.py      # P&L scoring obcí → output/obce_scoring.csv + obce_analyza.html
+python3 build_report.py      # HTML report → output/report.html
+python3 build_google_zone.py # přebudovat Google zónu (jen při změně gridu/limitu)
 python3 -m pytest test_analyze.py -v
 ```
 
@@ -67,11 +78,14 @@ Soubory bez git sledování je třeba stáhnout nebo vygenerovat lokálně — v
 
 | Soubor | Obsah |
 |---|---|
-| `output/report.html` | Kompletní HTML report (15 sekcí): zóna, demografie, zástavba, zákazníci, finance, marže, sortiment, cenová historie, predikce, marketing, scénáře vzdálenosti, mapa, investor, závěry |
+| `output/report.html` | Kompletní HTML report (16 sekcí): zóna, výběr obcí, demografie, zástavba, zákazníci, finance, marže, sortiment, cenová historie, predikce, marketing, scénáře vzdálenosti, mapa, investor, závěry, sklad |
+| `output/obce_analyza.html` | Interaktivní Folium mapa — P&L tier choropleth obcí, popup s P&L rozkladem per obec |
+| `output/obce_scoring.csv` | P&L scoring 59 obcí — driving distance, čistý příspěvek/obj, odh. příspěvek/měs, tier |
 | `output/vecerkaplus_mapa.html` | Interaktivní Folium mapa — zóny, ZUJ, gridy domácností, zákazníci, marketing spoty |
+| `output/sklad_analyza.html` | Scoring 8 kandidátních lokalit skladu |
 | `output/scenare_vzdalenosti.csv` | Srovnání 7 scénářů (5–35 km) včetně palivových nákladů |
 | `output/obce_v_dosahu.csv` | Obce v bufferu 20 km s demografikou SLDB |
-| `output/google_grid_distances.csv` | Vzdálenosti všech 1 093 grid bodů |
+| `output/sklad_scoring.csv` | Scoring lokalit skladu (domácnosti, nightlife, vzdálenost zákazníků) |
 
 ## Testy
 
