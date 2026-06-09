@@ -39,12 +39,14 @@ V provozní zóně: 212 restaurací · 85 pubů · 53 fast foodů · 42 kaváren
 ## Spuštění
 
 ```bash
-pip install geopandas folium requests pandas pytest
+pip install geopandas folium requests pandas pytest osmnx
 
-python3 analyze.py           # prostorová analýza → output/
-python3 analyze_obce.py      # P&L scoring obcí → output/obce_scoring.csv + obce_analyza.html
-python3 build_report.py      # HTML report → output/report.html
-python3 build_google_zone.py # přebudovat Google zónu (jen při změně gridu/limitu)
+python3 analyze.py             # prostorová analýza → output/
+python3 analyze_obce.py        # P&L scoring obcí → output/obce_scoring.csv + obce_analyza.html
+python3 analyze_network.py     # OSMnx izochróny 5/10/15/20 min → output/network_analyza.html
+python3 simulate_monte_carlo.py  # Monte Carlo P&L (5 000 trialů) → output/monte_carlo_summary.json
+python3 build_report.py        # HTML report → output/report.html
+python3 build_google_zone.py   # přebudovat Google zónu (jen při změně gridu/limitu)
 python3 -m pytest test_analyze.py -v
 ```
 
@@ -78,9 +80,14 @@ Soubory bez git sledování je třeba stáhnout nebo vygenerovat lokálně — v
 
 | Soubor | Obsah |
 |---|---|
-| `output/report.html` | Kompletní HTML report (16 sekcí): zóna, výběr obcí, demografie, zástavba, zákazníci, finance, marže, sortiment, cenová historie, predikce, marketing, scénáře vzdálenosti, mapa, investor, závěry, sklad |
+| `output/report.html` | Kompletní HTML report (18 sekcí): zóna, výběr obcí, demografie, zástavba, zákazníci, finance, marže, sortiment, cenová historie, predikce, Monte Carlo P&L, síťová dostupnost, marketing, scénáře vzdálenosti, mapa, investor, závěry, sklad |
 | `output/obce_analyza.html` | Interaktivní Folium mapa — P&L tier choropleth obcí, popup s P&L rozkladem per obec |
 | `output/obce_scoring.csv` | P&L scoring 59 obcí — driving distance, čistý příspěvek/obj, odh. příspěvek/měs, tier |
+| `output/network_analyza.html` | Folium mapa s OSMnx izochrónami 5/10/15/20 min jízdy, hustota domácností |
+| `output/network_summary.json` | Pokrytí domácností per izochróna vs. Google 20km zóna |
+| `output/monte_carlo_summary.json` | P&L percentily (p5/p25/p50/p75/p95) per měsíc per scénář |
+| `output/monte_carlo_results.csv` | Vzorkované výsledky simulace (500 trialů × 12 měsíců × 3 scénáře) |
+| `output/sensitivity_analysis.csv` | Tornado analýza citlivosti P&L na klíčové parametry |
 | `output/vecerkaplus_mapa.html` | Interaktivní Folium mapa — zóny, ZUJ, gridy domácností, zákazníci, marketing spoty |
 | `output/sklad_analyza.html` | Scoring 8 kandidátních lokalit skladu |
 | `output/scenare_vzdalenosti.csv` | Srovnání 7 scénářů (5–35 km) včetně palivových nákladů |

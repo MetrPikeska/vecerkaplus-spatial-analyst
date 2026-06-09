@@ -1,0 +1,38 @@
+{
+  "5": {
+    "minutes": 5,
+    "area_km2": 22.6,
+    "hh_count": 23974,
+    "pop_est": 56818,
+    "pct_google20": 18.4,
+    "incremental_hh": 23974
+  },
+  "10": {
+    "minutes": 10,
+    "area_km2": 167.3,
+    "hh_count": 49171,
+    "pop_est": 116535,
+    "pct_google20": 37.7,
+    "incremental_hh": 25197
+  },
+  "15": {
+    "minutes": 15,
+    "area_km2": 532.1,
+    "hh_count": 140271,
+    "pop_est": 332442,
+    "pct_google20": 107.7,
+    "incremental_hh": 91100
+  },
+  "20": {
+    "minutes": 20,
+    "area_km2": 923.0,
+    "hh_count": 254387,
+    "pop_est": 602897,
+    "pct_google20": 195.3,
+    "incremental_hh": 114116
+  },
+  "google20": {
+    "hh_count": 130264,
+    "area_km2": 733.8
+  }
+}

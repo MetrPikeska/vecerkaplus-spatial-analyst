@@ -148,6 +148,8 @@
     <li><a href="#sortiment">Sortiment a produkty</a></li>
     <li><a href="#cena-historie">Cenová historie</a></li>
     <li><a href="#predikce">Predikce a scénáře růstu</a></li>
+    <li><a href="#monte-carlo">Monte Carlo P&L projekce</a></li>
+    <li><a href="#sit-dostupnost">Síťová dostupnost (OSM)</a></li>
     <li><a href="#marketing">Marketingové příležitosti</a></li>
     <li><a href="#scenare">Scénáře vzdálenosti + palivo</a></li>
     <li><a href="#mapa">Interaktivní mapa</a></li>
@@ -591,6 +593,105 @@
 
 <div class="highlight" style="margin-top:16px;">
   <strong>Poznámka k modelu:</strong> Příspěvková marže zahrnuje pouze přímé palivové náklady (7.0 l/100 km × 42.0 Kč/l). Nezahrnuje odpisy vozidla, čas řidiče, marketing ani provoz Supabase/webu. Při 3 obj./víkend (cílový scénář) jsou roční tržby ~79 404 Kč — ekonomicky životaschopná aktivita při stávající nízké režii.
+</div>
+</div>
+
+
+<!-- ── 11. MONTE CARLO P&L PROJEKCE ────────────────────────────────────── -->
+<div class="section" id="monte-carlo">
+<h2>11. Monte Carlo P&amp;L projekce</h2>
+<p>Simulace 5 000 scénářů × 12 měsíců pro tři úrovně poptávky. Příchod objednávek modelován Poissonovým procesem; hodnota objednávky a vzdálenost jako normální rozdělení tažené z dat (n=7).</p>
+
+<canvas id="mcChart" style="max-height:340px;"></canvas>
+<script>
+(function(){
+  var ctx = document.getElementById('mcChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: { labels: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12"], datasets: [{"label": "Konzervativni (1/tyden) p75", "data": [377.4, 379.1, 463.1, 374.2, 379.7, 456.0, 380.1, 381.1, 458.9, 379.2, 378.9, 456.9], "borderColor": "transparent", "backgroundColor": "#88888833", "fill": "+1", "tension": 0.4, "pointRadius": 0}, {"label": "Konzervativni (1/tyden) p25", "data": [140.1, 139.0, 195.6, 141.8, 143.2, 189.8, 139.5, 144.5, 196.0, 139.6, 139.5, 193.3], "borderColor": "transparent", "backgroundColor": "#88888833", "fill": false, "tension": 0.4, "pointRadius": 0}, {"label": "Konzervativni (1/tyden)", "data": [247.5, 252.1, 317.2, 249.2, 246.9, 316.2, 251.1, 253.9, 317.4, 254.7, 247.9, 316.2], "borderColor": "#888888", "backgroundColor": "transparent", "fill": false, "tension": 0.4, "borderWidth": 2.5, "pointRadius": 3, "pointHoverRadius": 5}, {"label": "Cilovy (3/tyden) p75", "data": [1004.7, 1014.7, 1238.3, 1005.9, 989.6, 1224.3, 998.5, 996.4, 1228.4, 1004.2, 1006.8, 1227.7], "borderColor": "transparent", "backgroundColor": "#29B6F633", "fill": "+1", "tension": 0.4, "pointRadius": 0}, {"label": "Cilovy (3/tyden) p25", "data": [591.6, 590.1, 770.3, 587.7, 586.2, 767.2, 592.3, 590.3, 769.7, 591.1, 597.6, 772.5], "borderColor": "transparent", "backgroundColor": "#29B6F633", "fill": false, "tension": 0.4, "pointRadius": 0}, {"label": "Cilovy (3/tyden)", "data": [783.6, 793.7, 998.1, 788.7, 773.7, 985.0, 785.2, 784.1, 991.5, 788.3, 792.6, 985.8], "borderColor": "#29B6F6", "backgroundColor": "transparent", "fill": false, "tension": 0.4, "borderWidth": 2.5, "pointRadius": 3, "pointHoverRadius": 5}, {"label": "Optimisticky (7/tyden) p75", "data": [2194.4, 2195.5, 2690.2, 2184.9, 2205.3, 2696.8, 2185.2, 2201.0, 2693.7, 2184.6, 2197.0, 2697.2], "borderColor": "transparent", "backgroundColor": "#00e67633", "fill": "+1", "tension": 0.4, "pointRadius": 0}, {"label": "Optimisticky (7/tyden) p25", "data": [1576.9, 1560.6, 1990.9, 1567.8, 1574.8, 1994.5, 1568.7, 1565.5, 1993.5, 1551.0, 1573.3, 1992.2], "borderColor": "transparent", "backgroundColor": "#00e67633", "fill": false, "tension": 0.4, "pointRadius": 0}, {"label": "Optimisticky (7/tyden)", "data": [1875.7, 1872.6, 2326.2, 1856.8, 1875.6, 2338.2, 1867.7, 1873.7, 2321.8, 1865.2, 1870.6, 2350.0], "borderColor": "#00e676", "backgroundColor": "transparent", "fill": false, "tension": 0.4, "borderWidth": 2.5, "pointRadius": 3, "pointHoverRadius": 5}] },
+    options: {
+      responsive: true,
+      interaction: { intersect: false, mode: 'index' },
+      plugins: {
+        legend: { labels: { color: '#bbb', filter: function(item) { return !item.text.endsWith(' p75') && !item.text.endsWith(' p25'); } } },
+        tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + Math.round(ctx.parsed.y) + ' Kc'; } } }
+      },
+      scales: {
+        x: { ticks: { color: '#888' }, grid: { color: '#1a1a28' } },
+        y: { ticks: { color: '#888', callback: function(v){return v+' Kc';} }, grid: { color: '#1a1a28' } }
+      }
+    }
+  });
+})();
+</script>
+<p style="color:var(--muted);font-size:.82rem;margin-top:8px;">Šrafovaná pásma = mezikvartiálový rozsah p25–p75. Linie = medián (p50). Čistý příspěvek / objednávku = hrubá marže + dopravné zákazníka − paušál kurýrovi.</p>
+
+<h3 style="margin-top:24px;">Roční souhrn per scénář</h3>
+<table style="width:100%;border-collapse:collapse;margin:16px 0">
+<tr style="color:#888;font-size:.85rem;border-bottom:1px solid var(--border)"><th style="text-align:left;padding:6px 8px">Scenar</th><th class="num">Rocni p5</th><th class="num">Rocni median</th><th class="num">Rocni p95</th><th class="num">p25&gt;0?</th></tr>
+<tr><td style="color:#888888;font-weight:600">Konzervativni (1/tyden)</td><td class="num">2,510 Kc</td><td class="num" style="color:#888888">3,519 Kc</td><td class="num">4,583 Kc</td><td class="num" style='color:var(--green)'>&check;</td></tr>
+<tr><td style="color:#29B6F6;font-weight:600">Cilovy (3/tyden)</td><td class="num">8,736 Kc</td><td class="num" style="color:#29B6F6">10,515 Kc</td><td class="num">12,351 Kc</td><td class="num" style='color:var(--green)'>&check;</td></tr>
+<tr><td style="color:#00e676;font-weight:600">Optimisticky (7/tyden)</td><td class="num">21,876 Kc</td><td class="num" style="color:#00e676">24,543 Kc</td><td class="num">27,405 Kc</td><td class="num" style='color:var(--green)'>&check;</td></tr>
+</table>
+
+<h3 style="margin-top:24px;">Analýza citlivosti — tornado chart (cílový scénář, ±30 %)</h3>
+<p style="color:#bbb;margin-bottom:8px;">Vliv ±30% odchylky každého parametru na roční P50. Delší sloupec = větší citlivost.</p>
+<canvas id="tornadoChart" style="max-height:280px;margin-top:24px"></canvas>
+<script>
+(function(){
+  var ctx = document.getElementById('tornadoChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ["Hrub\u00e1 mar\u017ee", "Pr\u016fm\u011brn\u00e1 tr\u017eba/obj", "Kur\u00fdr 10\u201320 km pau\u0161\u00e1l", "Dopravn\u00e9 z\u00e1kazn\u00edka", "Pr\u016fm\u011brn\u00e1 vzd\u00e1lenost"],
+      datasets: [
+        { label: '-30% variace', data: [-7772, -6959, 2335, -1840, 838], backgroundColor: '#FF3D9A99', borderColor: '#FF3D9A', borderWidth: 1 },
+        { label: '+30% variace', data: [7706, 7580, -2473, 1726, -920], backgroundColor: '#00e67699', borderColor: '#00e676', borderWidth: 1 }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { labels: { color: '#bbb' } } },
+      scales: {
+        x: { ticks: { color: '#888', callback: function(v){return v+' Kc';} }, grid: { color: '#1a1a28' } },
+        y: { ticks: { color: '#bbb' } }
+      }
+    }
+  });
+})();
+</script>
+
+<div class="highlight" style="margin-top:20px;">
+  <strong>Klíčové zjištění:</strong> Největší páku na P&amp;L má hrubá marže na zboží a průměrná tržba/objednávka — oba parametry jsou ovlivnitelné volbou sortimentu s vyšší marží. Dopravné zákazníka (39 Kč) má výrazně menší vliv než kurýrský paušál. Model je ilustrativní (n=7 historických objednávek).
+</div>
+</div>
+
+
+<!-- ── 12. SÍŤOVÁ DOSTUPNOST (OSM) ───────────────────────────────────────── -->
+<div class="section" id="sit-dostupnost">
+<h2>12. Síťová dostupnost (OpenStreetMap)</h2>
+<p>Izochróny jízdní dostupnosti vypočteny z výchozího bodu řidiče (Frýdek-Místek) na základě OSM silniční sítě (OSMnx 2.1.0). Pokrytí domácností porovnáno s provozní Google Distance Matrix zónou ≤ 20 km.</p>
+
+<table style="width:100%;border-collapse:collapse;margin:16px 0">
+<tr style="color:#888;font-size:.85rem;border-bottom:1px solid var(--border)"><th style="text-align:left;padding:6px 8px">Izochrona</th><th class="num">Plocha</th><th class="num">Domacnosti</th><th class="num">Odh. obyvatel</th><th class="num">% Google 20km</th><th class="num">Prirůstek HH</th></tr>
+<tr><td style="color:#00e676;font-weight:600">5 min</td><td class="num">23 km&sup2;</td><td class="num">23,974</td><td class="num">56,818</td><td class="num">18 %</td><td class="num">+23,974</td></tr>
+<tr><td style="color:#ffd740;font-weight:600">10 min</td><td class="num">167 km&sup2;</td><td class="num">49,171</td><td class="num">116,535</td><td class="num">38 %</td><td class="num">+25,197</td></tr>
+<tr><td style="color:#ff9800;font-weight:600">15 min</td><td class="num">532 km&sup2;</td><td class="num">140,271</td><td class="num">332,442</td><td class="num">108 %</td><td class="num">+91,100</td></tr>
+<tr><td style="color:#e74c3c;font-weight:600">20 min</td><td class="num">923 km&sup2;</td><td class="num">254,387</td><td class="num">602,897</td><td class="num">195 %</td><td class="num">+114,116</td></tr>
+<tr style="border-top:1px solid var(--border);color:#3388ff"><td>Google &le;20 km (ref.)</td><td class="num">733.8 km&sup2;</td><td class="num">130,264</td><td class="num">-</td><td class="num">100 %</td><td class="num">-</td></tr>
+</table>
+
+<div class="kpi-grid" style="margin:20px 0;">
+  <div class="kpi"><div class="val" style="color:#00e676">23,974</div><div class="lbl">Domácností do 5 min</div></div>
+  <div class="kpi"><div class="val" style="color:#ffd740">49,171</div><div class="lbl">Domácností do 10 min</div></div>
+  <div class="kpi"><div class="val" style="color:#ff9800">140,271</div><div class="lbl">Domácností do 15 min</div></div>
+  <div class="kpi"><div class="val" style="color:#e74c3c">254,387</div><div class="lbl">Domácností do 20 min</div></div>
+</div>
+
+<div class="highlight">
+  <strong>Operační závěr:</strong> Do 10 min jízdy je dostupných 38 % domácností provozní zóny (Google ≤ 20 km). Izochróna 15 min ji překrývá o 8 % — část zákazníků v Google zóně leží v oblastech s delší jízdní dobou. 
+  Mapa: <a href="network_analyza.html" target="_blank">network_analyza.html</a>
 </div>
 </div>
 

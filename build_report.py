@@ -139,6 +139,27 @@ else:
     _obce_rows_a = _obce_rows_b = ""
     _total_pl_a = _total_pl_b = 0
 
+# Síťová dostupnost (OSMnx)
+network_json = os.path.join(OUT_DIR, "network_summary.json")
+if os.path.exists(network_json):
+    with open(network_json, encoding="utf-8") as f:
+        network_data = json.load(f)
+else:
+    network_data = None
+
+# Monte Carlo P&L
+mc_json = os.path.join(OUT_DIR, "monte_carlo_summary.json")
+if os.path.exists(mc_json):
+    with open(mc_json, encoding="utf-8") as f:
+        mc_data = json.load(f)
+else:
+    mc_data = None
+mc_sens_csv = os.path.join(OUT_DIR, "sensitivity_analysis.csv")
+if os.path.exists(mc_sens_csv):
+    mc_sens = pd.read_csv(mc_sens_csv).sort_values("swing_kc", ascending=False)
+else:
+    mc_sens = None
+
 # Analýza skladu
 sklad_csv = os.path.join(OUT_DIR, "sklad_scoring.csv")
 if os.path.exists(sklad_csv):
@@ -267,6 +288,194 @@ scenare["fuel_avg_kc"] = (scenare["avg_delivery_km"] * 2 * cost_per_km).round(1)
 scenare["fuel_max_kc"] = (scenare["limit_km"] * 2 * cost_per_km).round(1)
 
 print("Data načtena, generuji report...")
+
+
+# ── Chart.js data pro Monte Carlo ──────────────────────────────────────────
+_mc_chart_html = ""
+_mc_table_html = ""
+_mc_tornado_html = ""
+if mc_data:
+    _scenario_cfg = {
+        "konzervativni": {"label": "Konzervativni (1/tyden)", "color": "#888888"},
+        "cilovy":        {"label": "Cilovy (3/tyden)",        "color": "#29B6F6"},
+        "optimisticky":  {"label": "Optimisticky (7/tyden)",   "color": "#00e676"},
+    }
+    _month_labels = json.dumps([f"M{i}" for i in range(1, 13)])
+    _datasets = []
+    for sc_key, sc_cfg in _scenario_cfg.items():
+        sc = mc_data.get(sc_key, {})
+        months = sc.get("months", {})
+        if not months:
+            continue
+        c = sc_cfg["color"]
+        p25 = [months[str(m)]["p25"] for m in range(1, 13)]
+        p50 = [months[str(m)]["p50"] for m in range(1, 13)]
+        p75 = [months[str(m)]["p75"] for m in range(1, 13)]
+        _datasets.append({
+            "label": sc_cfg["label"] + " p75",
+            "data": p75,
+            "borderColor": "transparent",
+            "backgroundColor": c + "33",
+            "fill": "+1",
+            "tension": 0.4,
+            "pointRadius": 0,
+        })
+        _datasets.append({
+            "label": sc_cfg["label"] + " p25",
+            "data": p25,
+            "borderColor": "transparent",
+            "backgroundColor": c + "33",
+            "fill": False,
+            "tension": 0.4,
+            "pointRadius": 0,
+        })
+        _datasets.append({
+            "label": sc_cfg["label"],
+            "data": p50,
+            "borderColor": c,
+            "backgroundColor": "transparent",
+            "fill": False,
+            "tension": 0.4,
+            "borderWidth": 2.5,
+            "pointRadius": 3,
+            "pointHoverRadius": 5,
+        })
+    _datasets_js = json.dumps(_datasets)
+    _mc_chart_html = (
+        '<canvas id="mcChart" style="max-height:340px;"></canvas>\n'
+        '<script>\n'
+        '(function(){\n'
+        '  var ctx = document.getElementById(\'mcChart\').getContext(\'2d\');\n'
+        '  new Chart(ctx, {\n'
+        '    type: \'line\',\n'
+        '    data: { labels: ' + _month_labels + ', datasets: ' + _datasets_js + ' },\n'
+        '    options: {\n'
+        '      responsive: true,\n'
+        '      interaction: { intersect: false, mode: \'index\' },\n'
+        '      plugins: {\n'
+        '        legend: { labels: { color: \'#bbb\', filter: function(item) { return !item.text.endsWith(\' p75\') && !item.text.endsWith(\' p25\'); } } },\n'
+        '        tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + \': \' + Math.round(ctx.parsed.y) + \' Kc\'; } } }\n'
+        '      },\n'
+        '      scales: {\n'
+        '        x: { ticks: { color: \'#888\' }, grid: { color: \'#1a1a28\' } },\n'
+        '        y: { ticks: { color: \'#888\', callback: function(v){return v+\' Kc\';} }, grid: { color: \'#1a1a28\' } }\n'
+        '      }\n'
+        '    }\n'
+        '  });\n'
+        '})();\n'
+        '</script>'
+    )
+    _mc_rows = ""
+    for sc_key, sc_cfg in _scenario_cfg.items():
+        sc = mc_data.get(sc_key, {})
+        if not sc:
+            continue
+        be = mc_data.get("breakeven", {}).get(sc_key, {})
+        p25_ok = be.get("breakeven_positive", False)
+        _mc_rows += (
+            f'<tr>'
+            f'<td style="color:{sc_cfg["color"]};font-weight:600">{sc_cfg["label"]}</td>'
+            f'<td class="num">{sc.get("annual_p5", 0):,.0f} Kc</td>'
+            f'<td class="num" style="color:{sc_cfg["color"]}">{sc.get("annual_p50", 0):,.0f} Kc</td>'
+            f'<td class="num">{sc.get("annual_p95", 0):,.0f} Kc</td>'
+            f'<td class="num" style=\'color:{"var(--green)" if p25_ok else "var(--pink)"}\'>'
+            f'{"&check;" if p25_ok else "&times;"}</td>'
+            f'</tr>\n'
+        )
+    _mc_table_html = (
+        '<table style="width:100%;border-collapse:collapse;margin:16px 0">\n'
+        '<tr style="color:#888;font-size:.85rem;border-bottom:1px solid var(--border)">'
+        '<th style="text-align:left;padding:6px 8px">Scenar</th>'
+        '<th class="num">Rocni p5</th><th class="num">Rocni median</th>'
+        '<th class="num">Rocni p95</th><th class="num">p25&gt;0?</th></tr>\n'
+        + _mc_rows + '</table>'
+    )
+    if mc_sens is not None:
+        _tornado_labels = json.dumps(list(mc_sens["parameter"]))
+        _tornado_low    = json.dumps(list(mc_sens["delta_low_kc"].round(0).astype(int)))
+        _tornado_high   = json.dumps(list(mc_sens["delta_high_kc"].round(0).astype(int)))
+        _mc_tornado_html = (
+            '<canvas id="tornadoChart" style="max-height:280px;margin-top:24px"></canvas>\n'
+            '<script>\n'
+            '(function(){\n'
+            '  var ctx = document.getElementById(\'tornadoChart\').getContext(\'2d\');\n'
+            '  new Chart(ctx, {\n'
+            '    type: \'bar\',\n'
+            '    data: {\n'
+            '      labels: ' + _tornado_labels + ',\n'
+            '      datasets: [\n'
+            '        { label: \'-30% variace\', data: ' + _tornado_low + ', backgroundColor: \'#FF3D9A99\', borderColor: \'#FF3D9A\', borderWidth: 1 },\n'
+            '        { label: \'+30% variace\', data: ' + _tornado_high + ', backgroundColor: \'#00e67699\', borderColor: \'#00e676\', borderWidth: 1 }\n'
+            '      ]\n'
+            '    },\n'
+            '    options: {\n'
+            '      indexAxis: \'y\',\n'
+            '      responsive: true,\n'
+            '      plugins: { legend: { labels: { color: \'#bbb\' } } },\n'
+            '      scales: {\n'
+            '        x: { ticks: { color: \'#888\', callback: function(v){return v+\' Kc\';} }, grid: { color: \'#1a1a28\' } },\n'
+            '        y: { ticks: { color: \'#bbb\' } }\n'
+            '      }\n'
+            '    }\n'
+            '  });\n'
+            '})();\n'
+            '</script>'
+        )
+
+# ── data pro síťovou dostupnost ───────────────────────────────────────────────
+_net_table_html = ""
+if network_data:
+    _net_rows = ""
+    _iso_colors = {5: "#00e676", 10: "#ffd740", 15: "#ff9800", 20: "#e74c3c"}
+    for minutes in [5, 10, 15, 20]:
+        s = network_data.get(str(minutes), {})
+        if not s:
+            continue
+        c = _iso_colors[minutes]
+        _net_rows += (
+            f'<tr>'
+            f'<td style="color:{c};font-weight:600">{minutes} min</td>'
+            f'<td class="num">{s["area_km2"]:.0f} km&sup2;</td>'
+            f'<td class="num">{s["hh_count"]:,}</td>'
+            f'<td class="num">{s["pop_est"]:,}</td>'
+            f'<td class="num">{s["pct_google20"]:.0f} %</td>'
+            f'<td class="num">+{s["incremental_hh"]:,}</td>'
+            f'</tr>\n'
+        )
+    g20 = network_data.get("google20", {})
+    _net_table_html = (
+        '<table style="width:100%;border-collapse:collapse;margin:16px 0">\n'
+        '<tr style="color:#888;font-size:.85rem;border-bottom:1px solid var(--border)">'
+        '<th style="text-align:left;padding:6px 8px">Izochrona</th>'
+        '<th class="num">Plocha</th><th class="num">Domacnosti</th>'
+        '<th class="num">Odh. obyvatel</th><th class="num">% Google 20km</th>'
+        '<th class="num">Prirůstek HH</th></tr>\n'
+        + _net_rows +
+        f'<tr style="border-top:1px solid var(--border);color:#3388ff">'
+        f'<td>Google &le;20 km (ref.)</td>'
+        f'<td class="num">{g20.get("area_km2", "-")} km&sup2;</td>'
+        f'<td class="num">{g20.get("hh_count", 0):,}</td>'
+        f'<td class="num">-</td><td class="num">100 %</td><td class="num">-</td>'
+        f'</tr>\n</table>'
+    )
+
+    # KPI proměnné pro HTML sekci
+    _net_5min_hh  = f"{network_data.get('5', {}).get('hh_count', 0):,}"
+    _net_10min_hh = f"{network_data.get('10', {}).get('hh_count', 0):,}"
+    _net_15min_hh = f"{network_data.get('15', {}).get('hh_count', 0):,}"
+    _net_20min_hh = f"{network_data.get('20', {}).get('hh_count', 0):,}"
+    _pct_10min = f"{network_data.get('10', {}).get('pct_google20', 0):.0f}"
+    _net_15_over = f"{max(0, network_data.get('15', {}).get('pct_google20', 0) - 100):.0f}"
+else:
+    _net_5min_hh = _net_10min_hh = _net_15min_hh = _net_20min_hh = "–"
+    _pct_10min = "–"
+    _net_15_over = "–"
+
+try:
+    import osmnx as _ox_ver
+    _osmnx_ver = _ox_ver.__version__
+except Exception:
+    _osmnx_ver = "2.x"
 
 # ── HTML report ────────────────────────────────────────────────────────────
 def fmt_n(n): return f"{n:,}".replace(",", " ")
@@ -422,6 +631,8 @@ HTML = f"""<!DOCTYPE html>
     <li><a href="#sortiment">Sortiment a produkty</a></li>
     <li><a href="#cena-historie">Cenová historie</a></li>
     <li><a href="#predikce">Predikce a scénáře růstu</a></li>
+    <li><a href="#monte-carlo">Monte Carlo P&L projekce</a></li>
+    <li><a href="#sit-dostupnost">Síťová dostupnost (OSM)</a></li>
     <li><a href="#marketing">Marketingové příležitosti</a></li>
     <li><a href="#scenare">Scénáře vzdálenosti + palivo</a></li>
     <li><a href="#mapa">Interaktivní mapa</a></li>
@@ -882,6 +1093,48 @@ HTML = f"""<!DOCTYPE html>
 
 <div class="highlight" style="margin-top:16px;">
   <strong>Poznámka k modelu:</strong> Příspěvková marže zahrnuje pouze přímé palivové náklady ({SPOTREBA_L_100KM} l/100 km × {CENA_PHM_KC_L} Kč/l). Nezahrnuje odpisy vozidla, čas řidiče, marketing ani provoz Supabase/webu. Při 3 obj./víkend (cílový scénář) jsou roční tržby ~{fmt_n(int(3 * 52 * trzba_avg))} Kč — ekonomicky životaschopná aktivita při stávající nízké režii.
+</div>
+</div>
+
+
+<!-- ── 11. MONTE CARLO P&L PROJEKCE ────────────────────────────────────── -->
+<div class="section" id="monte-carlo">
+<h2>11. Monte Carlo P&amp;L projekce</h2>
+<p>Simulace 5 000 scénářů × 12 měsíců pro tři úrovně poptávky. Příchod objednávek modelován Poissonovým procesem; hodnota objednávky a vzdálenost jako normální rozdělení tažené z dat (n=7).</p>
+
+{_mc_chart_html}
+<p style="color:var(--muted);font-size:.82rem;margin-top:8px;">Šrafovaná pásma = mezikvartiálový rozsah p25–p75. Linie = medián (p50). Čistý příspěvek / objednávku = hrubá marže + dopravné zákazníka − paušál kurýrovi.</p>
+
+<h3 style="margin-top:24px;">Roční souhrn per scénář</h3>
+{_mc_table_html}
+
+<h3 style="margin-top:24px;">Analýza citlivosti — tornado chart (cílový scénář, ±30 %)</h3>
+<p style="color:#bbb;margin-bottom:8px;">Vliv ±30% odchylky každého parametru na roční P50. Delší sloupec = větší citlivost.</p>
+{_mc_tornado_html}
+
+<div class="highlight" style="margin-top:20px;">
+  <strong>Klíčové zjištění:</strong> Největší páku na P&amp;L má hrubá marže na zboží a průměrná tržba/objednávka — oba parametry jsou ovlivnitelné volbou sortimentu s vyšší marží. Dopravné zákazníka (39 Kč) má výrazně menší vliv než kurýrský paušál. Model je ilustrativní (n=7 historických objednávek).
+</div>
+</div>
+
+
+<!-- ── 12. SÍŤOVÁ DOSTUPNOST (OSM) ───────────────────────────────────────── -->
+<div class="section" id="sit-dostupnost">
+<h2>12. Síťová dostupnost (OpenStreetMap)</h2>
+<p>Izochróny jízdní dostupnosti vypočteny z výchozího bodu řidiče (Frýdek-Místek) na základě OSM silniční sítě (OSMnx {_osmnx_ver}). Pokrytí domácností porovnáno s provozní Google Distance Matrix zónou ≤ 20 km.</p>
+
+{_net_table_html}
+
+<div class="kpi-grid" style="margin:20px 0;">
+  <div class="kpi"><div class="val" style="color:#00e676">{_net_5min_hh}</div><div class="lbl">Domácností do 5 min</div></div>
+  <div class="kpi"><div class="val" style="color:#ffd740">{_net_10min_hh}</div><div class="lbl">Domácností do 10 min</div></div>
+  <div class="kpi"><div class="val" style="color:#ff9800">{_net_15min_hh}</div><div class="lbl">Domácností do 15 min</div></div>
+  <div class="kpi"><div class="val" style="color:#e74c3c">{_net_20min_hh}</div><div class="lbl">Domácností do 20 min</div></div>
+</div>
+
+<div class="highlight">
+  <strong>Operační závěr:</strong> Do 10 min jízdy je dostupných {_pct_10min} % domácností provozní zóny (Google ≤ 20 km). Izochróna 15 min ji překrývá o {_net_15_over} % — část zákazníků v Google zóně leží v oblastech s delší jízdní dobou. 
+  Mapa: <a href="network_analyza.html" target="_blank">network_analyza.html</a>
 </div>
 </div>
 
