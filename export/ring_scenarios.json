@@ -1,0 +1,94 @@
+{
+  "0–5 km": {
+    "konzervativni": {
+      "annual_p50": 4306.0,
+      "annual_p25": 3839.0,
+      "annual_p95": 5519.0,
+      "avg_dist_km": 4.43,
+      "avg_courier_kc": 121.7
+    },
+    "cilovy": {
+      "annual_p50": 12974.0,
+      "annual_p25": 12141.0,
+      "annual_p95": 14921.0,
+      "avg_dist_km": 4.43,
+      "avg_courier_kc": 121.7
+    },
+    "optimisticky": {
+      "annual_p50": 30194.0,
+      "annual_p25": 28933.0,
+      "annual_p95": 33401.0,
+      "avg_dist_km": 4.43,
+      "avg_courier_kc": 121.7
+    }
+  },
+  "5–10 km": {
+    "konzervativni": {
+      "annual_p50": 3645.0,
+      "annual_p25": 3218.0,
+      "annual_p95": 4726.0,
+      "avg_dist_km": 7.86,
+      "avg_courier_kc": 134.0
+    },
+    "cilovy": {
+      "annual_p50": 11030.0,
+      "annual_p25": 10249.0,
+      "annual_p95": 12939.0,
+      "avg_dist_km": 7.86,
+      "avg_courier_kc": 134.0
+    },
+    "optimisticky": {
+      "annual_p50": 25755.0,
+      "annual_p25": 24606.0,
+      "annual_p95": 28618.0,
+      "avg_dist_km": 7.86,
+      "avg_courier_kc": 134.0
+    }
+  },
+  "10–15 km": {
+    "konzervativni": {
+      "annual_p50": 1951.0,
+      "annual_p25": 1639.0,
+      "annual_p95": 2798.0,
+      "avg_dist_km": 12.52,
+      "avg_courier_kc": 167.1
+    },
+    "cilovy": {
+      "annual_p50": 5884.0,
+      "annual_p25": 5337.0,
+      "annual_p95": 7311.0,
+      "avg_dist_km": 12.52,
+      "avg_courier_kc": 167.1
+    },
+    "optimisticky": {
+      "annual_p50": 13773.0,
+      "annual_p25": 12914.0,
+      "annual_p95": 15956.0,
+      "avg_dist_km": 12.52,
+      "avg_courier_kc": 167.1
+    }
+  },
+  "15–20 km": {
+    "konzervativni": {
+      "annual_p50": 1657.0,
+      "annual_p25": 1368.0,
+      "annual_p95": 2407.0,
+      "avg_dist_km": 16.37,
+      "avg_courier_kc": 187.5
+    },
+    "cilovy": {
+      "annual_p50": 4967.0,
+      "annual_p25": 4461.0,
+      "annual_p95": 6269.0,
+      "avg_dist_km": 16.37,
+      "avg_courier_kc": 187.5
+    },
+    "optimisticky": {
+      "annual_p50": 11566.0,
+      "annual_p25": 10762.0,
+      "annual_p95": 13563.0,
+      "avg_dist_km": 16.37,
+      "avg_courier_kc": 187.5
+    }
+  }
+}

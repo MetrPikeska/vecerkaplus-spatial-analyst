@@ -25,6 +25,17 @@ ORDER_VALUE_STD  = 140.0
 DIST_KM_MEAN     = 6.7
 DIST_KM_STD      = 6.5
 
+# Lognormální parametry pro vzdálenosti (pravostranně sešikmené — většina blízko, výjimky daleko)
+import math as _math
+_DIST_SIGMA = _math.sqrt(_math.log(1 + DIST_KM_STD**2 / DIST_KM_MEAN**2))  # ≈ 0.815
+_DIST_MU    = _math.log(DIST_KM_MEAN) - _DIST_SIGMA**2 / 2                 # ≈ 1.570
+
+# Fixní měsíční náklady (telefon, data, pojištění vozidla, platforma)
+FIXED_COSTS_MONTHLY = 800.0   # Kč/měsíc
+
+# Ramp-up: lambda roste od 0 exponenciálně na cílovou hodnotu s tau=4 měsíce
+RAMP_TAU_MONTHS = 4.0
+
 AVG_GROSS_MARGIN = 0.365
 DELIVERY_FEE_Z12 = 39.0    # ≤ 20 km dopravné zákazníka
 DELIVERY_FEE_Z3  = 164.0   # > 20 km
@@ -61,21 +72,30 @@ def net_per_order(order_value, dist_km,
 
 
 def run_trials(lambda_per_week, n_trials=N_TRIALS, n_months=N_MONTHS, **kwargs):
-    """Vrátí (n_trials × n_months) array měsíčního P&L."""
+    """Vrátí (n_trials × n_months) array měsíčního P&L.
+
+    Vylepšení oproti v1:
+    - Lognormální vzdálenosti (pravostranně sešikmené, reálnější než symetrická Normal)
+    - Ramp-up: lambda roste exponenciálně na cílovou hodnotu (tau=RAMP_TAU_MONTHS)
+    - Fixní náklady: odečteny každý měsíc
+    """
     results = np.zeros((n_trials, n_months))
     for month in range(n_months):
-        # počet objednávek v měsíci = sum weekly Poisson přes týdny
+        # Ramp-up: efektivní lambda pro tento měsíc
+        ramp = 1.0 - np.exp(-(month + 1) / RAMP_TAU_MONTHS)
+        effective_lam = lambda_per_week * ramp
+
         n_weeks = 4 if (month % 3 != 2) else 5
-        n_orders_per_trial = rng.poisson(lambda_per_week * n_weeks, size=n_trials)
+        n_orders_per_trial = rng.poisson(effective_lam * n_weeks, size=n_trials)
         for trial_idx in range(n_trials):
             n = int(n_orders_per_trial[trial_idx])
             if n == 0:
-                results[trial_idx, month] = 0.0
+                results[trial_idx, month] = -FIXED_COSTS_MONTHLY
                 continue
             values  = rng.normal(ORDER_VALUE_MEAN, ORDER_VALUE_STD, n).clip(200, 2000)
-            dists   = rng.normal(DIST_KM_MEAN, DIST_KM_STD, n).clip(0.5, 35)
+            dists   = rng.lognormal(_DIST_MU, _DIST_SIGMA, n).clip(0.5, 35)
             monthly = sum(net_per_order(v, d, **kwargs) for v, d in zip(values, dists))
-            results[trial_idx, month] = monthly
+            results[trial_idx, month] = monthly - FIXED_COSTS_MONTHLY
     return results
 
 
@@ -150,21 +170,20 @@ for label, (param_key, base_val, low_val, high_val) in params.items():
     kw_low  = {}
     kw_high = {}
     if param_key == "order_value_mean":
-        # Musíme předat přes global — jednodušší přepsat průměr lokálně
-        saved = ORDER_VALUE_MEAN
-        # Simulaci voláme s upraveným globálem — patch přes monkey-patch funkce
         def _run_with_mean(mean_val, lam):
             arr = np.zeros((N_TRIALS, N_MONTHS))
             for month in range(N_MONTHS):
-                n_weeks = 4 if (month % 3 != 2) else 5
-                n_orders = rng.poisson(lam * n_weeks, size=N_TRIALS)
+                ramp     = 1.0 - np.exp(-(month + 1) / RAMP_TAU_MONTHS)
+                n_weeks  = 4 if (month % 3 != 2) else 5
+                n_orders = rng.poisson(lam * ramp * n_weeks, size=N_TRIALS)
                 for i in range(N_TRIALS):
                     n = int(n_orders[i])
+                    arr[i, month] = -FIXED_COSTS_MONTHLY
                     if n == 0:
                         continue
                     values = rng.normal(mean_val, ORDER_VALUE_STD, n).clip(200, 2000)
-                    dists  = rng.normal(DIST_KM_MEAN, DIST_KM_STD, n).clip(0.5, 35)
-                    arr[i, month] = sum(net_per_order(v, d) for v, d in zip(values, dists))
+                    dists  = rng.lognormal(_DIST_MU, _DIST_SIGMA, n).clip(0.5, 35)
+                    arr[i, month] += sum(net_per_order(v, d) for v, d in zip(values, dists))
             return arr
         low_p50  = float(np.median(_run_with_mean(low_val,  BASE_LAM).sum(axis=1)))
         high_p50 = float(np.median(_run_with_mean(high_val, BASE_LAM).sum(axis=1)))
@@ -179,17 +198,24 @@ for label, (param_key, base_val, low_val, high_val) in params.items():
         high_p50 = float(np.median(run_trials(BASE_LAM, courier_z2=high_val).sum(axis=1)))
     elif param_key == "dist_mean":
         def _run_with_dist(dist_mean_val, lam):
+            # Přepočítat lognormal parametry pro daný mean (std proporcionálně)
+            import math as _m
+            ratio   = dist_mean_val / DIST_KM_MEAN
+            sigma_v = _DIST_SIGMA
+            mu_v    = _m.log(dist_mean_val) - sigma_v**2 / 2
             arr = np.zeros((N_TRIALS, N_MONTHS))
             for month in range(N_MONTHS):
-                n_weeks = 4 if (month % 3 != 2) else 5
-                n_orders = rng.poisson(lam * n_weeks, size=N_TRIALS)
+                ramp     = 1.0 - np.exp(-(month + 1) / RAMP_TAU_MONTHS)
+                n_weeks  = 4 if (month % 3 != 2) else 5
+                n_orders = rng.poisson(lam * ramp * n_weeks, size=N_TRIALS)
                 for i in range(N_TRIALS):
                     n = int(n_orders[i])
+                    arr[i, month] = -FIXED_COSTS_MONTHLY
                     if n == 0:
                         continue
                     values = rng.normal(ORDER_VALUE_MEAN, ORDER_VALUE_STD, n).clip(200, 2000)
-                    dists  = rng.normal(dist_mean_val, DIST_KM_STD, n).clip(0.5, 35)
-                    arr[i, month] = sum(net_per_order(v, d) for v, d in zip(values, dists))
+                    dists  = rng.lognormal(mu_v, sigma_v, n).clip(0.5, 35)
+                    arr[i, month] += sum(net_per_order(v, d) for v, d in zip(values, dists))
             return arr
         low_p50  = float(np.median(_run_with_dist(low_val,  BASE_LAM).sum(axis=1)))
         high_p50 = float(np.median(_run_with_dist(high_val, BASE_LAM).sum(axis=1)))

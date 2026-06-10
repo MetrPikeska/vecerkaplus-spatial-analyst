@@ -36,7 +36,13 @@ COURIER_FEE_Z2    = 180    # kurýr paušál 10–20 km
 COURIER_FEE_Z3    = 250    # kurýr paušál >20 km
 DELIVERY_FEE_Z12  = 39     # zákazník platí dopravné ≤20 km (průměr z dat)
 DELIVERY_FEE_Z3   = 164    # zákazník platí dopravné >20 km (průměr 149+179/2)
-CONVERSION_RATE   = 0.002  # 0.2 % domácností/měsíc (base rate odhad)
+CONVERSION_RATE_BASE = 0.002  # 0.2 % domácností/měsíc (base rate)
+# Multiplikátor dle hustoty nightlife (více podniků → vyšší pravděpodobnost noční objednávky)
+def conversion_rate(nightlife_per_1k: float) -> float:
+    if nightlife_per_1k >= 2.0:   return CONVERSION_RATE_BASE * 1.6
+    if nightlife_per_1k >= 1.0:   return CONVERSION_RATE_BASE * 1.25
+    if nightlife_per_1k >= 0.5:   return CONVERSION_RATE_BASE * 1.0
+    return CONVERSION_RATE_BASE * 0.65
 
 # Vyřazené obce dle delivery-zones.ts
 VYRAZENE = {"Ostravice", "Morávka"}
@@ -177,14 +183,15 @@ for idx, row in df[df["cache_points"] == 0].iterrows():
 
 df["driving_dist_km"] = df["driving_dist_km"].round(1)
 
-# P&L metriky
-df["net_per_order_kc"]       = df["driving_dist_km"].apply(net_per_order).round(1)
-df["expected_orders_month"]  = (df["hh_celkem"] * CONVERSION_RATE).round(1)
-df["monthly_contribution_kc"] = (df["expected_orders_month"] * df["net_per_order_kc"]).round(0).astype(int)
-df["byt_podil"]              = (df["byt_domy_byty"] / df["hh_celkem"].replace(0, np.nan)).fillna(0).round(3)
-df["nightlife_per_1k"]       = (
+# P&L metriky (nightlife_per_1k musí být vypočteno před conversion_rate)
+df["byt_podil"]       = (df["byt_domy_byty"] / df["hh_celkem"].replace(0, np.nan)).fillna(0).round(3)
+df["nightlife_per_1k"] = (
     df["nightlife_count"] / (df["obyvatelstvo_celkem"].replace(0, np.nan) / 1000)
 ).fillna(0).round(2)
+df["net_per_order_kc"]        = df["driving_dist_km"].apply(net_per_order).round(1)
+df["conversion_rate"]         = df["nightlife_per_1k"].apply(conversion_rate)
+df["expected_orders_month"]   = (df["hh_celkem"] * df["conversion_rate"]).round(1)
+df["monthly_contribution_kc"] = (df["expected_orders_month"] * df["net_per_order_kc"]).round(0).astype(int)
 df["vyrazeno"] = df["nazev"].isin(VYRAZENE)
 
 # ── scoring ───────────────────────────────────────────────────────────────────
@@ -214,6 +221,25 @@ df["tier"] = df["monthly_contribution_kc"].apply(
 df = df.sort_values("skore_total", ascending=False).reset_index(drop=True)
 df["rank"] = df.index + 1
 
+# Doporučení – závisí na tier, proto až po tiering
+def doporuceni(row):
+    if row["vyrazeno"]:
+        return "vyřadit"
+    d, tier, hh = row["driving_dist_km"], row["tier"], row["hh_celkem"]
+    if tier == "A" and d <= 10:
+        return "ponechat – prioritní"
+    if tier == "A":
+        return "ponechat – aktivní marketing"
+    if tier == "B" and d <= 15:
+        return "ponechat – pasivní"
+    if tier == "B":
+        return "podmíněně"
+    if d > 12 and hh < 400:
+        return "vyřadit"
+    return "podmíněně"
+
+df["doporuceni"] = df.apply(doporuceni, axis=1)
+
 # ── print výsledků ────────────────────────────────────────────────────────────
 EMOJI = {"A": "🟢", "B": "🟡", "C": "🔴"}
 print(f"\n{'#':<4} {'T':<4} {'Obec':<30} {'HH':>7} {'km':>6} {'Kč/obj':>7} {'Kč/měsíc':>10} {'Skóre':>7}")
@@ -229,14 +255,36 @@ print(f"Celkový měsíční potenciál Tier A: {df[df.tier=='A']['monthly_contr
 print(f"Celkový měsíční potenciál Tier B: {df[df.tier=='B']['monthly_contribution_kc'].sum():,} Kč")
 
 # ── export CSV ────────────────────────────────────────────────────────────────
-cols_out = ["kod","nazev","rank","tier","hh_celkem","obyvatelstvo_celkem","vek_15_64",
-            "driving_dist_km","net_per_order_kc","expected_orders_month",
+cols_out = ["kod","nazev","rank","tier","doporuceni","hh_celkem","obyvatelstvo_celkem","vek_15_64",
+            "driving_dist_km","net_per_order_kc","conversion_rate","expected_orders_month",
             "monthly_contribution_kc","nightlife_count","nightlife_per_1k",
             "byt_domy_byty","byt_podil","cache_points",
             "s_trh","s_pl","s_byty","s_nightlife","skore_total","vyrazeno"]
 csv_out = os.path.join(OUT_DIR, "obce_scoring.csv")
 df[[c for c in cols_out if c in df.columns]].to_csv(csv_out, index=False, encoding="utf-8-sig")
 print(f"\nCSV: {csv_out}")
+
+# Exportovat recommended_zone.json — vstup pro appku
+rec_ponechat = df[df["doporuceni"].str.startswith("ponechat")]["nazev"].tolist()
+rec_podminene = df[df["doporuceni"] == "podmíněně"]["nazev"].tolist()
+rec_vyradit  = df[df["doporuceni"] == "vyřadit"]["nazev"].tolist()
+recommended_zone = {
+    "generated": "2026-06-10",
+    "ponechat":   rec_ponechat,
+    "podmínečně": rec_podminene,
+    "vyřadit":    rec_vyradit,
+    "souhrn": {
+        "ponechat_count":   len(rec_ponechat),
+        "podmínečně_count": len(rec_podminene),
+        "vyřadit_count":    len(rec_vyradit),
+        "tier_A_mesicni_kc": int(df[df.tier=="A"]["monthly_contribution_kc"].sum()),
+        "tier_B_mesicni_kc": int(df[df.tier=="B"]["monthly_contribution_kc"].sum()),
+    },
+}
+rec_json = os.path.join(OUT_DIR, "recommended_zone.json")
+with open(rec_json, "w", encoding="utf-8") as f:
+    json.dump(recommended_zone, f, ensure_ascii=False, indent=2)
+print(f"JSON: {rec_json}")
 
 # ── Folium mapa ───────────────────────────────────────────────────────────────
 print("\n=== Generuji mapu ===")

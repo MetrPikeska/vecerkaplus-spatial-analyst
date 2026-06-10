@@ -1,0 +1,16 @@
+{
+  "flat_39kc": {
+    "label": "Aktuální (flat 39 Kč)",
+    "avg_fee_kc": 44.3,
+    "annual_p25": 6412.0,
+    "annual_p50": 7014.0,
+    "annual_p95": 8538.0
+  },
+  "tiered": {
+    "label": "Pásmové dopravné",
+    "avg_fee_kc": 74.7,
+    "annual_p25": 10937.0,
+    "annual_p50": 11726.0,
+    "annual_p95": 13712.0
+  }
+}

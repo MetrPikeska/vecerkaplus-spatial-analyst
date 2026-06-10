@@ -34,6 +34,7 @@ GRAPH_DIST_M     = 25_000       # okruh stahování grafu
 
 TIME_LIMITS_MIN  = [5, 10, 15, 20]
 ISOCHRONY_COLORS = {5:"#00e676", 10:"#ffd740", 15:"#ff9800", 20:"#e74c3c"}
+NIGHT_SPEED_FACTOR = 1.15   # noční provoz 22–6: méně aut → ~15 % rychlejší průjezd
 
 DATA_DIR  = os.path.join(os.path.dirname(__file__), "data")
 OUT_DIR   = os.path.join(os.path.dirname(__file__), "output")
@@ -63,15 +64,19 @@ else:
     ox.save_graphml(G, filepath=GRAPH_CACHE)
     print(f"   Uloženo: {GRAPH_CACHE}")
 
-# Ověř přítomnost travel_time (po načtení z cache nemusí být)
-edges_gdf = ox.graph_to_gdfs(G, nodes=False)
-if "travel_time" not in edges_gdf.columns:
-    print("   Přepočítávám rychlosti a jízdní časy…")
-    G = ox.add_edge_speeds(G)
-    G = ox.add_edge_travel_times(G)
+# Vždy přepočítat rychlosti s nočním faktorem (cache má denní hodnoty)
+print(f"   Aplikuji noční rychlostní faktor {NIGHT_SPEED_FACTOR}×…")
+G = ox.add_edge_speeds(G)
+for _, _, _, d in G.edges(data=True, keys=True):
+    if "speed_kph" in d:
+        d["speed_kph"] = d["speed_kph"] * NIGHT_SPEED_FACTOR
+G = ox.add_edge_travel_times(G)
 
 orig_node = ox.nearest_nodes(G, FM_LON, FM_LAT)
 print(f"   Výchozí uzel: {orig_node}")
+
+# Dijkstra — délky ke všem uzlům (pro route vizualizaci)
+dist_m_dict = nx.single_source_dijkstra_path_length(G, orig_node, weight="length")
 
 # ── 2. Izochróny ──────────────────────────────────────────────────────────────
 print("\n=== 2. Výpočet izochrón ===")
@@ -109,20 +114,31 @@ print("\n=== 3. Pokrytí domácností per izochróna ===")
 
 grid = gpd.read_file(os.path.join(DATA_DIR, "gridy_domacnosti",
     "grid_domacnosti_sldb2021_20210326.gpkg")).rename(columns={"g179999001": "hh_celkem"})
-grid_m   = grid.to_crs(CRS_METRIC)
-grid_pts = gpd.GeoDataFrame(grid_m[["hh_celkem"]], geometry=grid_m.geometry.centroid, crs=CRS_METRIC)
+grid_m = grid.to_crs(CRS_METRIC)[["hh_celkem", "geometry"]].copy()
+grid_m["cell_area"] = grid_m.geometry.area
+
+
+def hh_in_polygon(poly_m):
+    """Proporční počet domácností – váhuje buňky na hranici izochróny plochou průniku."""
+    cands = grid_m[grid_m.geometry.intersects(poly_m)].copy()
+    if cands.empty:
+        return 0
+    cands["isect_area"] = cands.geometry.intersection(poly_m).area
+    cands["w"] = (cands["isect_area"] / cands["cell_area"]).clip(0, 1)
+    return int((cands["hh_celkem"] * cands["w"]).sum())
+
 
 # Google 20km zóna jako referenční hodnota
 zone20 = gpd.read_file(os.path.join(DATA_DIR, "google_zone_20km.geojson")).to_crs(CRS_METRIC)
 zone20_geom = zone20.geometry.unary_union
-hh_google20 = int(grid_pts[grid_pts.geometry.within(zone20_geom)]["hh_celkem"].sum())
+hh_google20 = hh_in_polygon(zone20_geom)
 
 summary = {}
 prev_hh = 0
 for _, row in iso_gdf.iterrows():
     minutes = int(row["minutes"])
     iso_m = gpd.GeoDataFrame([{"geometry": row.geometry}], crs=CRS_WGS).to_crs(CRS_METRIC).geometry.iloc[0]
-    hh = int(grid_pts[grid_pts.geometry.within(iso_m)]["hh_celkem"].sum())
+    hh = hh_in_polygon(iso_m)
     area_km2 = iso_m.area / 1e6
     pct_google = hh / hh_google20 * 100 if hh_google20 > 0 else 0
     incremental = hh - prev_hh
@@ -133,6 +149,7 @@ for _, row in iso_gdf.iterrows():
         "pop_est": int(hh * AVG_HH_SIZE),
         "pct_google20": round(pct_google, 1),
         "incremental_hh": incremental,
+        "night_speed_factor": NIGHT_SPEED_FACTOR,
     }
     print(f"   {minutes:2d} min — {area_km2:.0f} km² — {hh:,} HH ({pct_google:.0f} % Google 20km) +{incremental:,} přírůstek")
     prev_hh = hh
@@ -178,21 +195,39 @@ folium.GeoJson(
                                "fillOpacity": 0.04, "dashArray": "6,4"},
 ).add_to(m)
 
-# 1km grid heatmap (domácnosti)
-grid_vis = grid_pts[grid_pts.geometry.within(zone20_geom)].to_crs(CRS_WGS)
+# 1km grid heatmap (domácnosti) — centroids z grid_m
+grid_pts_vis = gpd.GeoDataFrame(grid_m[["hh_celkem"]], geometry=grid_m.geometry.centroid, crs=CRS_METRIC)
+grid_vis = grid_pts_vis[grid_pts_vis.geometry.within(zone20_geom)].to_crs(CRS_WGS)
 heat_data = [[r.geometry.y, r.geometry.x, r.hh_celkem]
              for _, r in grid_vis[grid_vis.hh_celkem > 0].iterrows()]
 from folium.plugins import HeatMap
 HeatMap(heat_data, name="Hustota domácností", min_opacity=0.2,
         radius=16, blur=20, max_zoom=13, show=False).add_to(m)
 
-# Zákazníci
+# Trasy zákazníků po OSM síti
 zak = pd.read_csv(os.path.join(DATA_DIR, "zakaznici.csv")).dropna(subset=["lat","lng"])
-zak_grp = folium.FeatureGroup(name="Zákazníci (objednávky)", show=True)
+route_grp = folium.FeatureGroup(name="Trasy zákazníků (OSM shortest path)", show=True)
 for _, r in zak.iterrows():
+    dest_node = ox.nearest_nodes(G, float(r.lng), float(r.lat))
+    try:
+        path = nx.shortest_path(G, orig_node, dest_node, weight="length")
+        coords = [(G.nodes[n]["y"], G.nodes[n]["x"]) for n in path]
+        road_km = dist_m_dict.get(dest_node, 0) / 1000
+        folium.PolyLine(
+            coords, color="#e74c3c", weight=3, opacity=0.75,
+            tooltip=f"#{int(r.id)} – {int(r.trzba_kc)} Kč | po silnici {road_km:.1f} km",
+        ).add_to(route_grp)
+    except (nx.NetworkXNoPath, nx.NodeNotFound):
+        pass
+route_grp.add_to(m)
+
+# Zákazníci — body
+zak_grp = folium.FeatureGroup(name="Zákazníci (body)", show=True)
+for _, r in zak.iterrows():
+    road_km = dist_m_dict.get(ox.nearest_nodes(G, float(r.lng), float(r.lat)), 0) / 1000
     folium.CircleMarker([r.lat, r.lng], radius=9, color="#fff", weight=2,
                         fill_color="#e74c3c", fill_opacity=0.95,
-                        tooltip=f"#{int(r.id)} — {int(r.trzba_kc)} Kč, {r.vzdalenost_km} km").add_to(zak_grp)
+                        tooltip=f"#{int(r.id)} — {int(r.trzba_kc)} Kč | vzduch {r.vzdalenost_km} km | silnice {road_km:.1f} km").add_to(zak_grp)
 zak_grp.add_to(m)
 
 # FM výchozí bod

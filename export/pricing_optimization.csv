@@ -1,0 +1,60 @@
+﻿nazev,tier,doporuceni,driving_dist_km,courier_kc,net_flat_39,tiered_fee_kc,net_tiered,net_gain_tiered,min_fee_kc,fee_doporuceni,monthly_contribution_kc
+Havířov,A,ponechat – aktivní marketing,16.8,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),1603
+Frýdek-Místek,A,ponechat – prioritní,5.8,120.0,84.0,39.0,84.0,0.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",6182
+Pražmo,C,vyřadit,16.0,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),2
+Baška,A,ponechat – prioritní,7.3,120.0,84.0,39.0,84.0,0.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",378
+Staré Město,A,ponechat – prioritní,3.3,120.0,84.0,39.0,84.0,0.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",689
+Malenovice,C,vyřadit,18.6,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),19
+Sviadnov,A,ponechat – prioritní,4.7,120.0,84.0,39.0,84.0,0.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",134
+Staříč,A,ponechat – prioritní,9.9,120.0,84.0,69.0,114.0,30.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",176
+Krásná,B,podmíněně,20.5,250.0,-46.0,149.0,64.0,110.0,145.0,145 Kč (cost-based),55
+Frýdlant nad Ostravicí,A,ponechat – aktivní marketing,14.5,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),302
+Dobrá,A,ponechat – prioritní,4.0,120.0,84.0,39.0,84.0,0.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",202
+Nošovice,B,ponechat – pasivní,6.3,120.0,84.0,39.0,84.0,0.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",67
+Stará Ves nad Ondřejnicí,A,ponechat – aktivní marketing,20.5,250.0,-46.0,149.0,64.0,110.0,145.0,145 Kč (cost-based),229
+Sedliště,A,ponechat – prioritní,6.0,120.0,84.0,39.0,84.0,0.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",109
+Soběšovice,C,vyřadit,15.6,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),24
+Pržno,B,ponechat – pasivní,9.1,120.0,84.0,69.0,114.0,30.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",50
+Hukvaldy,B,podmíněně,16.4,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),62
+Horní Domaslavice,B,ponechat – pasivní,8.4,120.0,84.0,69.0,114.0,30.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",67
+Žabeň,B,ponechat – pasivní,7.0,120.0,84.0,39.0,84.0,0.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",67
+Bruzovice,B,ponechat – pasivní,8.0,120.0,84.0,39.0,84.0,0.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",42
+Vyšní Lhoty,B,ponechat – pasivní,11.7,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),38
+Nižní Lhoty,C,podmíněně,9.1,120.0,84.0,69.0,114.0,30.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",17
+Pazderna,C,podmíněně,6.5,120.0,84.0,39.0,84.0,0.0,15.0,"39 Kč (OK, margin ≥ 60 Kč)",17
+Ropice,B,podmíněně,22.3,250.0,-46.0,149.0,64.0,110.0,145.0,145 Kč (cost-based),63
+Vratimov,A,ponechat – aktivní marketing,12.9,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),173
+Skotnice,B,podmíněně,20.2,250.0,-46.0,149.0,64.0,110.0,145.0,145 Kč (cost-based),32
+Trnávka,C,vyřadit,20.5,250.0,-46.0,149.0,64.0,110.0,145.0,145 Kč (cost-based),24
+Vělopolí,C,vyřadit,21.0,250.0,-46.0,149.0,64.0,110.0,145.0,145 Kč (cost-based),8
+Komorní Lhotka,B,podmíněně,19.2,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),34
+Brušperk,A,ponechat – aktivní marketing,18.4,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),118
+Paskov,B,ponechat – pasivní,12.3,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),86
+Pstruží,B,podmíněně,16.5,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),36
+Krmelín,B,podmíněně,17.1,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),53
+Řepiště,B,ponechat – pasivní,10.8,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),65
+Šenov,A,ponechat – aktivní marketing,14.1,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),146
+Lučina,B,ponechat – pasivní,11.3,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),43
+Lhotka,C,vyřadit,17.3,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),14
+Příbor,A,ponechat – aktivní marketing,19.2,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),206
+Palkovice,B,ponechat – pasivní,12.5,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),91
+Kateřinice,C,vyřadit,17.6,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),22
+Vojkovice,C,vyřadit,12.4,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),22
+Hnojník,B,ponechat – pasivní,14.6,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),34
+Raškovice,C,podmíněně,12.5,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),26
+Petřvald,B,podmíněně,19.2,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),89
+Horní Bludovice,B,ponechat – pasivní,10.5,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),62
+Kozlovice,B,podmíněně,18.0,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),62
+Fryčovice,B,podmíněně,15.5,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),55
+Václavovice,B,ponechat – pasivní,10.3,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),46
+Horní Tošanovice,C,vyřadit,14.1,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),12
+Dobratice,C,podmíněně,11.5,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),22
+Dolní Domaslavice,C,podmíněně,15.9,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),24
+Třanovice,C,vyřadit,18.3,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),14
+Janovice,B,ponechat – pasivní,11.1,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),31
+Metylovice,C,podmíněně,13.0,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),26
+Dolní Tošanovice,C,vyřadit,12.4,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),7
+Žermanice,C,podmíněně,11.9,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),5
+Střítež,C,vyřadit,17.3,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),12
+Smilovice,C,vyřadit,18.9,180.0,24.0,99.0,84.0,60.0,75.0,99 Kč (pásmové),10
+Kaňovice,C,podmíněně,10.9,180.0,24.0,69.0,54.0,30.0,75.0,69 Kč (pásmové),5

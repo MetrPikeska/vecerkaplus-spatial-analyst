@@ -1,38 +1,42 @@
 {
   "5": {
     "minutes": 5,
-    "area_km2": 22.6,
-    "hh_count": 23974,
-    "pop_est": 56818,
-    "pct_google20": 18.4,
-    "incremental_hh": 23974
+    "area_km2": 27.3,
+    "hh_count": 23869,
+    "pop_est": 56569,
+    "pct_google20": 18.2,
+    "incremental_hh": 23869,
+    "night_speed_factor": 1.15
   },
   "10": {
     "minutes": 10,
-    "area_km2": 167.3,
-    "hh_count": 49171,
-    "pop_est": 116535,
-    "pct_google20": 37.7,
-    "incremental_hh": 25197
+    "area_km2": 270.3,
+    "hh_count": 69144,
+    "pop_est": 163871,
+    "pct_google20": 52.6,
+    "incremental_hh": 45275,
+    "night_speed_factor": 1.15
   },
   "15": {
     "minutes": 15,
-    "area_km2": 532.1,
-    "hh_count": 140271,
-    "pop_est": 332442,
-    "pct_google20": 107.7,
-    "incremental_hh": 91100
+    "area_km2": 738.2,
+    "hh_count": 175854,
+    "pop_est": 416773,
+    "pct_google20": 133.9,
+    "incremental_hh": 106710,
+    "night_speed_factor": 1.15
   },
   "20": {
     "minutes": 20,
-    "area_km2": 923.0,
-    "hh_count": 254387,
-    "pop_est": 602897,
-    "pct_google20": 195.3,
-    "incremental_hh": 114116
+    "area_km2": 1199.2,
+    "hh_count": 295831,
+    "pop_est": 701119,
+    "pct_google20": 225.2,
+    "incremental_hh": 119977,
+    "night_speed_factor": 1.15
   },
   "google20": {
-    "hh_count": 130264,
+    "hh_count": 131337,
     "area_km2": 733.8
   }
 }
