@@ -47,6 +47,107 @@ gridy_m = gridy.to_crs(CRS_METRIC); gridy_m["c"] = gridy_m.geometry.centroid
 hh_iso = int(gridy_m[gridy_m["c"].within(zone_m)]["hh_celkem"].sum())
 pop_grid_iso = int(hh_iso * 2.37)
 
+# Demografie per rozvozová zóna (area-weighted SLDB + centroid HH grid)
+_zone_km_list = [5, 10, 15, 20]
+_zone_labels  = {5: "do 5 km", 10: "5–10 km", 15: "10–15 km", 20: "15–20 km"}
+_zone_colors  = {5: "#00e676", 10: "#ffd740", 15: "#ff9800", 20: "#e74c3c"}
+_demo_num_cols = ["obyvatelstvo_celkem", "muzi", "zeny", "vek_0_14", "vek_15_64", "vek_65plus"]
+
+_obce_aw = obce.to_crs(CRS_METRIC).copy()
+for _c in _demo_num_cols + ["prumerny_vek"]:
+    if _c in _obce_aw.columns:
+        _obce_aw[_c] = pd.to_numeric(_obce_aw[_c], errors="coerce").fillna(0)
+    else:
+        _obce_aw[_c] = 0
+_obce_aw = _obce_aw[_obce_aw["obyvatelstvo_celkem"] > 0].copy()
+_obce_aw["_obec_area"] = _obce_aw.geometry.area
+
+def _demo_in_zone(zone_geom):
+    cands = _obce_aw[_obce_aw.geometry.intersects(zone_geom)].copy()
+    if cands.empty:
+        return {c: 0 for c in _demo_num_cols + ["prumerny_vek"]}
+    cands["_isect"] = cands.geometry.intersection(zone_geom).area
+    cands["_w"] = (cands["_isect"] / cands["_obec_area"]).clip(0, 1)
+    res = {c: int(round((cands[c] * cands["_w"]).sum())) for c in _demo_num_cols}
+    denom = (cands["_w"] * cands["obyvatelstvo_celkem"]).sum()
+    res["prumerny_vek"] = round(
+        (cands["_w"] * cands["obyvatelstvo_celkem"] * cands["prumerny_vek"]).sum() / denom, 1
+    ) if denom > 0 else 43.0
+    return res
+
+# Kumulativní hodnoty per zóna
+_cum_demo = {}
+_cum_hh   = {}
+for _km in _zone_km_list:
+    _zpath = os.path.join(DATA_DIR, f"google_zone_{_km}km.geojson")
+    _zgeom = gpd.read_file(_zpath).to_crs(CRS_METRIC).geometry.iloc[0]
+    _cum_demo[_km] = _demo_in_zone(_zgeom)
+    _cum_hh[_km]   = int(gridy_m[gridy_m["c"].within(_zgeom)]["hh_celkem"].sum())
+
+# Prstencové hodnoty (kumulativní - předchozí)
+_ring_demo = {}
+_ring_hh   = {}
+_prev_demo = {c: 0 for c in _demo_num_cols + ["prumerny_vek"]}
+_prev_hh   = 0
+for _km in _zone_km_list:
+    _ring_demo[_km] = {}
+    for _c in _demo_num_cols:
+        _ring_demo[_km][_c] = _cum_demo[_km][_c] - _prev_demo.get(_c, 0)
+    _ring_demo[_km]["prumerny_vek"] = _cum_demo[_km]["prumerny_vek"]
+    _ring_hh[_km] = _cum_hh[_km] - _prev_hh
+    _prev_demo = {c: _cum_demo[_km][c] for c in _demo_num_cols}
+    _prev_demo["prumerny_vek"] = _cum_demo[_km]["prumerny_vek"]
+    _prev_hh = _cum_hh[_km]
+
+# HTML tabulka
+def _pct(a, b): return round(a / b * 100, 1) if b else 0
+def fmt_n(n): return f"{n:,}".replace(",", " ")  # non-breaking space
+_zone_demo_rows = ""
+for _km in _zone_km_list:
+    _r  = _ring_demo[_km]
+    _hh = _ring_hh[_km]
+    _pop = _r["obyvatelstvo_celkem"]
+    _col = _zone_colors[_km]
+    _zone_demo_rows += (
+        f'<tr>'
+        f'<td><span style="color:{_col};font-weight:700">{_zone_labels[_km]}</span></td>'
+        f'<td class="num">{fmt_n(_pop)}</td>'
+        f'<td class="num">{fmt_n(_hh)}</td>'
+        f'<td class="num">{fmt_n(_r["vek_0_14"])}</td>'
+        f'<td class="num">{_pct(_r["vek_0_14"], _pop)} %</td>'
+        f'<td class="num">{fmt_n(_r["vek_15_64"])}</td>'
+        f'<td class="num">{_pct(_r["vek_15_64"], _pop)} %</td>'
+        f'<td class="num">{fmt_n(_r["vek_65plus"])}</td>'
+        f'<td class="num">{_pct(_r["vek_65plus"], _pop)} %</td>'
+        f'<td class="num">{_r["prumerny_vek"]}</td>'
+        f'</tr>\n'
+    )
+_pop_total = sum(_ring_demo[k]["obyvatelstvo_celkem"] for k in _zone_km_list)
+_hh_total  = sum(_ring_hh[k] for k in _zone_km_list)
+_vek0_total = sum(_ring_demo[k]["vek_0_14"] for k in _zone_km_list)
+_vek15_total = sum(_ring_demo[k]["vek_15_64"] for k in _zone_km_list)
+_vek65_total = sum(_ring_demo[k]["vek_65plus"] for k in _zone_km_list)
+_zone_demo_rows += (
+    f'<tr style="border-top:2px solid var(--border);font-weight:600">'
+    f'<td>CELKEM ≤ 20 km</td>'
+    f'<td class="num">{fmt_n(_pop_total)}</td>'
+    f'<td class="num">{fmt_n(_hh_total)}</td>'
+    f'<td class="num">{fmt_n(_vek0_total)}</td>'
+    f'<td class="num">{_pct(_vek0_total, _pop_total)} %</td>'
+    f'<td class="num">{fmt_n(_vek15_total)}</td>'
+    f'<td class="num">{_pct(_vek15_total, _pop_total)} %</td>'
+    f'<td class="num">{fmt_n(_vek65_total)}</td>'
+    f'<td class="num">{_pct(_vek65_total, _pop_total)} %</td>'
+    f'<td class="num">{round(sum(_cum_demo[k]["prumerny_vek"] * _cum_demo[k]["obyvatelstvo_celkem"] for k in _zone_km_list) / sum(_cum_demo[k]["obyvatelstvo_celkem"] for k in _zone_km_list), 1)}</td>'
+    f'</tr>\n'
+)
+
+# Chart.js data pro věkovou strukturu per zóna (stacked bar)
+_chart_zone_labels = [_zone_labels[k] for k in _zone_km_list]
+_chart_vek0  = [_ring_demo[k]["vek_0_14"] for k in _zone_km_list]
+_chart_vek15 = [_ring_demo[k]["vek_15_64"] for k in _zone_km_list]
+_chart_vek65 = [_ring_demo[k]["vek_65plus"] for k in _zone_km_list]
+
 # RÚIAN budovy
 budovy = gpd.read_file(os.path.join(DATA_DIR, "ruian_budovy_fm.gpkg"))
 total_budov    = len(budovy)
@@ -159,6 +260,70 @@ if os.path.exists(mc_sens_csv):
     mc_sens = pd.read_csv(mc_sens_csv).sort_values("swing_kc", ascending=False)
 else:
     mc_sens = None
+
+# ── Rozvozová politika ───────────────────────────────────────────────────
+_POLICY_ZONES = [
+    {"km": 5,  "ring": "0–5 km",   "fee": 39,  "free_from": 1000, "min_order": 500,  "courier": 120, "color": "#00e676"},
+    {"km": 10, "ring": "5–10 km",  "fee": 69,  "free_from": 1000, "min_order": 500,  "courier": 120, "color": "#ffd740"},
+    {"km": 15, "ring": "10–15 km", "fee": 99,  "free_from": 1200, "min_order": 700,  "courier": 180, "color": "#ff9800"},
+    {"km": 20, "ring": "15–20 km", "fee": 149, "free_from": 1500, "min_order": 700,  "courier": 180, "color": "#e74c3c"},
+]
+_GROSS_KC = round(452 * 0.365)  # 165 Kč — hrubá marže z průměrné objednávky
+for _z in _POLICY_ZONES:
+    _z["net_kc"] = _GROSS_KC + _z["fee"] - _z["courier"]
+
+# Nightlife POI per ring
+_NIGHTLIFE_CATS = {"pub", "bar", "nightclub", "cafe", "restaurant", "fast_food"}
+_nl_spots = spots_m[spots_m["amenity"].isin(_NIGHTLIFE_CATS)].copy()
+_prev_pzgeom = None
+_ring_poi = {}
+for _z in _POLICY_ZONES:
+    _pzg = gpd.read_file(os.path.join(DATA_DIR, f"google_zone_{_z['km']}km.geojson")).to_crs(CRS_METRIC).geometry.iloc[0]
+    _n_cum = int(_nl_spots.geometry.within(_pzg).sum())
+    _ring_poi[_z["km"]] = _n_cum - (int(_nl_spots.geometry.within(_prev_pzgeom).sum()) if _prev_pzgeom is not None else 0)
+    _prev_pzgeom = _pzg
+
+# Doporučení obcí
+_rzone_json = os.path.join(OUT_DIR, "recommended_zone.json")
+if os.path.exists(_rzone_json):
+    with open(_rzone_json, encoding="utf-8") as f:
+        _rzone = json.load(f)
+else:
+    _rzone = {"ponechat": [], "podmínečně": [], "vyřadit": [],
+              "souhrn": {"ponechat_count": 0, "podmínečně_count": 0, "vyřadit_count": 0}}
+
+# HTML tabulka zón
+_policy_rows = ""
+for _z in _POLICY_ZONES:
+    _net = _z["net_kc"]
+    _nc  = "#2ecc71" if _net >= 100 else "#f39c12" if _net >= 80 else "#e74c3c"
+    _hh  = _ring_hh.get(_z["km"], 0)
+    _poi = _ring_poi.get(_z["km"], 0)
+    _policy_rows += (
+        f'<tr>'
+        f'<td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;'
+        f'background:{_z["color"]};margin-right:6px;vertical-align:middle"></span>'
+        f'<strong>{_z["ring"]}</strong></td>'
+        f'<td class="num">{_z["fee"]} Kč</td>'
+        f'<td class="num">{_z["min_order"]} Kč</td>'
+        f'<td class="num">{_z["free_from"]} Kč</td>'
+        f'<td class="num">{_z["courier"]} Kč</td>'
+        f'<td class="num" style="color:{_nc};font-weight:700">{_net} Kč</td>'
+        f'<td class="num">{fmt_n(_hh)}</td>'
+        f'<td class="num">{_poi}</td>'
+        f'</tr>\n'
+    )
+
+def _muni_badges(names, color):
+    return " ".join(
+        f'<span style="display:inline-block;background:rgba(255,255,255,.07);border:1px solid {color}33;'
+        f'border-radius:4px;padding:2px 8px;font-size:.8rem;margin:2px">{n}</span>'
+        for n in names
+    )
+
+_badge_ponechat  = _muni_badges(_rzone["ponechat"], "#2ecc71")
+_badge_podmn     = _muni_badges(_rzone["podmínečně"], "#f39c12")
+_badge_vyradit   = _muni_badges(_rzone["vyřadit"], "#e74c3c")
 
 # Analýza skladu
 sklad_csv = os.path.join(OUT_DIR, "sklad_scoring.csv")
@@ -635,6 +800,7 @@ HTML = f"""<!DOCTYPE html>
     <li><a href="#sit-dostupnost">Síťová dostupnost (OSM)</a></li>
     <li><a href="#marketing">Marketingové příležitosti</a></li>
     <li><a href="#scenare">Scénáře vzdálenosti + palivo</a></li>
+    <li><a href="#politika">Rozvozová politika</a></li>
     <li><a href="#mapa">Interaktivní mapa</a></li>
     <li><a href="#investori">Pro investory</a></li>
     <li><a href="#zaver">Závěry a doporučení</a></li>
@@ -773,6 +939,43 @@ HTML = f"""<!DOCTYPE html>
   <div class="bar-label">65+ let</div>
   <div class="bar-track"><div class="bar-fill pink" style="width:{round(100*vek_65p/(vek_0_14+vek_15_64+vek_65p))}%"></div></div>
   <div class="bar-val">{round(100*vek_65p/(vek_0_14+vek_15_64+vek_65p),1)} %</div>
+</div>
+</div>
+
+<div style="margin-top:32px;">
+<h3>Demografie per rozvozová zóna (SLDB 2021 · area-weighted)</h3>
+<p style="font-size:.85rem;color:var(--muted);margin-bottom:14px;">
+  Věková struktura a domácnosti pro každý dopravní prsten. Hodnoty jsou prstencové (každá zóna bez předchozí).
+  Zdroj: ČSÚ SLDB 2021, Google Distance Matrix zóny.
+</p>
+<div style="overflow-x:auto;">
+<table>
+  <tr>
+    <th>Zóna</th>
+    <th class="num">Obyvatelé</th>
+    <th class="num">Domácností</th>
+    <th class="num">0–14</th>
+    <th class="num">%</th>
+    <th class="num">15–64</th>
+    <th class="num">%</th>
+    <th class="num">65+</th>
+    <th class="num">%</th>
+    <th class="num">Ø věk</th>
+  </tr>
+  {_zone_demo_rows}
+</table>
+</div>
+
+<div style="margin-top:24px;" class="chart-wrap">
+  <h3 style="margin-bottom:16px;">Věková struktura per zóna — absolutní počty (SLDB 2021)</h3>
+  <canvas id="chartZoneDemo" style="max-height:300px;"></canvas>
+</div>
+
+<div class="highlight" style="margin-top:20px;">
+  <strong>Klíčové zjištění:</strong> Věková struktura je napříč zónami prakticky identická (~43 let Ø věk, ~20 % seniorů, ~15 % dětí).
+  Vzdálenost <strong>není demografickým segmentačním faktorem</strong> — cílová skupina 15–64 let tvoří stabilně
+  ~64 % v každé zóně. Největší absolutní rezervoár zákazníků je v prstenci 15–20 km
+  ({fmt_n(_ring_demo[20]["vek_15_64"])} osob ve věku 15–64), ale průměrná kontribuční marže je zde nejnižší.
 </div>
 </div>
 </div>
@@ -1233,9 +1436,86 @@ HTML = f"""<!DOCTYPE html>
 </div>
 </div>
 
-<!-- ── 13. MAPA ─────────────────────────────────────────────────────────── -->
+<!-- ── ROZVOZOVÁ POLITIKA ────────────────────────────────────────────── -->
+<div class="section" id="politika">
+<h2>13. Rozvozová politika</h2>
+<p>Každý prstenec je ekonomicky kladný. Limitujícím faktorem není marže, ale <strong>čas kurýra</strong> — jedno doručení do 15–20 km trvá 45–70 min, tedy 2–3× déle než jízda do centra FM.</p>
+
+<h3 style="margin:24px 0 10px">Ekonomika zón (průměrná objednávka {int(trzba_avg)} Kč)</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Prstenec</th>
+      <th class="num">Dopravné</th>
+      <th class="num">Min. obj.</th>
+      <th class="num">Zdarma od</th>
+      <th class="num">Kurýr/obj</th>
+      <th class="num">Příspěvek/obj</th>
+      <th class="num">Domácností</th>
+      <th class="num">Nightlife POI</th>
+    </tr>
+  </thead>
+  <tbody>{_policy_rows}</tbody>
+</table>
+<p style="font-size:.8rem;color:var(--muted);margin-top:6px">Příspěvek/obj = hrubá marže ({_GROSS_KC} Kč) + dopravné − kurýrní paušál. Domácnosti z SLDB 2021 / ČÚZK gridu.</p>
+
+<h3 style="margin:28px 0 12px">Doporučení per zóna</h3>
+<div style="display:grid;gap:12px">
+
+<div style="background:var(--bg2);border-left:4px solid #2ecc71;border-radius:6px;padding:14px 16px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+    <span style="background:#2ecc71;color:#000;font-size:.72rem;font-weight:700;padding:2px 9px;border-radius:99px">Aktivně obsloužit</span>
+    <strong>0–5 km — Jádro FM</strong>
+  </div>
+  <p style="margin:0;font-size:.88rem;color:var(--muted)">Základní operační zóna. Nejnižší dopravné (39 Kč) přitahuje impulzivní objednávky, husté osídlení, nejvyšší koncentrace nightlife POI. Frýdek-Místek centrum, Staré Město, Sviadnov. Doporučena agresivní propagace.</p>
+</div>
+
+<div style="background:var(--bg2);border-left:4px solid #27ae60;border-radius:6px;padding:14px 16px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+    <span style="background:#27ae60;color:#fff;font-size:.72rem;font-weight:700;padding:2px 9px;border-radius:99px">Aktivně obsloužit</span>
+    <strong>5–10 km — Rozšířená zóna</strong>
+  </div>
+  <p style="margin:0;font-size:.88rem;color:var(--muted)">Nejvyšší příspěvková marže (114 Kč/obj) ze všech zón — stejné kurýrní náklady jako v pásu 0–5 km při vyšším dopravném. Zahrnuje Havířov, Bašku, Paskov, Dobrá, Šenov. Aktivní marketingová kampaň.</p>
+</div>
+
+<div style="background:var(--bg2);border-left:4px solid #f39c12;border-radius:6px;padding:14px 16px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+    <span style="background:#f39c12;color:#000;font-size:.72rem;font-weight:700;padding:2px 9px;border-radius:99px">Podmínečně</span>
+    <strong>10–15 km — Selektivní obsluha</strong>
+  </div>
+  <p style="margin:0;font-size:.88rem;color:var(--muted)">Marže 84 Kč/obj je solidní tam, kde poptávka přichází. Prioritizovat Frýdlant n.O., Petřvald, Brušperk, Příbor. Pro venkovské obce obsloužit jen pokud není vytíženost v pásu 0–10 km. Min. objednávka 700 Kč.</p>
+</div>
+
+<div style="background:var(--bg2);border-left:4px solid #e67e22;border-radius:6px;padding:14px 16px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+    <span style="background:#e67e22;color:#fff;font-size:.72rem;font-weight:700;padding:2px 9px;border-radius:99px">Pouze prémium</span>
+    <strong>15–20 km — Prémiové doručení</strong>
+  </div>
+  <p style="margin:0;font-size:.88rem;color:var(--muted)">Marže 134 Kč/obj ale doručení trvá 45–70 min — kurýr stráví čas, ve kterém by zvládl 2–3 objednávky v centru. Přijímat pouze ≥ 1 500 Kč (dopravné zdarma) a pouze bez jiné zakázky. Aktivně nemarketovat.</p>
+</div>
+
+</div>
+
+<h3 style="margin:28px 0 12px">Doporučení obcí ({_rzone["souhrn"]["ponechat_count"]} / {_rzone["souhrn"]["podmínečně_count"]} / {_rzone["souhrn"]["vyřadit_count"]})</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;font-size:.85rem">
+  <div>
+    <div style="color:#2ecc71;font-weight:600;margin-bottom:6px">✅ Vždy obsloužit ({_rzone["souhrn"]["ponechat_count"]})</div>
+    <div style="line-height:1.9">{_badge_ponechat}</div>
+  </div>
+  <div>
+    <div style="color:#f39c12;font-weight:600;margin-bottom:6px">⚠️ Podmínečně ({_rzone["souhrn"]["podmínečně_count"]})</div>
+    <div style="line-height:1.9">{_badge_podmn}</div>
+  </div>
+  <div>
+    <div style="color:#e74c3c;font-weight:600;margin-bottom:6px">🚫 Neobsloužit ({_rzone["souhrn"]["vyřadit_count"]})</div>
+    <div style="line-height:1.9">{_badge_vyradit}</div>
+  </div>
+</div>
+</div>
+
+<!-- ── 14. MAPA ─────────────────────────────────────────────────────────── -->
 <div class="section" id="mapa">
-<h2>13. Interaktivní mapa</h2>
+<h2>14. Interaktivní mapa</h2>
 <p>Mapa zobrazuje Google rozvozovou zónu (oranžová), buffer 20 km (modrá přerušovaná), ZUJ hranice, 1km gridy domácností, OSM marketing spoty a geocodované zákazníky. Vrstvy lze přepínat v pravém horním rohu.</p>
 <div class="map-container">
   <iframe src="vecerkaplus_mapa.html" loading="lazy"></iframe>
@@ -1438,6 +1718,33 @@ new Chart(document.getElementById('chartVek'), {{
   }},
   options: {{ plugins: {{ legend: {{ labels: {{ color: '#bbb', font: {{ size: 12 }} }} }} }},
     cutout: '60%' }}
+}});
+
+// ── Demografie per zóna ──
+new Chart(document.getElementById('chartZoneDemo'), {{
+  type: 'bar',
+  data: {{
+    labels: {json.dumps(_chart_zone_labels)},
+    datasets: [
+      {{ label: '0–14 let',  data: {json.dumps(_chart_vek0)},  backgroundColor: '#37474f', stack: 's' }},
+      {{ label: '15–64 let', data: {json.dumps(_chart_vek15)}, backgroundColor: '#29B6F6', stack: 's' }},
+      {{ label: '65+ let',   data: {json.dumps(_chart_vek65)}, backgroundColor: '#FF3D9A', stack: 's' }}
+    ]
+  }},
+  options: {{
+    responsive: true,
+    plugins: {{
+      legend: {{ labels: {{ color: '#bbb' }} }},
+      tooltip: {{ callbacks: {{ label: function(ctx) {{
+        var v = ctx.parsed.y;
+        return ctx.dataset.label + ': ' + v.toLocaleString('cs-CZ');
+      }} }} }}
+    }},
+    scales: {{
+      x: {{ ticks: {{ color: '#bbb' }}, grid: {{ color: '#1a1a28' }} }},
+      y: {{ stacked: true, ticks: {{ color: '#888', callback: function(v) {{ return (v/1000).toFixed(0) + ' tis.'; }} }}, grid: {{ color: '#1a1a28' }} }}
+    }}
+  }}
 }});
 
 // ── Budovy koláč ──

@@ -1,12 +1,12 @@
 """
 VečerkaPlus – síťová analýza dostupnosti (OSMnx)
 ================================================
-Izochróny 5/10/15/20 minut jízdy od výchozího bodu řidiče.
-Pokrytí domácností per časové pásmo, porovnání s Google Distance Matrix zónou.
+Izodistance 5/10/15/20 km jízdy po silnici od výchozího bodu řidiče.
+Pokrytí domácností per vzdálenostní pásmo, porovnání s Google Distance Matrix zónou.
 
 Výstupy:
   data/osm_fm_drive.graphml    — cache OSM grafu (stáhne se jen jednou)
-  data/osm_isochrones.geojson  — 4 polygony izochrón
+  data/osm_isochrones.geojson  — 4 polygony izodistancí
   output/network_summary.json  — tabulka dostupnosti
   output/network_analyza.html  — interaktivní mapa
 """
@@ -32,9 +32,8 @@ CRS_WGS          = "EPSG:4326"
 AVG_HH_SIZE      = 2.37
 GRAPH_DIST_M     = 25_000       # okruh stahování grafu
 
-TIME_LIMITS_MIN  = [5, 10, 15, 20]
+DIST_LIMITS_KM   = [5, 10, 15, 20]
 ISOCHRONY_COLORS = {5:"#00e676", 10:"#ffd740", 15:"#ff9800", 20:"#e74c3c"}
-NIGHT_SPEED_FACTOR = 1.15   # noční provoz 22–6: méně aut → ~15 % rychlejší průjezd
 
 DATA_DIR  = os.path.join(os.path.dirname(__file__), "data")
 OUT_DIR   = os.path.join(os.path.dirname(__file__), "output")
@@ -64,50 +63,40 @@ else:
     ox.save_graphml(G, filepath=GRAPH_CACHE)
     print(f"   Uloženo: {GRAPH_CACHE}")
 
-# Vždy přepočítat rychlosti s nočním faktorem (cache má denní hodnoty)
-print(f"   Aplikuji noční rychlostní faktor {NIGHT_SPEED_FACTOR}×…")
-G = ox.add_edge_speeds(G)
-for _, _, _, d in G.edges(data=True, keys=True):
-    if "speed_kph" in d:
-        d["speed_kph"] = d["speed_kph"] * NIGHT_SPEED_FACTOR
-G = ox.add_edge_travel_times(G)
-
 orig_node = ox.nearest_nodes(G, FM_LON, FM_LAT)
 print(f"   Výchozí uzel: {orig_node}")
 
 # Dijkstra — délky ke všem uzlům (pro route vizualizaci)
 dist_m_dict = nx.single_source_dijkstra_path_length(G, orig_node, weight="length")
 
-# ── 2. Izochróny ──────────────────────────────────────────────────────────────
-print("\n=== 2. Výpočet izochrón ===")
+# ── 2. Izodistance ────────────────────────────────────────────────────────────
+print("\n=== 2. Výpočet izodistancí ===")
 
-def make_isochrone(G, center_node, travel_time_s):
-    """Vrátí Shapely polygon pokrývající oblasti dosažitelné do travel_time_s."""
-    subG = nx.ego_graph(G, center_node, radius=travel_time_s, distance="travel_time")
+def make_isodistance(G, center_node, dist_m):
+    """Vrátí Shapely polygon pokrývající oblasti dosažitelné do dist_m metrů po silnici."""
+    subG = nx.ego_graph(G, center_node, radius=dist_m, distance="length")
     nodes_gdf, _ = ox.graph_to_gdfs(subG)
     pts = nodes_gdf.geometry.to_crs(CRS_WGS)
-    # concave_hull (ratio 0.05) je přesnější než konvexní obal
     mp = MultiPoint(list(pts))
     try:
         poly = concave_hull(mp, ratio=0.05)
     except Exception:
         poly = mp.convex_hull
-    # Pokud je výsledek příliš malý nebo prázdný, fallback na konvexní obal
     if poly.is_empty or poly.area < 1e-6:
         poly = mp.convex_hull
     return poly
 
 isochrony = []
-for minutes in TIME_LIMITS_MIN:
-    t_s = minutes * 60
-    poly = make_isochrone(G, orig_node, t_s)
-    isochrony.append({"minutes": minutes, "geometry": poly})
-    nodes_count = len(nx.ego_graph(G, orig_node, radius=t_s, distance="travel_time").nodes)
-    print(f"   {minutes} min — {nodes_count} uzlů, plocha {poly.area * 1e4:.0f} km² (WGS)")
+for km in DIST_LIMITS_KM:
+    dist_m = km * 1000
+    poly = make_isodistance(G, orig_node, dist_m)
+    isochrony.append({"km": km, "geometry": poly})
+    nodes_count = len(nx.ego_graph(G, orig_node, radius=dist_m, distance="length").nodes)
+    print(f"   {km} km — {nodes_count} uzlů, plocha {poly.area * 1e4:.0f} km² (WGS)")
 
 iso_gdf = gpd.GeoDataFrame(isochrony, crs=CRS_WGS)
 iso_gdf.to_file(ISO_GEOJSON, driver="GeoJSON")
-print(f"\n   Izochróny uloženy: {ISO_GEOJSON}")
+print(f"\n   Izodistance uloženy: {ISO_GEOJSON}")
 
 # ── 3. Pokrytí domácností ─────────────────────────────────────────────────────
 print("\n=== 3. Pokrytí domácností per izochróna ===")
@@ -136,22 +125,21 @@ hh_google20 = hh_in_polygon(zone20_geom)
 summary = {}
 prev_hh = 0
 for _, row in iso_gdf.iterrows():
-    minutes = int(row["minutes"])
+    km = int(row["km"])
     iso_m = gpd.GeoDataFrame([{"geometry": row.geometry}], crs=CRS_WGS).to_crs(CRS_METRIC).geometry.iloc[0]
     hh = hh_in_polygon(iso_m)
     area_km2 = iso_m.area / 1e6
     pct_google = hh / hh_google20 * 100 if hh_google20 > 0 else 0
     incremental = hh - prev_hh
-    summary[str(minutes)] = {
-        "minutes": minutes,
+    summary[str(km)] = {
+        "km": km,
         "area_km2": round(area_km2, 1),
         "hh_count": hh,
         "pop_est": int(hh * AVG_HH_SIZE),
         "pct_google20": round(pct_google, 1),
         "incremental_hh": incremental,
-        "night_speed_factor": NIGHT_SPEED_FACTOR,
     }
-    print(f"   {minutes:2d} min — {area_km2:.0f} km² — {hh:,} HH ({pct_google:.0f} % Google 20km) +{incremental:,} přírůstek")
+    print(f"   {km:2d} km — {area_km2:.0f} km² — {hh:,} HH ({pct_google:.0f} % Google 20km) +{incremental:,} přírůstek")
     prev_hh = hh
 
 summary["google20"] = {"hh_count": hh_google20, "area_km2": round(zone20_geom.area / 1e6, 1)}
@@ -166,20 +154,20 @@ print("\n=== 4. Generuji mapu ===")
 m = folium.Map(location=[FM_LAT, FM_LON], zoom_start=11,
                tiles="CartoDB Positron", prefer_canvas=True)
 
-# Izochróny (od největší po nejmenší → správné překrytí)
-for minutes in sorted(TIME_LIMITS_MIN, reverse=True):
-    row = iso_gdf[iso_gdf["minutes"] == minutes].iloc[0]
-    color = ISOCHRONY_COLORS[minutes]
-    s = summary[str(minutes)]
+# Izodistance (od největší po nejmenší → správné překrytí)
+for km in sorted(DIST_LIMITS_KM, reverse=True):
+    row = iso_gdf[iso_gdf["km"] == km].iloc[0]
+    color = ISOCHRONY_COLORS[km]
+    s = summary[str(km)]
     folium.GeoJson(
         row.geometry.__geo_interface__,
-        name=f"Izochróna {minutes} min",
-        style_function=lambda x, c=color, m=minutes: {
+        name=f"Izodistance {km} km",
+        style_function=lambda x, c=color, k=km: {
             "fillColor": c, "color": c, "weight": 2,
-            "fillOpacity": 0.25, "dashArray": "" if m == 20 else "4,4",
+            "fillOpacity": 0.25, "dashArray": "" if k == 20 else "4,4",
         },
         tooltip=folium.Tooltip(
-            f"<b>{minutes} min jízdy</b><br>"
+            f"<b>{km} km po silnici</b><br>"
             f"Plocha: {s['area_km2']:.0f} km²<br>"
             f"Domácností: {s['hh_count']:,}<br>"
             f"Odh. obyvatel: {s['pop_est']:,}<br>"
@@ -238,12 +226,12 @@ folium.Marker([FM_LAT, FM_LON], tooltip="Výchozí bod (byt řidiče)",
 
 # Legenda
 legend_rows = ""
-for minutes in TIME_LIMITS_MIN:
-    s = summary[str(minutes)]
-    c = ISOCHRONY_COLORS[minutes]
+for km in DIST_LIMITS_KM:
+    s = summary[str(km)]
+    c = ISOCHRONY_COLORS[km]
     legend_rows += (
         f'<tr>'
-        f'<td><span style="color:{c};font-size:16px">■</span> {minutes} min</td>'
+        f'<td><span style="color:{c};font-size:16px">■</span> {km} km</td>'
         f'<td style="text-align:right">{s["area_km2"]:.0f} km²</td>'
         f'<td style="text-align:right">{s["hh_count"]:,}</td>'
         f'<td style="text-align:right">{s["pct_google20"]:.0f} %</td>'
@@ -258,7 +246,7 @@ legend_html = f"""
   <hr style="margin:6px 0">
   <table style="width:100%;border-collapse:collapse">
     <tr style="color:#888;font-size:11px">
-      <th style="text-align:left">Izochróna</th>
+      <th style="text-align:left">Izodistance</th>
       <th style="text-align:right">Plocha</th>
       <th style="text-align:right">Domácností</th>
       <th style="text-align:right">% Google 20km</th>
